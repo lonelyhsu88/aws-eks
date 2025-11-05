@@ -1,0 +1,39 @@
+# Claude Code local settings
+.claude/
+
+# macOS
+.DS_Store
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Kubernetes
+kubeconfig
+*.kubeconfig
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# AWS
+.aws/
+credentials
+
+# Temporary files
+tmp/
+temp/
