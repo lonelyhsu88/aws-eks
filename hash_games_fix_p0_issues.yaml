@@ -1,0 +1,186 @@
+# Hash Games P0 問題修復配置
+# 執行日期: 2025-11-07 (更新於 2025-11-08)
+# 需在 24-48 小時內執行
+# 總計 6 個 P0 問題
+
+---
+# P0-1: luckydropcoc2-prd - 🔴🔴 超過 Request 64% (最嚴重)
+# 當前: Request 200Mi, Limit 1Gi
+# HPA: 164% (超過 Request)
+# 實際用量: 327Mi
+# 風險: 資源緊張時可能被驅逐
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: luckydropcoc2
+  namespace: luckydropcoc2-prd
+spec:
+  template:
+    spec:
+      containers:
+      - name: luckydropcoc2
+        resources:
+          requests:
+            memory: 400Mi
+            cpu: 40m
+          limits:
+            memory: 1Gi
+            cpu: 120m
+
+---
+# P0-2: limbone-prd - 記憶體壓力 100%, 已重啟 3 次
+# 當前: Request 200Mi, Limit 1Gi
+# HPA: 100%
+# 實際用量: 201Mi
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: limbone
+  namespace: limbone-prd
+spec:
+  template:
+    spec:
+      containers:
+      - name: limbone
+        resources:
+          requests:
+            memory: 300Mi
+            cpu: 60m
+          limits:
+            memory: 500Mi
+            cpu: 120m
+
+---
+# P0-3: limbo-prd - 記憶體壓力 94%
+# 當前: Request 200Mi, Limit 1Gi
+# HPA: 94%
+# 實際用量: 189Mi
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: limbo
+  namespace: limbo-prd
+spec:
+  template:
+    spec:
+      containers:
+      - name: limbo
+        resources:
+          requests:
+            memory: 300Mi
+            cpu: 60m
+          limits:
+            memory: 500Mi
+            cpu: 120m
+
+---
+# P0-4: plinkocl-prd - 配置嚴重異常
+# 當前: Request 1.8Ti, Limit 2.8Ti (配置錯誤)
+# HPA: 12% (計算錯誤)
+# 實際用量: 224Mi
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: plinkocl
+  namespace: plinkocl-prd
+spec:
+  template:
+    spec:
+      containers:
+      - name: plinkocl
+        resources:
+          requests:
+            memory: 400Mi
+            cpu: 120m
+          limits:
+            memory: 600Mi
+            cpu: 200m
+
+---
+# P0-5: minesne-prd - 配置異常 + 頻繁重啟
+# 當前: Request 900Mi, Limit 1.3Ti (配置錯誤)
+# HPA: 13%
+# 實際用量: 122Mi
+# 重啟次數: 4 次
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: minesne
+  namespace: minesne-prd
+spec:
+  template:
+    spec:
+      containers:
+      - name: minesne
+        resources:
+          requests:
+            memory: 200Mi
+            cpu: 60m
+          limits:
+            memory: 300Mi
+            cpu: 120m
+
+---
+# P0-6: luckyhilo-prd - 配置異常
+# 當前: Request 800Mi, Limit 1.2Ti (配置錯誤)
+# HPA: 25%
+# 實際用量: 205Mi
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: luckyhilo
+  namespace: luckyhilo-prd
+spec:
+  template:
+    spec:
+      containers:
+      - name: luckyhilo
+        resources:
+          requests:
+            memory: 400Mi
+            cpu: 150m
+          limits:
+            memory: 600Mi
+            cpu: 280m
+
+---
+# 執行指令:
+# kubectl apply -f hash_games_fix_p0_issues.yaml
+
+# 驗證指令:
+# kubectl top pods -n luckydropcoc2-prd
+# kubectl top pods -n limbone-prd
+# kubectl top pods -n limbo-prd
+# kubectl top pods -n plinkocl-prd
+# kubectl top pods -n minesne-prd
+# kubectl top pods -n luckyhilo-prd
+
+# 檢查 HPA:
+# kubectl get hpa -n luckydropcoc2-prd
+# kubectl get hpa -n limbone-prd
+# kubectl get hpa -n limbo-prd
+# kubectl get hpa -n plinkocl-prd
+# kubectl get hpa -n minesne-prd
+# kubectl get hpa -n luckyhilo-prd
+
+# 監控重啟:
+# kubectl get pods -n luckydropcoc2-prd -w
+# kubectl get pods -n limbone-prd -w
+# kubectl get pods -n limbo-prd -w
+# kubectl get pods -n plinkocl-prd -w
+# kubectl get pods -n minesne-prd -w
+# kubectl get pods -n luckyhilo-prd -w
+
+# 預期結果:
+# - luckydropcoc2: HPA 從 164% 降至 ~82% (327Mi / 400Mi)
+# - limbone: HPA 從 100% 降至 ~67% (201Mi / 300Mi)
+# - limbo: HPA 從 94% 降至 ~63% (189Mi / 300Mi)
+# - plinkocl: HPA 從異常值恢復至 ~56% (224Mi / 400Mi)
+# - minesne: HPA 從異常值恢復至 ~61% (122Mi / 200Mi)
+# - luckyhilo: HPA 從異常值恢復至 ~51% (205Mi / 400Mi)
