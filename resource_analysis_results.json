@@ -1,0 +1,2540 @@
+[
+  {
+    "priority": "🔴 緊急",
+    "namespace": "argocd",
+    "pod": "argocd-application-controller-0",
+    "container": "application-controller",
+    "requests_cpu": 0.1,
+    "requests_memory": 536870912.0,
+    "limits_cpu": 1.0,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.277216678002799,
+    "avg_cpu_used": 0.017240817739286415,
+    "max_memory_used": 493178880.0,
+    "avg_memory_used": 249280793.38272592,
+    "issues": [
+      "CPU request 使用率過高 (277.2%)",
+      "Memory request 使用率過高 (91.9%)"
+    ],
+    "recommendations": [
+      "增加 CPU request 至少到 0.360 cores",
+      "增加 Memory request 至少到 611.43Mi"
+    ]
+  },
+  {
+    "priority": "🔴 緊急",
+    "namespace": "caribbeanbingo-prd",
+    "pod": "caribbeanbingo-0",
+    "container": "caribbeanbingo",
+    "requests_cpu": 0.025,
+    "requests_memory": 157286400.0,
+    "limits_cpu": 0.06,
+    "limits_memory": 262144000.0,
+    "max_cpu_used": 0.009394349210551536,
+    "avg_cpu_used": 0.002171487050917152,
+    "max_memory_used": 193085440.0,
+    "avg_memory_used": 135075854.60469112,
+    "issues": [
+      "Memory request 使用率過高 (122.8%)"
+    ],
+    "recommendations": [
+      "增加 Memory request 至少到 239.38Mi"
+    ]
+  },
+  {
+    "priority": "🔴 緊急",
+    "namespace": "cavebingo-prd",
+    "pod": "cavebingo-0",
+    "container": "cavebingo",
+    "requests_cpu": 0.025,
+    "requests_memory": 146800640.0,
+    "limits_cpu": 0.06,
+    "limits_memory": 230686720.0,
+    "max_cpu_used": 0.007766500700461407,
+    "avg_cpu_used": 0.0019723812508610807,
+    "max_memory_used": 191717376.0,
+    "avg_memory_used": 130946823.36833061,
+    "issues": [
+      "Memory request 使用率過高 (130.6%)"
+    ],
+    "recommendations": [
+      "增加 Memory request 至少到 237.69Mi"
+    ]
+  },
+  {
+    "priority": "🔴 緊急",
+    "namespace": "exgameapi-prd",
+    "pod": "exgameapi-f86d89788-bhn46",
+    "container": "exgameapi",
+    "requests_cpu": 0.2,
+    "requests_memory": 104857600.0,
+    "limits_cpu": 0.6,
+    "limits_memory": 419430400.0,
+    "max_cpu_used": 0.04750726457921535,
+    "avg_cpu_used": 0.024756527512822597,
+    "max_memory_used": 156028928.0,
+    "avg_memory_used": 124293764.47428225,
+    "issues": [
+      "CPU request 平均使用率過低 (12.4%)",
+      "Memory request 使用率過高 (148.8%)"
+    ],
+    "recommendations": [
+      "可降低 CPU request 到 0.050 cores",
+      "增加 Memory request 至少到 193.44Mi"
+    ]
+  },
+  {
+    "priority": "🔴 緊急",
+    "namespace": "fakeapi-prd",
+    "pod": "fakeapi-95f57c47d-vchzp",
+    "container": "fakeapi",
+    "requests_cpu": 0.005,
+    "requests_memory": 10485760.0,
+    "limits_cpu": 0.05,
+    "limits_memory": 104857600.0,
+    "max_cpu_used": 0.00020337647195796887,
+    "avg_cpu_used": 3.1636350630732544e-05,
+    "max_memory_used": 9580544.0,
+    "avg_memory_used": 6670762.908528729,
+    "issues": [
+      "Memory request 使用率過高 (91.4%)"
+    ],
+    "recommendations": [
+      "增加 Memory request 至少到 11.88Mi"
+    ]
+  },
+  {
+    "priority": "🔴 緊急",
+    "namespace": "filebeat",
+    "pod": "filebeat-filebeat-c2p9g",
+    "container": "filebeat",
+    "requests_cpu": 0.1,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.5,
+    "limits_memory": 524288000.0,
+    "max_cpu_used": 0.1541383068079729,
+    "avg_cpu_used": 0.05259242160739056,
+    "max_memory_used": 151482368.0,
+    "avg_memory_used": 98921488.3533809,
+    "issues": [
+      "CPU request 使用率過高 (154.1%)",
+      "Memory request 使用率偏高 (72.2%)"
+    ],
+    "recommendations": [
+      "增加 CPU request 至少到 0.200 cores",
+      "建議增加 Memory request 到 173.36Mi"
+    ]
+  },
+  {
+    "priority": "🔴 緊急",
+    "namespace": "filebeat",
+    "pod": "filebeat-filebeat-mgf7w",
+    "container": "filebeat",
+    "requests_cpu": 0.1,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.5,
+    "limits_memory": 524288000.0,
+    "max_cpu_used": 0.4722210260508896,
+    "avg_cpu_used": 0.21411865190894022,
+    "max_memory_used": 202833920.0,
+    "avg_memory_used": 133383583.09751953,
+    "issues": [
+      "CPU request 使用率過高 (472.2%)",
+      "CPU limit 使用率過高 (94.4%)",
+      "Memory request 使用率過高 (96.7%)"
+    ],
+    "recommendations": [
+      "增加 CPU request 至少到 0.614 cores",
+      "增加 CPU limit 至少到 0.614 cores",
+      "增加 Memory request 至少到 251.47Mi"
+    ]
+  },
+  {
+    "priority": "🔴 緊急",
+    "namespace": "filebeat",
+    "pod": "filebeat-filebeat-nglh4",
+    "container": "filebeat",
+    "requests_cpu": 0.1,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.5,
+    "limits_memory": 524288000.0,
+    "max_cpu_used": 0.152662728041201,
+    "avg_cpu_used": 0.05317881626025928,
+    "max_memory_used": 172593152.0,
+    "avg_memory_used": 100132944.02718315,
+    "issues": [
+      "CPU request 使用率過高 (152.7%)",
+      "Memory request 使用率偏高 (82.3%)"
+    ],
+    "recommendations": [
+      "增加 CPU request 至少到 0.198 cores",
+      "建議增加 Memory request 到 197.52Mi"
+    ]
+  },
+  {
+    "priority": "🔴 緊急",
+    "namespace": "filebeat",
+    "pod": "filebeat-filebeat-phb5k",
+    "container": "filebeat",
+    "requests_cpu": 0.1,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.5,
+    "limits_memory": 524288000.0,
+    "max_cpu_used": 0.18372591315866707,
+    "avg_cpu_used": 0.05764999872802168,
+    "max_memory_used": 169451520.0,
+    "avg_memory_used": 99943131.82608695,
+    "issues": [
+      "CPU request 使用率過高 (183.7%)",
+      "Memory request 使用率偏高 (80.8%)"
+    ],
+    "recommendations": [
+      "增加 CPU request 至少到 0.239 cores",
+      "建議增加 Memory request 到 193.92Mi"
+    ]
+  },
+  {
+    "priority": "🔴 緊急",
+    "namespace": "filebeat",
+    "pod": "filebeat-filebeat-tsglc",
+    "container": "filebeat",
+    "requests_cpu": 0.1,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.5,
+    "limits_memory": 524288000.0,
+    "max_cpu_used": 0.3497436151162148,
+    "avg_cpu_used": 0.09889295587738275,
+    "max_memory_used": 189476864.0,
+    "avg_memory_used": 111076655.30434783,
+    "issues": [
+      "CPU request 使用率過高 (349.7%)",
+      "Memory request 使用率過高 (90.3%)"
+    ],
+    "recommendations": [
+      "增加 CPU request 至少到 0.455 cores",
+      "增加 Memory request 至少到 234.91Mi"
+    ]
+  },
+  {
+    "priority": "🔴 緊急",
+    "namespace": "filebeat",
+    "pod": "filebeat-filebeat-xzqnp",
+    "container": "filebeat",
+    "requests_cpu": 0.1,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.5,
+    "limits_memory": 524288000.0,
+    "max_cpu_used": 0.14125214440885986,
+    "avg_cpu_used": 0.05043790834861324,
+    "max_memory_used": 153600000.0,
+    "avg_memory_used": 97305288.58987428,
+    "issues": [
+      "CPU request 使用率過高 (141.3%)",
+      "Memory request 使用率偏高 (73.2%)"
+    ],
+    "recommendations": [
+      "增加 CPU request 至少到 0.184 cores",
+      "建議增加 Memory request 到 175.78Mi"
+    ]
+  },
+  {
+    "priority": "🔴 緊急",
+    "namespace": "forestteaparty-prd",
+    "pod": "forestteaparty-0",
+    "container": "forestteaparty",
+    "requests_cpu": 0.1,
+    "requests_memory": 314572800.0,
+    "limits_cpu": 0.5,
+    "limits_memory": 629145600.0,
+    "max_cpu_used": 0.053192493392792674,
+    "avg_cpu_used": 0.03226389403586446,
+    "max_memory_used": 532250624.0,
+    "avg_memory_used": 350306715.75727046,
+    "issues": [
+      "Memory request 使用率過高 (169.2%)"
+    ],
+    "recommendations": [
+      "增加 Memory request 至少到 659.87Mi"
+    ]
+  },
+  {
+    "priority": "🔴 緊急",
+    "namespace": "istio-system",
+    "pod": "istio-ingressgateway-58b79c77d8-b48zd",
+    "container": "istio-proxy",
+    "requests_cpu": 0.1,
+    "requests_memory": 134217728.0,
+    "limits_cpu": 2.0,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.07425875892900526,
+    "avg_cpu_used": 0.017458758384952408,
+    "max_memory_used": 126394368.0,
+    "avg_memory_used": 75327941.15706441,
+    "issues": [
+      "CPU request 使用率偏高 (74.3%)",
+      "Memory request 使用率過高 (94.2%)"
+    ],
+    "recommendations": [
+      "建議增加 CPU request 到 0.089 cores",
+      "增加 Memory request 至少到 156.70Mi"
+    ]
+  },
+  {
+    "priority": "🔴 緊急",
+    "namespace": "limbocl-prd",
+    "pod": "limbocl-0",
+    "container": "limbocl",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.051347693030412186,
+    "avg_cpu_used": 0.008887647822972704,
+    "max_memory_used": 2519040.0,
+    "avg_memory_used": 2519040.0,
+    "issues": [
+      "CPU request 使用率過高 (128.4%)",
+      "Memory request 平均使用率過低 (1.2%)"
+    ],
+    "recommendations": [
+      "增加 CPU request 至少到 0.067 cores",
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🔴 緊急",
+    "namespace": "limbone-prd",
+    "pod": "limbone-0",
+    "container": "limbone",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.02997589012772055,
+    "avg_cpu_used": 0.00945573599456107,
+    "max_memory_used": 214069248.0,
+    "avg_memory_used": 97915954.53963886,
+    "issues": [
+      "CPU request 使用率偏高 (74.9%)",
+      "Memory request 使用率過高 (102.1%)"
+    ],
+    "recommendations": [
+      "建議增加 CPU request 到 0.036 cores",
+      "增加 Memory request 至少到 265.40Mi"
+    ]
+  },
+  {
+    "priority": "🔴 緊急",
+    "namespace": "luckydropcoc2-prd",
+    "pod": "luckydropcoc2-0",
+    "container": "luckydropcoc2",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.04105697185150217,
+    "avg_cpu_used": 0.012674659112591982,
+    "max_memory_used": 354631680.0,
+    "avg_memory_used": 183984851.32044342,
+    "issues": [
+      "CPU request 使用率過高 (102.6%)",
+      "Memory request 使用率過高 (169.1%)"
+    ],
+    "recommendations": [
+      "增加 CPU request 至少到 0.053 cores",
+      "增加 Memory request 至少到 439.66Mi"
+    ]
+  },
+  {
+    "priority": "🔴 緊急",
+    "namespace": "partnerapi-prd",
+    "pod": "partnerapi-8584997f6-kpzsp",
+    "container": "partnerapi",
+    "requests_cpu": 0.2,
+    "requests_memory": 41943040.0,
+    "limits_cpu": 0.4,
+    "limits_memory": 104857600.0,
+    "max_cpu_used": 0.13796307475601363,
+    "avg_cpu_used": 0.05419753484900213,
+    "max_memory_used": 84623360.0,
+    "avg_memory_used": 28755793.331615563,
+    "issues": [
+      "Memory request 使用率過高 (201.8%)"
+    ],
+    "recommendations": [
+      "增加 Memory request 至少到 104.91Mi"
+    ]
+  },
+  {
+    "priority": "🔴 緊急",
+    "namespace": "plinkogr-prd",
+    "pod": "plinkogr-0",
+    "container": "plinkogr",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.0661469406017579,
+    "avg_cpu_used": 0.011451880670933822,
+    "max_memory_used": 122155008.0,
+    "avg_memory_used": 90731613.34709322,
+    "issues": [
+      "CPU request 使用率過高 (165.4%)"
+    ],
+    "recommendations": [
+      "增加 CPU request 至少到 0.086 cores"
+    ]
+  },
+  {
+    "priority": "🔴 緊急",
+    "namespace": "schedule-prd",
+    "pod": "schedule-7f7988db95-xbswg",
+    "container": "schedule",
+    "requests_cpu": 0.01,
+    "requests_memory": 314572800.0,
+    "limits_cpu": 0.1,
+    "limits_memory": 524288000.0,
+    "max_cpu_used": 0.04580230614308405,
+    "avg_cpu_used": 0.000198373581546559,
+    "max_memory_used": 523698176.0,
+    "avg_memory_used": 19260829.042016808,
+    "issues": [
+      "CPU request 使用率過高 (458.0%)",
+      "Memory request 使用率過高 (166.5%)",
+      "Memory limit 使用率過高 (99.9%，可能導致 OOMKilled）"
+    ],
+    "recommendations": [
+      "增加 CPU request 至少到 0.060 cores",
+      "增加 Memory request 至少到 649.27Mi",
+      "增加 Memory limit 至少到 649.27Mi"
+    ]
+  },
+  {
+    "priority": "🔴 緊急",
+    "namespace": "steampunk2-prd",
+    "pod": "steampunk2-0",
+    "container": "steampunk2",
+    "requests_cpu": 0.025,
+    "requests_memory": 188743680.0,
+    "limits_cpu": 0.06,
+    "limits_memory": 314572800.0,
+    "max_cpu_used": 0.0058557954657728955,
+    "avg_cpu_used": 0.001940941912562924,
+    "max_memory_used": 197820416.0,
+    "avg_memory_used": 136824077.30698514,
+    "issues": [
+      "Memory request 使用率過高 (104.8%)"
+    ],
+    "recommendations": [
+      "增加 Memory request 至少到 245.25Mi"
+    ]
+  },
+  {
+    "priority": "🔴 緊急",
+    "namespace": "syncservice-prd",
+    "pod": "syncservice-5866bf79d-zs4tt",
+    "container": "syncservice",
+    "requests_cpu": 0.1,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.3,
+    "limits_memory": 524288000.0,
+    "max_cpu_used": 0.2155910440496471,
+    "avg_cpu_used": 0.02643153136239148,
+    "max_memory_used": 284704768.0,
+    "avg_memory_used": 47624151.445544556,
+    "issues": [
+      "CPU request 使用率過高 (215.6%)",
+      "Memory request 使用率過高 (135.8%)"
+    ],
+    "recommendations": [
+      "增加 CPU request 至少到 0.280 cores",
+      "增加 Memory request 至少到 352.97Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "domain-serviceapi-prd",
+    "pod": "domain-serviceapi-d74dbf674-kx8vb",
+    "container": "domain-serviceapi",
+    "requests_cpu": 0.01,
+    "requests_memory": 20971520.0,
+    "limits_cpu": 0.05,
+    "limits_memory": 52428800.0,
+    "max_cpu_used": 0.0023684893649601204,
+    "avg_cpu_used": 0.0009792599601295478,
+    "max_memory_used": 16752640.0,
+    "avg_memory_used": 14084378.318989951,
+    "issues": [
+      "Memory request 使用率偏高 (79.9%)"
+    ],
+    "recommendations": [
+      "建議增加 Memory request 到 19.17Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "egypthilo-prd",
+    "pod": "egypthilo-0",
+    "container": "egypthilo",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.021529254225610698,
+    "avg_cpu_used": 0.006747285530192693,
+    "max_memory_used": 157954048.0,
+    "avg_memory_used": 82893628.13954288,
+    "issues": [
+      "Memory request 使用率偏高 (75.3%)"
+    ],
+    "recommendations": [
+      "建議增加 Memory request 到 180.76Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "eventapi-prd",
+    "pod": "eventapi-56bbd9ccd-dtqw7",
+    "container": "eventapi",
+    "requests_cpu": 0.05,
+    "requests_memory": 20971520.0,
+    "limits_cpu": 0.4,
+    "limits_memory": 52428800.0,
+    "max_cpu_used": 0.0006605133333863579,
+    "avg_cpu_used": 0.00015671040110366486,
+    "max_memory_used": 17985536.0,
+    "avg_memory_used": 15149168.680052152,
+    "issues": [
+      "Memory request 使用率偏高 (85.8%)"
+    ],
+    "recommendations": [
+      "建議增加 Memory request 到 20.58Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "fakeapi2-prd",
+    "pod": "fakeapi2-7dbbd8fd94-t7m47",
+    "container": "fakeapi2",
+    "requests_cpu": 0.005,
+    "requests_memory": 10485760.0,
+    "limits_cpu": 0.05,
+    "limits_memory": 104857600.0,
+    "max_cpu_used": 9.083456024267119e-05,
+    "avg_cpu_used": 3.085396005380878e-05,
+    "max_memory_used": 8634368.0,
+    "avg_memory_used": 5889558.29528472,
+    "issues": [
+      "Memory request 使用率偏高 (82.3%)"
+    ],
+    "recommendations": [
+      "建議增加 Memory request 到 9.88Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "ingress-nginx",
+    "pod": "nginx-ingress-ingress-nginx-controller-6b5bd6b94c-w7ggx",
+    "container": "controller",
+    "requests_cpu": 0.1,
+    "requests_memory": 94371840.0,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.0036116334606200577,
+    "avg_cpu_used": 0.000976132286367704,
+    "max_memory_used": 77074432.0,
+    "avg_memory_used": 72727147.8190714,
+    "issues": [
+      "Memory request 使用率偏高 (81.7%)"
+    ],
+    "recommendations": [
+      "建議增加 Memory request 到 88.20Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "aws-load-balancer-controller-6bb4b459dc-6vqvq",
+    "container": "aws-load-balancer-controller",
+    "requests_cpu": null,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.0052788581004940905,
+    "avg_cpu_used": 0.001984217329040366,
+    "max_memory_used": 35807232.0,
+    "avg_memory_used": 32353787.041038442,
+    "issues": [
+      "未設定 CPU request",
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 CPU request 為 0.006 cores",
+      "建議設定 Memory request 為 40.98Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "aws-load-balancer-controller-6bb4b459dc-m2zlz",
+    "container": "aws-load-balancer-controller",
+    "requests_cpu": null,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.0031946195561362474,
+    "avg_cpu_used": 0.0011018772656661239,
+    "max_memory_used": 30224384.0,
+    "avg_memory_used": 28026986.132001996,
+    "issues": [
+      "未設定 CPU request",
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 CPU request 為 0.004 cores",
+      "建議設定 Memory request 為 34.59Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "aws-node-7qrdj",
+    "container": "aws-node",
+    "requests_cpu": 0.025,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.006178186079328644,
+    "avg_cpu_used": 0.00276161349293561,
+    "max_memory_used": 50995200.0,
+    "avg_memory_used": 36653763.61228341,
+    "issues": [
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 Memory request 為 58.36Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "aws-node-7qrdj",
+    "container": "aws-eks-nodeagent",
+    "requests_cpu": 0.025,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 7.481021960250324e-05,
+    "avg_cpu_used": 1.9047989200427614e-05,
+    "max_memory_used": 15409152.0,
+    "avg_memory_used": 13759554.228855722,
+    "issues": [
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 Memory request 為 17.63Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "aws-node-cqgcs",
+    "container": "aws-node",
+    "requests_cpu": 0.025,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.0055632120995489425,
+    "avg_cpu_used": 0.002746148006460265,
+    "max_memory_used": 62238720.0,
+    "avg_memory_used": 53932506.219870195,
+    "issues": [
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 Memory request 為 71.23Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "aws-node-cqgcs",
+    "container": "aws-eks-nodeagent",
+    "requests_cpu": 0.025,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 6.992001537597204e-05,
+    "avg_cpu_used": 1.881067713825003e-05,
+    "max_memory_used": 13578240.0,
+    "avg_memory_used": 13345734.63964054,
+    "issues": [
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 Memory request 為 15.54Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "aws-node-mt7lc",
+    "container": "aws-node",
+    "requests_cpu": 0.025,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.005453670692256486,
+    "avg_cpu_used": 0.002552132648000762,
+    "max_memory_used": 53837824.0,
+    "avg_memory_used": 45382981.95995406,
+    "issues": [
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 Memory request 為 61.61Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "aws-node-mt7lc",
+    "container": "aws-eks-nodeagent",
+    "requests_cpu": 0.025,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 6.70237500000026e-05,
+    "avg_cpu_used": 1.8409689531915543e-05,
+    "max_memory_used": 13963264.0,
+    "avg_memory_used": 13297196.765167024,
+    "issues": [
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 Memory request 為 15.98Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "aws-node-n6chp",
+    "container": "aws-node",
+    "requests_cpu": 0.025,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.005529401250000063,
+    "avg_cpu_used": 0.0027038398948591,
+    "max_memory_used": 52944896.0,
+    "avg_memory_used": 40475290.42650807,
+    "issues": [
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 Memory request 為 60.59Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "aws-node-n6chp",
+    "container": "aws-eks-nodeagent",
+    "requests_cpu": 0.025,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.00010530774550484057,
+    "avg_cpu_used": 1.942958740188855e-05,
+    "max_memory_used": 15818752.0,
+    "avg_memory_used": 13988560.367034834,
+    "issues": [
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 Memory request 為 18.10Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "aws-node-v86kf",
+    "container": "aws-node",
+    "requests_cpu": 0.025,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.005373523567192101,
+    "avg_cpu_used": 0.002592102501716386,
+    "max_memory_used": 53444608.0,
+    "avg_memory_used": 42511958.53989508,
+    "issues": [
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 Memory request 為 61.16Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "aws-node-v86kf",
+    "container": "aws-eks-nodeagent",
+    "requests_cpu": 0.025,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 7.618949471247982e-05,
+    "avg_cpu_used": 1.872008859077477e-05,
+    "max_memory_used": 13897728.0,
+    "avg_memory_used": 13321103.495578317,
+    "issues": [
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 Memory request 為 15.90Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "aws-node-vfdx6",
+    "container": "aws-node",
+    "requests_cpu": 0.025,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.00533207404331323,
+    "avg_cpu_used": 0.0026444950158193707,
+    "max_memory_used": 50536448.0,
+    "avg_memory_used": 41605499.085035205,
+    "issues": [
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 Memory request 為 57.83Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "aws-node-vfdx6",
+    "container": "aws-eks-nodeagent",
+    "requests_cpu": 0.025,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 7.425165651116953e-05,
+    "avg_cpu_used": 1.8882636529770614e-05,
+    "max_memory_used": 14528512.0,
+    "avg_memory_used": 13417256.994257752,
+    "issues": [
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 Memory request 為 16.63Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "aws-node-xm7qm",
+    "container": "aws-node",
+    "requests_cpu": 0.025,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.00299834139241769,
+    "avg_cpu_used": 0.0026550465242785757,
+    "max_memory_used": 49385472.0,
+    "avg_memory_used": 40895407.14864401,
+    "issues": [
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 Memory request 為 56.52Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "aws-node-xm7qm",
+    "container": "aws-eks-nodeagent",
+    "requests_cpu": 0.025,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 5.57682308347337e-05,
+    "avg_cpu_used": 1.8770174169579748e-05,
+    "max_memory_used": 13516800.0,
+    "avg_memory_used": 13299255.365602471,
+    "issues": [
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 Memory request 為 15.47Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "kube-proxy-25bsn",
+    "container": "kube-proxy",
+    "requests_cpu": 0.1,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.022299961475426733,
+    "avg_cpu_used": 0.0005205555091103529,
+    "max_memory_used": 34787328.0,
+    "avg_memory_used": 25201846.384181354,
+    "issues": [
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 Memory request 為 39.81Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "kube-proxy-h966t",
+    "container": "kube-proxy",
+    "requests_cpu": 0.1,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.014735543764468166,
+    "avg_cpu_used": 0.0005601151324916279,
+    "max_memory_used": 31490048.0,
+    "avg_memory_used": 27938163.197804082,
+    "issues": [
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 Memory request 為 36.04Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "kube-proxy-hmx9r",
+    "container": "kube-proxy",
+    "requests_cpu": 0.1,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.02311958688567999,
+    "avg_cpu_used": 0.0005450136713766092,
+    "max_memory_used": 31207424.0,
+    "avg_memory_used": 25508516.87182304,
+    "issues": [
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 Memory request 為 35.71Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "kube-proxy-m2lv7",
+    "container": "kube-proxy",
+    "requests_cpu": 0.1,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.02234931604050025,
+    "avg_cpu_used": 0.0005213399520628771,
+    "max_memory_used": 34312192.0,
+    "avg_memory_used": 26271422.813334,
+    "issues": [
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 Memory request 為 39.27Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "kube-proxy-rp2n4",
+    "container": "kube-proxy",
+    "requests_cpu": 0.1,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.01299504359897618,
+    "avg_cpu_used": 0.0005386256811220023,
+    "max_memory_used": 32583680.0,
+    "avg_memory_used": 27985705.919670444,
+    "issues": [
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 Memory request 為 37.29Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "kube-proxy-s45zn",
+    "container": "kube-proxy",
+    "requests_cpu": 0.1,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.021536406594187464,
+    "avg_cpu_used": 0.000525308218201701,
+    "max_memory_used": 33329152.0,
+    "avg_memory_used": 25277170.32705471,
+    "issues": [
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 Memory request 為 38.14Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "kube-system",
+    "pod": "kube-proxy-z4g5g",
+    "container": "kube-proxy",
+    "requests_cpu": 0.1,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.024044544701642474,
+    "avg_cpu_used": 0.0005385957845778127,
+    "max_memory_used": 31477760.0,
+    "avg_memory_used": 25399395.997204192,
+    "issues": [
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 Memory request 為 36.02Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "loggzip-uploader",
+    "pod": "loggzip-uploader-2tt87",
+    "container": "loggzip",
+    "requests_cpu": null,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.2703242877746487,
+    "avg_cpu_used": 0.000538669348716958,
+    "max_memory_used": 594898944.0,
+    "avg_memory_used": 170935596.97865352,
+    "issues": [
+      "未設定 CPU request",
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 CPU request 為 0.324 cores",
+      "建議設定 Memory request 為 680.81Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "loggzip-uploader",
+    "pod": "loggzip-uploader-7v7zp",
+    "container": "loggzip",
+    "requests_cpu": null,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 1.0210925951693315,
+    "avg_cpu_used": 0.007470233548280641,
+    "max_memory_used": 2375610368.0,
+    "avg_memory_used": 220388732.25212076,
+    "issues": [
+      "未設定 CPU request",
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 CPU request 為 1.225 cores",
+      "建議設定 Memory request 為 2.65Gi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "loggzip-uploader",
+    "pod": "loggzip-uploader-9h445",
+    "container": "loggzip",
+    "requests_cpu": null,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.3413886524185717,
+    "avg_cpu_used": 0.0008085348178092734,
+    "max_memory_used": 636887040.0,
+    "avg_memory_used": 249889941.9151692,
+    "issues": [
+      "未設定 CPU request",
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 CPU request 為 0.410 cores",
+      "建議設定 Memory request 為 728.86Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "loggzip-uploader",
+    "pod": "loggzip-uploader-ffsff",
+    "container": "loggzip",
+    "requests_cpu": null,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 1.0298809992465943,
+    "avg_cpu_used": 0.0019969513670455644,
+    "max_memory_used": 1325494272.0,
+    "avg_memory_used": 234365006.83389583,
+    "issues": [
+      "未設定 CPU request",
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 CPU request 為 1.236 cores",
+      "建議設定 Memory request 為 1.48Gi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "loggzip-uploader",
+    "pod": "loggzip-uploader-kz7hx",
+    "container": "loggzip",
+    "requests_cpu": null,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.6338870260214511,
+    "avg_cpu_used": 0.0012880582306986073,
+    "max_memory_used": 1029677056.0,
+    "avg_memory_used": 414668916.7563623,
+    "issues": [
+      "未設定 CPU request",
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 CPU request 為 0.761 cores",
+      "建議設定 Memory request 為 1.15Gi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "loggzip-uploader",
+    "pod": "loggzip-uploader-rj6wg",
+    "container": "loggzip",
+    "requests_cpu": null,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 9.070730707156587e-05,
+    "avg_cpu_used": 2.9859416639638863e-06,
+    "max_memory_used": 6868992.0,
+    "avg_memory_used": 1669089.5499407097,
+    "issues": [
+      "未設定 CPU request",
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 CPU request 為 0.11m",
+      "建議設定 Memory request 為 7.86Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "loggzip-uploader",
+    "pod": "loggzip-uploader-ss2z6",
+    "container": "loggzip",
+    "requests_cpu": null,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.46619582276219407,
+    "avg_cpu_used": 0.00116581571510905,
+    "max_memory_used": 978288640.0,
+    "avg_memory_used": 414110844.88260514,
+    "issues": [
+      "未設定 CPU request",
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 CPU request 為 0.559 cores",
+      "建議設定 Memory request 為 1.09Gi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "monitoring",
+    "pod": "alertmanager-prometheus-kube-prometheus-alertmanager-0",
+    "container": "config-reloader",
+    "requests_cpu": null,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.00019721133069467968,
+    "avg_cpu_used": 0.00010497946843603574,
+    "max_memory_used": 17195008.0,
+    "avg_memory_used": 14661932.906357162,
+    "issues": [
+      "未設定 CPU request",
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 CPU request 為 0.24m",
+      "建議設定 Memory request 為 19.68Mi"
+    ]
+  },
+  {
+    "priority": "🟡 建議調整",
+    "namespace": "monitoring",
+    "pod": "prometheus-prometheus-kube-prometheus-prometheus-0",
+    "container": "config-reloader",
+    "requests_cpu": null,
+    "requests_memory": null,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.0001724828646140601,
+    "avg_cpu_used": 0.00013150435517710334,
+    "max_memory_used": 18362368.0,
+    "avg_memory_used": 14962157.669546112,
+    "issues": [
+      "未設定 CPU request",
+      "未設定 Memory request"
+    ],
+    "recommendations": [
+      "建議設定 CPU request 為 0.21m",
+      "建議設定 Memory request 為 21.01Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "adapterapi-prd",
+    "pod": "adapterapi-74d5bd8d48-cw5gm",
+    "container": "adapterapi",
+    "requests_cpu": 0.2,
+    "requests_memory": 41943040.0,
+    "limits_cpu": 0.4,
+    "limits_memory": 104857600.0,
+    "max_cpu_used": 0.0011958626592711926,
+    "avg_cpu_used": 0.0010866453020835774,
+    "max_memory_used": 18767872.0,
+    "avg_memory_used": 16319270.393403195,
+    "issues": [
+      "CPU request 平均使用率過低 (0.5%)"
+    ],
+    "recommendations": [
+      "可降低 CPU request 到 0.010 cores"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "arcade-gate-prd",
+    "pod": "arcade-gate-0",
+    "container": "arcade-gate",
+    "requests_cpu": 0.8,
+    "requests_memory": 2147483648.0,
+    "limits_cpu": 1.5,
+    "limits_memory": 4294967296.0,
+    "max_cpu_used": 0.012715045517702285,
+    "avg_cpu_used": 0.012715045517702285,
+    "max_memory_used": 2822144.0,
+    "avg_memory_used": 2822144.0,
+    "issues": [
+      "CPU request 平均使用率過低 (1.6%)",
+      "Memory request 平均使用率過低 (0.1%)"
+    ],
+    "recommendations": [
+      "可降低 CPU request 到 0.025 cores",
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "arcadebingo-prd",
+    "pod": "arcadebingo-0",
+    "container": "arcadebingo",
+    "requests_cpu": 0.03,
+    "requests_memory": 419430400.0,
+    "limits_cpu": 0.08,
+    "limits_memory": 734003200.0,
+    "max_cpu_used": 0.00020264466131388352,
+    "avg_cpu_used": 0.00020264466131388352,
+    "max_memory_used": 5865472.0,
+    "avg_memory_used": 4360192.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.0%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "argocd",
+    "pod": "argocd-applicationset-controller-d69fbd959-4rvhr",
+    "container": "applicationset-controller",
+    "requests_cpu": 0.05,
+    "requests_memory": 268435456.0,
+    "limits_cpu": 0.3,
+    "limits_memory": 536870912.0,
+    "max_cpu_used": 0.005137360675292704,
+    "avg_cpu_used": 0.0004577695297332891,
+    "max_memory_used": 38592512.0,
+    "avg_memory_used": 25114992.701347977,
+    "issues": [
+      "Memory request 平均使用率過低 (9.4%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 35.93Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "argocd",
+    "pod": "argocd-dex-server-94547c8d5-fnbb6",
+    "container": "dex-server",
+    "requests_cpu": 0.05,
+    "requests_memory": 134217728.0,
+    "limits_cpu": 0.2,
+    "limits_memory": 268435456.0,
+    "max_cpu_used": 0.0008756106197385848,
+    "avg_cpu_used": 0.00011819427301224473,
+    "max_memory_used": 31559680.0,
+    "avg_memory_used": 30576062.30654019,
+    "issues": [
+      "Memory request 平均使用率過低 (22.8%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 43.74Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "argocd",
+    "pod": "argocd-notifications-controller-7684b9f486-8bn9l",
+    "container": "notifications-controller",
+    "requests_cpu": 0.05,
+    "requests_memory": 134217728.0,
+    "limits_cpu": 0.2,
+    "limits_memory": 268435456.0,
+    "max_cpu_used": 0.001190697904449688,
+    "avg_cpu_used": 0.0006483982501425967,
+    "max_memory_used": 46096384.0,
+    "avg_memory_used": 38849028.70253046,
+    "issues": [
+      "Memory request 平均使用率過低 (28.9%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 55.57Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "argocd",
+    "pod": "argocd-repo-server-7cb7cd7d86-dlh2f",
+    "container": "repo-server",
+    "requests_cpu": 0.1,
+    "requests_memory": 536870912.0,
+    "limits_cpu": 1.0,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.03512407828993212,
+    "avg_cpu_used": 0.0012100975448512145,
+    "max_memory_used": 50229248.0,
+    "avg_memory_used": 37848047.74278582,
+    "issues": [
+      "Memory request 平均使用率過低 (7.0%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 54.14Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "argocd",
+    "pod": "argocd-server-55d464ccb9-vnxbj",
+    "container": "server",
+    "requests_cpu": 0.05,
+    "requests_memory": 268435456.0,
+    "limits_cpu": 0.5,
+    "limits_memory": 536870912.0,
+    "max_cpu_used": 0.008414246596181677,
+    "avg_cpu_used": 0.001650878832101941,
+    "max_memory_used": 64573440.0,
+    "avg_memory_used": 53674631.31700074,
+    "issues": [
+      "Memory request 平均使用率過低 (20.0%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 76.78Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "aviator-prd",
+    "pod": "aviator-0",
+    "container": "aviator",
+    "requests_cpu": 0.04,
+    "requests_memory": 629145600.0,
+    "limits_cpu": 0.08,
+    "limits_memory": 943718400.0,
+    "max_cpu_used": 0.011504912918519168,
+    "avg_cpu_used": 0.007085284688292858,
+    "max_memory_used": 2863104.0,
+    "avg_memory_used": 2863104.0,
+    "issues": [
+      "Memory request 平均使用率過低 (0.5%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "aviator2-prd",
+    "pod": "aviator2-0",
+    "container": "aviator2",
+    "requests_cpu": 0.08,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.15,
+    "limits_memory": 838860800.0,
+    "max_cpu_used": 0.02050849070171314,
+    "avg_cpu_used": 0.009668394887454265,
+    "max_memory_used": 2879488.0,
+    "avg_memory_used": 2879488.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.4%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "aviator2xin-prd",
+    "pod": "aviator2xin-0",
+    "container": "aviator2xin",
+    "requests_cpu": 0.08,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.15,
+    "limits_memory": 838860800.0,
+    "max_cpu_used": 0.006085316713323522,
+    "avg_cpu_used": 0.004756699862534876,
+    "max_memory_used": 2523136.0,
+    "avg_memory_used": 2523136.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.2%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "bg-gate-prd",
+    "pod": "bg-gate-0",
+    "container": "bg-gate",
+    "requests_cpu": 0.2,
+    "requests_memory": 4294967296.0,
+    "limits_cpu": 0.5,
+    "limits_memory": 6442450944.0,
+    "max_cpu_used": 0.01600486554554564,
+    "avg_cpu_used": 0.010908312107411462,
+    "max_memory_used": 852127744.0,
+    "avg_memory_used": 596461029.0526316,
+    "issues": [
+      "CPU request 平均使用率過低 (5.5%)",
+      "Memory request 平均使用率過低 (13.9%)"
+    ],
+    "recommendations": [
+      "可降低 CPU request 到 0.022 cores",
+      "可降低 Memory request 到 853.24Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "bingbingbingo-prd",
+    "pod": "bingbingbingo-0",
+    "container": "bingbingbingo",
+    "requests_cpu": 0.03,
+    "requests_memory": 419430400.0,
+    "limits_cpu": 0.08,
+    "limits_memory": 734003200.0,
+    "max_cpu_used": 1.806000000000002e-05,
+    "avg_cpu_used": 1.806000000000002e-05,
+    "max_memory_used": 6430720.0,
+    "avg_memory_used": 6430720.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.5%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "bingobells-prd",
+    "pod": "bingobells-0",
+    "container": "bingobells",
+    "requests_cpu": 0.03,
+    "requests_memory": 419430400.0,
+    "limits_cpu": 0.08,
+    "limits_memory": 734003200.0,
+    "max_cpu_used": 1.706000000000004e-05,
+    "avg_cpu_used": 1.706000000000004e-05,
+    "max_memory_used": 6303744.0,
+    "avg_memory_used": 6303744.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.5%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "bonusbingo-prd",
+    "pod": "bonusbingo-0",
+    "container": "bonusbingo",
+    "requests_cpu": 0.06,
+    "requests_memory": 1610612736.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 3221225472.0,
+    "max_cpu_used": 0.02475842691962649,
+    "avg_cpu_used": 0.009912017922868447,
+    "max_memory_used": 534073344.0,
+    "avg_memory_used": 223316478.4603488,
+    "issues": [
+      "Memory request 平均使用率過低 (13.9%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 319.46Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "center-prd",
+    "pod": "center-0",
+    "container": "center",
+    "requests_cpu": 0.2,
+    "requests_memory": 524288000.0,
+    "limits_cpu": 0.5,
+    "limits_memory": 1048576000.0,
+    "max_cpu_used": 0.004325583589743589,
+    "avg_cpu_used": 0.0008609157179283772,
+    "max_memory_used": 250568704.0,
+    "avg_memory_used": 117325641.5049505,
+    "issues": [
+      "CPU request 平均使用率過低 (0.4%)",
+      "Memory request 平均使用率過低 (22.4%)"
+    ],
+    "recommendations": [
+      "可降低 CPU request 到 0.010 cores",
+      "可降低 Memory request 到 167.84Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "crash-prd",
+    "pod": "crash-0",
+    "container": "crash",
+    "requests_cpu": 0.04,
+    "requests_memory": 125829120.0,
+    "limits_cpu": 0.08,
+    "limits_memory": 188743680.0,
+    "max_cpu_used": 0.005987928360007133,
+    "avg_cpu_used": 0.004849642846889175,
+    "max_memory_used": 2871296.0,
+    "avg_memory_used": 2871296.0,
+    "issues": [
+      "Memory request 平均使用率過低 (2.3%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "crashcl-prd",
+    "pod": "crashcl-0",
+    "container": "crashcl",
+    "requests_cpu": 0.04,
+    "requests_memory": 125829120.0,
+    "limits_cpu": 0.08,
+    "limits_memory": 167772160.0,
+    "max_cpu_used": 0.00626025072110015,
+    "avg_cpu_used": 0.0046718407381249934,
+    "max_memory_used": 2838528.0,
+    "avg_memory_used": 2838528.0,
+    "issues": [
+      "Memory request 平均使用率過低 (2.3%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "crashgr-prd",
+    "pod": "crashgr-0",
+    "container": "crashgr",
+    "requests_cpu": 0.04,
+    "requests_memory": 419430400.0,
+    "limits_cpu": 0.08,
+    "limits_memory": 734003200.0,
+    "max_cpu_used": 0.006141557397159426,
+    "avg_cpu_used": 0.004876746101875609,
+    "max_memory_used": 2895872.0,
+    "avg_memory_used": 2895872.0,
+    "issues": [
+      "Memory request 平均使用率過低 (0.7%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "crashne-prd",
+    "pod": "crashne-0",
+    "container": "crashne",
+    "requests_cpu": 0.04,
+    "requests_memory": 125829120.0,
+    "limits_cpu": 0.08,
+    "limits_memory": 188743680.0,
+    "max_cpu_used": 0.006461852651671589,
+    "avg_cpu_used": 0.004863174407340371,
+    "max_memory_used": 2916352.0,
+    "avg_memory_used": 2916352.0,
+    "issues": [
+      "Memory request 平均使用率過低 (2.3%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "diamonds-prd",
+    "pod": "diamonds-0",
+    "container": "diamonds",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.007336513175245452,
+    "avg_cpu_used": 0.004005705147544036,
+    "max_memory_used": 51417088.0,
+    "avg_memory_used": 41019734.095892765,
+    "issues": [
+      "Memory request 平均使用率過低 (19.6%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 58.68Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "dice-prd",
+    "pod": "dice-0",
+    "container": "dice",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.018502885168250164,
+    "avg_cpu_used": 0.004527070871511202,
+    "max_memory_used": 2940928.0,
+    "avg_memory_used": 2940928.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.4%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "dragontower-prd",
+    "pod": "dragontower-0",
+    "container": "dragontower",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.016122012907431028,
+    "avg_cpu_used": 0.004990640304062608,
+    "max_memory_used": 2842624.0,
+    "avg_memory_used": 2842624.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.4%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "egghuntbingo-prd",
+    "pod": "egghuntbingo-0",
+    "container": "egghuntbingo",
+    "requests_cpu": 0.05,
+    "requests_memory": 524288000.0,
+    "limits_cpu": 0.1,
+    "limits_memory": 838860800.0,
+    "max_cpu_used": 0.011918872038854186,
+    "avg_cpu_used": 0.004257369117662515,
+    "max_memory_used": 193036288.0,
+    "avg_memory_used": 149361323.78108084,
+    "issues": [
+      "Memory request 平均使用率過低 (28.5%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 213.66Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "goldenclover-prd",
+    "pod": "goldenclover-0",
+    "container": "goldenclover",
+    "requests_cpu": 0.2,
+    "requests_memory": 524288000.0,
+    "limits_cpu": 0.5,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.0052732283174087785,
+    "avg_cpu_used": 0.003316480070099075,
+    "max_memory_used": 248958976.0,
+    "avg_memory_used": 150325836.90987125,
+    "issues": [
+      "CPU request 平均使用率過低 (1.7%)",
+      "Memory request 平均使用率過低 (28.7%)"
+    ],
+    "recommendations": [
+      "可降低 CPU request 到 0.010 cores",
+      "可降低 Memory request 到 215.04Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "hash-gate-prd",
+    "pod": "hash-gate-0",
+    "container": "hash-gate",
+    "requests_cpu": 0.8,
+    "requests_memory": 2147483648.0,
+    "limits_cpu": 1.5,
+    "limits_memory": 4294967296.0,
+    "max_cpu_used": 0.017640925080294526,
+    "avg_cpu_used": 0.014420128447805335,
+    "max_memory_used": 143368192.0,
+    "avg_memory_used": 143368192.0,
+    "issues": [
+      "CPU request 平均使用率過低 (1.8%)",
+      "Memory request 平均使用率過低 (6.7%)"
+    ],
+    "recommendations": [
+      "可降低 CPU request 到 0.029 cores",
+      "可降低 Memory request 到 205.09Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "hilocl-prd",
+    "pod": "hilocl-0",
+    "container": "hilocl",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.013812904226712134,
+    "avg_cpu_used": 0.005580814560462033,
+    "max_memory_used": 2514944.0,
+    "avg_memory_used": 2514944.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.2%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "hilogr-prd",
+    "pod": "hilogr-0",
+    "container": "hilogr",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.009130929558170728,
+    "avg_cpu_used": 0.004544741183401591,
+    "max_memory_used": 64196608.0,
+    "avg_memory_used": 48452820.75408146,
+    "issues": [
+      "Memory request 平均使用率過低 (23.1%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 69.31Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "hilone-prd",
+    "pod": "hilone-0",
+    "container": "hilone",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.0120535742524303,
+    "avg_cpu_used": 0.005387325024404859,
+    "max_memory_used": 84660224.0,
+    "avg_memory_used": 61469425.174084894,
+    "issues": [
+      "Memory request 平均使用率過低 (29.3%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 87.93Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "istio-system",
+    "pod": "istiod-78c747c594-tl9gg",
+    "container": "discovery",
+    "requests_cpu": 0.5,
+    "requests_memory": 2147483648.0,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.08609320226991929,
+    "avg_cpu_used": 0.0018201776791560644,
+    "max_memory_used": 164483072.0,
+    "avg_memory_used": 72407184.5767349,
+    "issues": [
+      "CPU request 平均使用率過低 (0.4%)",
+      "Memory request 平均使用率過低 (3.4%)"
+    ],
+    "recommendations": [
+      "可降低 CPU request 到 0.010 cores",
+      "可降低 Memory request 到 103.58Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "keno-prd",
+    "pod": "keno-0",
+    "container": "keno",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.009923839567372212,
+    "avg_cpu_used": 0.005013665814279191,
+    "max_memory_used": 2523136.0,
+    "avg_memory_used": 2523136.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.2%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "kube-system",
+    "pod": "cluster-autoscaler-9bc857945-gvjf8",
+    "container": "cluster-autoscaler",
+    "requests_cpu": 0.1,
+    "requests_memory": 629145600.0,
+    "limits_cpu": 0.1,
+    "limits_memory": 629145600.0,
+    "max_cpu_used": 0.006036082608711827,
+    "avg_cpu_used": 0.0017465234258584742,
+    "max_memory_used": 56569856.0,
+    "avg_memory_used": 48471017.40349476,
+    "issues": [
+      "Memory request 平均使用率過低 (7.7%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 69.34Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "kube-system",
+    "pod": "metrics-server-6b777dc784-mzddp",
+    "container": "metrics-server",
+    "requests_cpu": 0.1,
+    "requests_memory": 209715200.0,
+    "limits_cpu": null,
+    "limits_memory": 419430400.0,
+    "max_cpu_used": 0.0074879991984630355,
+    "avg_cpu_used": 0.004899892727055097,
+    "max_memory_used": 45682688.0,
+    "avg_memory_used": 33958356.08507239,
+    "issues": [
+      "Memory request 平均使用率過低 (16.2%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 48.58Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "kube-system",
+    "pod": "metrics-server-6b777dc784-t446s",
+    "container": "metrics-server",
+    "requests_cpu": 0.1,
+    "requests_memory": 209715200.0,
+    "limits_cpu": null,
+    "limits_memory": 419430400.0,
+    "max_cpu_used": 0.007272554139823768,
+    "avg_cpu_used": 0.004941254536676929,
+    "max_memory_used": 46313472.0,
+    "avg_memory_used": 33953456.2220669,
+    "issues": [
+      "Memory request 平均使用率過低 (16.2%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 48.57Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "limbo-prd",
+    "pod": "limbo-0",
+    "container": "limbo",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.023237602851233927,
+    "avg_cpu_used": 0.009923499716558084,
+    "max_memory_used": 2908160.0,
+    "avg_memory_used": 2908160.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.4%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "limbogr-prd",
+    "pod": "limbogr-0",
+    "container": "limbogr",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.007830819850922866,
+    "avg_cpu_used": 0.003918150192375481,
+    "max_memory_used": 2519040.0,
+    "avg_memory_used": 2519040.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.2%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "lostruins-prd",
+    "pod": "lostruins-0",
+    "container": "lostruins",
+    "requests_cpu": 0.03,
+    "requests_memory": 146800640.0,
+    "limits_cpu": 0.07,
+    "limits_memory": 241172480.0,
+    "max_cpu_used": 1.5963700622755568e-05,
+    "avg_cpu_used": 1.5963700622755568e-05,
+    "max_memory_used": 5705728.0,
+    "avg_memory_used": 5705728.0,
+    "issues": [
+      "Memory request 平均使用率過低 (3.9%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "loyaltyapi-prd",
+    "pod": "loyaltyapi-8497c69f65-gwr9w",
+    "container": "loyaltyapi",
+    "requests_cpu": 0.6,
+    "requests_memory": 4294967296.0,
+    "limits_cpu": 1.2,
+    "limits_memory": 5368709120.0,
+    "max_cpu_used": 0.03738056687648398,
+    "avg_cpu_used": 0.014852591759542915,
+    "max_memory_used": 320655360.0,
+    "avg_memory_used": 251687685.255003,
+    "issues": [
+      "CPU request 平均使用率過低 (2.5%)",
+      "Memory request 平均使用率過低 (5.9%)"
+    ],
+    "recommendations": [
+      "可降低 CPU request 到 0.030 cores",
+      "可降低 Memory request 到 360.04Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "luckydropcoc-prd",
+    "pod": "luckydropcoc-0",
+    "container": "luckydropcoc",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.0007381216666666666,
+    "avg_cpu_used": 0.0007381216666666666,
+    "max_memory_used": 12685312.0,
+    "avg_memory_used": 9300650.666666666,
+    "issues": [
+      "Memory request 平均使用率過低 (4.4%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 13.30Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "luckydropgx-prd",
+    "pod": "luckydropgx-0",
+    "container": "luckydropgx",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.00022555333333333335,
+    "avg_cpu_used": 0.00022555333333333335,
+    "max_memory_used": 2949120.0,
+    "avg_memory_used": 2949120.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.4%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "luckydropoly-prd",
+    "pod": "luckydropoly-0",
+    "container": "luckydropoly",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.0001519266666666667,
+    "avg_cpu_used": 0.0001519266666666667,
+    "max_memory_used": 2895872.0,
+    "avg_memory_used": 2895872.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.4%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "luckyhilo-prd",
+    "pod": "luckyhilo-0",
+    "container": "luckyhilo",
+    "requests_cpu": 0.15,
+    "requests_memory": 838860800.0,
+    "limits_cpu": 0.28,
+    "limits_memory": 1288490188.8,
+    "max_cpu_used": 0.026388576211290492,
+    "avg_cpu_used": 0.010629363453780337,
+    "max_memory_used": 692224.0,
+    "avg_memory_used": 692224.0,
+    "issues": [
+      "CPU request 平均使用率過低 (7.1%)",
+      "Memory request 平均使用率過低 (0.1%)"
+    ],
+    "recommendations": [
+      "可降低 CPU request 到 0.021 cores",
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "magicbingo-prd",
+    "pod": "magicbingo-0",
+    "container": "magicbingo",
+    "requests_cpu": 0.04,
+    "requests_memory": 524288000.0,
+    "limits_cpu": 0.08,
+    "limits_memory": 838860800.0,
+    "max_cpu_used": 0.00023433999999999998,
+    "avg_cpu_used": 0.00023433999999999998,
+    "max_memory_used": 6295552.0,
+    "avg_memory_used": 4868778.666666667,
+    "issues": [
+      "Memory request 平均使用率過低 (0.9%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "maplebingo-prd",
+    "pod": "maplebingo-0",
+    "container": "maplebingo",
+    "requests_cpu": 0.03,
+    "requests_memory": 419430400.0,
+    "limits_cpu": 0.07,
+    "limits_memory": 629145600.0,
+    "max_cpu_used": 8.980000000000007e-06,
+    "avg_cpu_used": 8.980000000000007e-06,
+    "max_memory_used": 6418432.0,
+    "avg_memory_used": 6418432.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.5%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "mines-prd",
+    "pod": "mines-0",
+    "container": "mines",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.019150605937739453,
+    "avg_cpu_used": 0.0077733251529431375,
+    "max_memory_used": 2527232.0,
+    "avg_memory_used": 2527232.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.2%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "minesca-prd",
+    "pod": "minesca-0",
+    "container": "minesca",
+    "requests_cpu": 0.1,
+    "requests_memory": 1073741824.0,
+    "limits_cpu": 0.16,
+    "limits_memory": 1610612736.0,
+    "max_cpu_used": 0.0012496733333333333,
+    "avg_cpu_used": 0.0012496733333333333,
+    "max_memory_used": 12775424.0,
+    "avg_memory_used": 12660736.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.2%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 18.11Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "minescl-prd",
+    "pod": "minescl-0",
+    "container": "minescl",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.01716540676943333,
+    "avg_cpu_used": 0.007709809704808277,
+    "max_memory_used": 2916352.0,
+    "avg_memory_used": 2916352.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.4%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "minesgr-prd",
+    "pod": "minesgr-0",
+    "container": "minesgr",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.022926081442645015,
+    "avg_cpu_used": 0.009191407962934894,
+    "max_memory_used": 2879488.0,
+    "avg_memory_used": 2879488.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.4%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "minesma-prd",
+    "pod": "minesma-0",
+    "container": "minesma",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.0016366177177977019,
+    "avg_cpu_used": 0.0016366177177977019,
+    "max_memory_used": 20885504.0,
+    "avg_memory_used": 20871168.0,
+    "issues": [
+      "Memory request 平均使用率過低 (10.0%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 29.86Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "minesne-prd",
+    "pod": "minesne-0",
+    "container": "minesne",
+    "requests_cpu": 0.1,
+    "requests_memory": 943718400.0,
+    "limits_cpu": 0.17,
+    "limits_memory": 1395864371.2,
+    "max_cpu_used": 0.027967253516089585,
+    "avg_cpu_used": 0.01161939741955471,
+    "max_memory_used": 2940928.0,
+    "avg_memory_used": 2940928.0,
+    "issues": [
+      "Memory request 平均使用率過低 (0.3%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "minespm-prd",
+    "pod": "minespm-0",
+    "container": "minespm",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.01388515456802779,
+    "avg_cpu_used": 0.006387281260575479,
+    "max_memory_used": 2523136.0,
+    "avg_memory_used": 2523136.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.2%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "minesraider-prd",
+    "pod": "minesraider-0",
+    "container": "minesraider",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.01897819520888636,
+    "avg_cpu_used": 0.004785824379460749,
+    "max_memory_used": 75808768.0,
+    "avg_memory_used": 55669340.70293031,
+    "issues": [
+      "Memory request 平均使用率過低 (26.5%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 79.64Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "monitoring",
+    "pod": "alertmanager-prometheus-kube-prometheus-alertmanager-0",
+    "container": "alertmanager",
+    "requests_cpu": null,
+    "requests_memory": 209715200.0,
+    "limits_cpu": null,
+    "limits_memory": null,
+    "max_cpu_used": 0.00040177101934866236,
+    "avg_cpu_used": 0.0003511150869625844,
+    "max_memory_used": 27504640.0,
+    "avg_memory_used": 23251727.869163807,
+    "issues": [
+      "Memory request 平均使用率過低 (11.1%)",
+      "未設定 CPU request"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 33.26Mi",
+      "建議設定 CPU request 為 0.48m"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "monitoring",
+    "pod": "prometheus-kube-prometheus-operator-c46dbff56-kg9qf",
+    "container": "kube-prometheus-stack",
+    "requests_cpu": 0.1,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.2,
+    "limits_memory": 419430400.0,
+    "max_cpu_used": 0.0028416854720952718,
+    "avg_cpu_used": 0.001637733792854594,
+    "max_memory_used": 24752128.0,
+    "avg_memory_used": 21998426.05371942,
+    "issues": [
+      "Memory request 平均使用率過低 (10.5%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 31.47Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "monitoring",
+    "pod": "prometheus-prometheus-kube-prometheus-prometheus-0",
+    "container": "prometheus",
+    "requests_cpu": 0.5,
+    "requests_memory": 2147483648.0,
+    "limits_cpu": 1.0,
+    "limits_memory": 4294967296.0,
+    "max_cpu_used": 0.19649499886937713,
+    "avg_cpu_used": 0.06603540596669928,
+    "max_memory_used": 1040035840.0,
+    "avg_memory_used": 603590406.276327,
+    "issues": [
+      "CPU request 平均使用率過低 (13.2%)",
+      "Memory request 平均使用率過低 (28.1%)"
+    ],
+    "recommendations": [
+      "可降低 CPU request 到 0.132 cores",
+      "可降低 Memory request 到 863.44Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "multiboomers-prd",
+    "pod": "multiboomers-0",
+    "container": "multiboomers",
+    "requests_cpu": 0.1,
+    "requests_memory": 314572800.0,
+    "limits_cpu": 0.5,
+    "limits_memory": 629145600.0,
+    "max_cpu_used": 0.007006488816912527,
+    "avg_cpu_used": 0.0049523170098274985,
+    "max_memory_used": 51961856.0,
+    "avg_memory_used": 43816893.390746675,
+    "issues": [
+      "Memory request 平均使用率過低 (13.9%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 62.68Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "multihilo-prd",
+    "pod": "multihilo-0",
+    "container": "multihilo",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.005287016812468321,
+    "avg_cpu_used": 0.0034884190547383397,
+    "max_memory_used": 2539520.0,
+    "avg_memory_used": 2539520.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.2%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "odinbingo-prd",
+    "pod": "odinbingo-0",
+    "container": "odinbingo",
+    "requests_cpu": 0.07,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 335544320.0,
+    "max_cpu_used": 2.391333333333338e-05,
+    "avg_cpu_used": 2.391333333333338e-05,
+    "max_memory_used": 5980160.0,
+    "avg_memory_used": 5935104.0,
+    "issues": [
+      "Memory request 平均使用率過低 (2.8%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "plinko-prd",
+    "pod": "plinko-0",
+    "container": "plinko",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.0006412416666666667,
+    "avg_cpu_used": 0.0006412416666666667,
+    "max_memory_used": 2908160.0,
+    "avg_memory_used": 2908160.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.4%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "plinkocl-prd",
+    "pod": "plinkocl-0",
+    "container": "plinkocl",
+    "requests_cpu": 0.12,
+    "requests_memory": 1932735283.2,
+    "limits_cpu": 0.2,
+    "limits_memory": 3006477107.2000003,
+    "max_cpu_used": 0.034071905769144914,
+    "avg_cpu_used": 0.012093364991784478,
+    "max_memory_used": 206114816.0,
+    "avg_memory_used": 120670178.78308697,
+    "issues": [
+      "CPU request 平均使用率過低 (10.1%)",
+      "Memory request 平均使用率過低 (6.2%)"
+    ],
+    "recommendations": [
+      "可降低 CPU request 到 0.024 cores",
+      "可降低 Memory request 到 172.62Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "plinkone-prd",
+    "pod": "plinkone-0",
+    "container": "plinkone",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.0006454516666666667,
+    "avg_cpu_used": 0.0006454516666666667,
+    "max_memory_used": 2519040.0,
+    "avg_memory_used": 2519040.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.2%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "steampunk-prd",
+    "pod": "steampunk-0",
+    "container": "steampunk",
+    "requests_cpu": 0.05,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.1,
+    "limits_memory": 314572800.0,
+    "max_cpu_used": 0.00025726000000000004,
+    "avg_cpu_used": 0.00025726000000000004,
+    "max_memory_used": 6402048.0,
+    "avg_memory_used": 5106346.666666667,
+    "issues": [
+      "Memory request 平均使用率過低 (2.4%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "videopoker-prd",
+    "pod": "videopoker-0",
+    "container": "videopoker",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.0068161333378198834,
+    "avg_cpu_used": 0.003840092475122033,
+    "max_memory_used": 2535424.0,
+    "avg_memory_used": 2535424.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.2%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "wheel-prd",
+    "pod": "wheel-0",
+    "container": "wheel",
+    "requests_cpu": 0.04,
+    "requests_memory": 209715200.0,
+    "limits_cpu": 0.12,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.008442329881940255,
+    "avg_cpu_used": 0.004171339111430808,
+    "max_memory_used": 2502656.0,
+    "avg_memory_used": 2502656.0,
+    "issues": [
+      "Memory request 平均使用率過低 (1.2%)"
+    ],
+    "recommendations": [
+      "可降低 Memory request 到 10.00Mi"
+    ]
+  },
+  {
+    "priority": "🟢 可優化",
+    "namespace": "wilddiggr-prd",
+    "pod": "wilddiggr-0",
+    "container": "wilddiggr",
+    "requests_cpu": 0.2,
+    "requests_memory": 524288000.0,
+    "limits_cpu": 0.5,
+    "limits_memory": 1073741824.0,
+    "max_cpu_used": 0.0074776597740234775,
+    "avg_cpu_used": 0.003928695460347976,
+    "max_memory_used": 249462784.0,
+    "avg_memory_used": 150554308.92307693,
+    "issues": [
+      "CPU request 平均使用率過低 (2.0%)",
+      "Memory request 平均使用率過低 (28.7%)"
+    ],
+    "recommendations": [
+      "可降低 CPU request 到 0.010 cores",
+      "可降低 Memory request 到 215.37Mi"
+    ]
+  }
+]

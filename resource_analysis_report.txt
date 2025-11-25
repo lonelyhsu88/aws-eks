@@ -1,0 +1,3059 @@
+====================================================================================================
+EKS 資源配置分析報告（過去 7 天數據）
+====================================================================================================
+
+分析時間範圍: 過去 7 天
+分析的 Pods: 142 個
+分析的 Containers: 173 個
+發現需要關注的容器: 123 個
+
+🔴 緊急需要調整: 21 個
+🟡 建議調整: 37 個
+🟢 可優化: 65 個
+====================================================================================================
+
+
+====================================================================================================
+🔴 緊急
+====================================================================================================
+
+Namespace: argocd
+Pod: argocd-application-controller-0
+Container: application-controller
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 1.000 cores
+  Memory Request: 512.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.277 cores
+  CPU 平均值: 0.017 cores
+  Memory 最大值: 470.33Mi
+  Memory 平均值: 237.73Mi
+
+問題:
+  ⚠️  CPU request 使用率過高 (277.2%)
+  ⚠️  Memory request 使用率過高 (91.9%)
+
+建議:
+  ✅ 增加 CPU request 至少到 0.360 cores
+  ✅ 增加 Memory request 至少到 611.43Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: caribbeanbingo-prd
+Pod: caribbeanbingo-0
+Container: caribbeanbingo
+
+當前配置:
+  CPU Request: 0.025 cores
+  CPU Limit: 0.060 cores
+  Memory Request: 150.00Mi
+  Memory Limit: 250.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.009 cores
+  CPU 平均值: 0.002 cores
+  Memory 最大值: 184.14Mi
+  Memory 平均值: 128.82Mi
+
+問題:
+  ⚠️  Memory request 使用率過高 (122.8%)
+
+建議:
+  ✅ 增加 Memory request 至少到 239.38Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: cavebingo-prd
+Pod: cavebingo-0
+Container: cavebingo
+
+當前配置:
+  CPU Request: 0.025 cores
+  CPU Limit: 0.060 cores
+  Memory Request: 140.00Mi
+  Memory Limit: 220.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.008 cores
+  CPU 平均值: 0.002 cores
+  Memory 最大值: 182.84Mi
+  Memory 平均值: 124.88Mi
+
+問題:
+  ⚠️  Memory request 使用率過高 (130.6%)
+
+建議:
+  ✅ 增加 Memory request 至少到 237.69Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: exgameapi-prd
+Pod: exgameapi-f86d89788-bhn46
+Container: exgameapi
+
+當前配置:
+  CPU Request: 0.200 cores
+  CPU Limit: 0.600 cores
+  Memory Request: 100.00Mi
+  Memory Limit: 400.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.048 cores
+  CPU 平均值: 0.025 cores
+  Memory 最大值: 148.80Mi
+  Memory 平均值: 118.54Mi
+
+問題:
+  ⚠️  CPU request 平均使用率過低 (12.4%)
+  ⚠️  Memory request 使用率過高 (148.8%)
+
+建議:
+  ✅ 可降低 CPU request 到 0.050 cores
+  ✅ 增加 Memory request 至少到 193.44Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: fakeapi-prd
+Pod: fakeapi-95f57c47d-vchzp
+Container: fakeapi
+
+當前配置:
+  CPU Request: 0.005 cores
+  CPU Limit: 0.050 cores
+  Memory Request: 10.00Mi
+  Memory Limit: 100.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.20m
+  CPU 平均值: 0.03m
+  Memory 最大值: 9.14Mi
+  Memory 平均值: 6.36Mi
+
+問題:
+  ⚠️  Memory request 使用率過高 (91.4%)
+
+建議:
+  ✅ 增加 Memory request 至少到 11.88Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: filebeat
+Pod: filebeat-filebeat-c2p9g
+Container: filebeat
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 0.500 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 500.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.154 cores
+  CPU 平均值: 0.053 cores
+  Memory 最大值: 144.46Mi
+  Memory 平均值: 94.34Mi
+
+問題:
+  ⚠️  CPU request 使用率過高 (154.1%)
+  ⚠️  Memory request 使用率偏高 (72.2%)
+
+建議:
+  ✅ 增加 CPU request 至少到 0.200 cores
+  ✅ 建議增加 Memory request 到 173.36Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: filebeat
+Pod: filebeat-filebeat-mgf7w
+Container: filebeat
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 0.500 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 500.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.472 cores
+  CPU 平均值: 0.214 cores
+  Memory 最大值: 193.44Mi
+  Memory 平均值: 127.20Mi
+
+問題:
+  ⚠️  CPU request 使用率過高 (472.2%)
+  ⚠️  CPU limit 使用率過高 (94.4%)
+  ⚠️  Memory request 使用率過高 (96.7%)
+
+建議:
+  ✅ 增加 CPU request 至少到 0.614 cores
+  ✅ 增加 CPU limit 至少到 0.614 cores
+  ✅ 增加 Memory request 至少到 251.47Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: filebeat
+Pod: filebeat-filebeat-nglh4
+Container: filebeat
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 0.500 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 500.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.153 cores
+  CPU 平均值: 0.053 cores
+  Memory 最大值: 164.60Mi
+  Memory 平均值: 95.49Mi
+
+問題:
+  ⚠️  CPU request 使用率過高 (152.7%)
+  ⚠️  Memory request 使用率偏高 (82.3%)
+
+建議:
+  ✅ 增加 CPU request 至少到 0.198 cores
+  ✅ 建議增加 Memory request 到 197.52Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: filebeat
+Pod: filebeat-filebeat-phb5k
+Container: filebeat
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 0.500 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 500.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.184 cores
+  CPU 平均值: 0.058 cores
+  Memory 最大值: 161.60Mi
+  Memory 平均值: 95.31Mi
+
+問題:
+  ⚠️  CPU request 使用率過高 (183.7%)
+  ⚠️  Memory request 使用率偏高 (80.8%)
+
+建議:
+  ✅ 增加 CPU request 至少到 0.239 cores
+  ✅ 建議增加 Memory request 到 193.92Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: filebeat
+Pod: filebeat-filebeat-tsglc
+Container: filebeat
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 0.500 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 500.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.350 cores
+  CPU 平均值: 0.099 cores
+  Memory 最大值: 180.70Mi
+  Memory 平均值: 105.93Mi
+
+問題:
+  ⚠️  CPU request 使用率過高 (349.7%)
+  ⚠️  Memory request 使用率過高 (90.3%)
+
+建議:
+  ✅ 增加 CPU request 至少到 0.455 cores
+  ✅ 增加 Memory request 至少到 234.91Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: filebeat
+Pod: filebeat-filebeat-xzqnp
+Container: filebeat
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 0.500 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 500.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.141 cores
+  CPU 平均值: 0.050 cores
+  Memory 最大值: 146.48Mi
+  Memory 平均值: 92.80Mi
+
+問題:
+  ⚠️  CPU request 使用率過高 (141.3%)
+  ⚠️  Memory request 使用率偏高 (73.2%)
+
+建議:
+  ✅ 增加 CPU request 至少到 0.184 cores
+  ✅ 建議增加 Memory request 到 175.78Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: forestteaparty-prd
+Pod: forestteaparty-0
+Container: forestteaparty
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 0.500 cores
+  Memory Request: 300.00Mi
+  Memory Limit: 600.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.053 cores
+  CPU 平均值: 0.032 cores
+  Memory 最大值: 507.59Mi
+  Memory 平均值: 334.08Mi
+
+問題:
+  ⚠️  Memory request 使用率過高 (169.2%)
+
+建議:
+  ✅ 增加 Memory request 至少到 659.87Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: istio-system
+Pod: istio-ingressgateway-58b79c77d8-b48zd
+Container: istio-proxy
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 2.000 cores
+  Memory Request: 128.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.074 cores
+  CPU 平均值: 0.017 cores
+  Memory 最大值: 120.54Mi
+  Memory 平均值: 71.84Mi
+
+問題:
+  ⚠️  CPU request 使用率偏高 (74.3%)
+  ⚠️  Memory request 使用率過高 (94.2%)
+
+建議:
+  ✅ 建議增加 CPU request 到 0.089 cores
+  ✅ 增加 Memory request 至少到 156.70Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: limbocl-prd
+Pod: limbocl-0
+Container: limbocl
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.051 cores
+  CPU 平均值: 0.009 cores
+  Memory 最大值: 2.40Mi
+  Memory 平均值: 2.40Mi
+
+問題:
+  ⚠️  CPU request 使用率過高 (128.4%)
+  ⚠️  Memory request 平均使用率過低 (1.2%)
+
+建議:
+  ✅ 增加 CPU request 至少到 0.067 cores
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: limbone-prd
+Pod: limbone-0
+Container: limbone
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.030 cores
+  CPU 平均值: 0.009 cores
+  Memory 最大值: 204.15Mi
+  Memory 平均值: 93.38Mi
+
+問題:
+  ⚠️  CPU request 使用率偏高 (74.9%)
+  ⚠️  Memory request 使用率過高 (102.1%)
+
+建議:
+  ✅ 建議增加 CPU request 到 0.036 cores
+  ✅ 增加 Memory request 至少到 265.40Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: luckydropcoc2-prd
+Pod: luckydropcoc2-0
+Container: luckydropcoc2
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.041 cores
+  CPU 平均值: 0.013 cores
+  Memory 最大值: 338.20Mi
+  Memory 平均值: 175.46Mi
+
+問題:
+  ⚠️  CPU request 使用率過高 (102.6%)
+  ⚠️  Memory request 使用率過高 (169.1%)
+
+建議:
+  ✅ 增加 CPU request 至少到 0.053 cores
+  ✅ 增加 Memory request 至少到 439.66Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: partnerapi-prd
+Pod: partnerapi-8584997f6-kpzsp
+Container: partnerapi
+
+當前配置:
+  CPU Request: 0.200 cores
+  CPU Limit: 0.400 cores
+  Memory Request: 40.00Mi
+  Memory Limit: 100.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.138 cores
+  CPU 平均值: 0.054 cores
+  Memory 最大值: 80.70Mi
+  Memory 平均值: 27.42Mi
+
+問題:
+  ⚠️  Memory request 使用率過高 (201.8%)
+
+建議:
+  ✅ 增加 Memory request 至少到 104.91Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: plinkogr-prd
+Pod: plinkogr-0
+Container: plinkogr
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.066 cores
+  CPU 平均值: 0.011 cores
+  Memory 最大值: 116.50Mi
+  Memory 平均值: 86.53Mi
+
+問題:
+  ⚠️  CPU request 使用率過高 (165.4%)
+
+建議:
+  ✅ 增加 CPU request 至少到 0.086 cores
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: schedule-prd
+Pod: schedule-7f7988db95-xbswg
+Container: schedule
+
+當前配置:
+  CPU Request: 0.010 cores
+  CPU Limit: 0.100 cores
+  Memory Request: 300.00Mi
+  Memory Limit: 500.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.046 cores
+  CPU 平均值: 0.20m
+  Memory 最大值: 499.44Mi
+  Memory 平均值: 18.37Mi
+
+問題:
+  ⚠️  CPU request 使用率過高 (458.0%)
+  ⚠️  Memory request 使用率過高 (166.5%)
+  ⚠️  Memory limit 使用率過高 (99.9%，可能導致 OOMKilled）
+
+建議:
+  ✅ 增加 CPU request 至少到 0.060 cores
+  ✅ 增加 Memory request 至少到 649.27Mi
+  ✅ 增加 Memory limit 至少到 649.27Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: steampunk2-prd
+Pod: steampunk2-0
+Container: steampunk2
+
+當前配置:
+  CPU Request: 0.025 cores
+  CPU Limit: 0.060 cores
+  Memory Request: 180.00Mi
+  Memory Limit: 300.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.006 cores
+  CPU 平均值: 0.002 cores
+  Memory 最大值: 188.66Mi
+  Memory 平均值: 130.49Mi
+
+問題:
+  ⚠️  Memory request 使用率過高 (104.8%)
+
+建議:
+  ✅ 增加 Memory request 至少到 245.25Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: syncservice-prd
+Pod: syncservice-5866bf79d-zs4tt
+Container: syncservice
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 0.300 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 500.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.216 cores
+  CPU 平均值: 0.026 cores
+  Memory 最大值: 271.52Mi
+  Memory 平均值: 45.42Mi
+
+問題:
+  ⚠️  CPU request 使用率過高 (215.6%)
+  ⚠️  Memory request 使用率過高 (135.8%)
+
+建議:
+  ✅ 增加 CPU request 至少到 0.280 cores
+  ✅ 增加 Memory request 至少到 352.97Mi
+
+----------------------------------------------------------------------------------------------------
+
+
+====================================================================================================
+🟡 建議調整
+====================================================================================================
+
+Namespace: domain-serviceapi-prd
+Pod: domain-serviceapi-d74dbf674-kx8vb
+Container: domain-serviceapi
+
+當前配置:
+  CPU Request: 0.010 cores
+  CPU Limit: 0.050 cores
+  Memory Request: 20.00Mi
+  Memory Limit: 50.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.002 cores
+  CPU 平均值: 0.98m
+  Memory 最大值: 15.98Mi
+  Memory 平均值: 13.43Mi
+
+問題:
+  ⚠️  Memory request 使用率偏高 (79.9%)
+
+建議:
+  ✅ 建議增加 Memory request 到 19.17Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: egypthilo-prd
+Pod: egypthilo-0
+Container: egypthilo
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.022 cores
+  CPU 平均值: 0.007 cores
+  Memory 最大值: 150.64Mi
+  Memory 平均值: 79.05Mi
+
+問題:
+  ⚠️  Memory request 使用率偏高 (75.3%)
+
+建議:
+  ✅ 建議增加 Memory request 到 180.76Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: eventapi-prd
+Pod: eventapi-56bbd9ccd-dtqw7
+Container: eventapi
+
+當前配置:
+  CPU Request: 0.050 cores
+  CPU Limit: 0.400 cores
+  Memory Request: 20.00Mi
+  Memory Limit: 50.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.66m
+  CPU 平均值: 0.16m
+  Memory 最大值: 17.15Mi
+  Memory 平均值: 14.45Mi
+
+問題:
+  ⚠️  Memory request 使用率偏高 (85.8%)
+
+建議:
+  ✅ 建議增加 Memory request 到 20.58Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: fakeapi2-prd
+Pod: fakeapi2-7dbbd8fd94-t7m47
+Container: fakeapi2
+
+當前配置:
+  CPU Request: 0.005 cores
+  CPU Limit: 0.050 cores
+  Memory Request: 10.00Mi
+  Memory Limit: 100.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.09m
+  CPU 平均值: 0.03m
+  Memory 最大值: 8.23Mi
+  Memory 平均值: 5.62Mi
+
+問題:
+  ⚠️  Memory request 使用率偏高 (82.3%)
+
+建議:
+  ✅ 建議增加 Memory request 到 9.88Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: ingress-nginx
+Pod: nginx-ingress-ingress-nginx-controller-6b5bd6b94c-w7ggx
+Container: controller
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 未設定
+  Memory Request: 90.00Mi
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.004 cores
+  CPU 平均值: 0.98m
+  Memory 最大值: 73.50Mi
+  Memory 平均值: 69.36Mi
+
+問題:
+  ⚠️  Memory request 使用率偏高 (81.7%)
+
+建議:
+  ✅ 建議增加 Memory request 到 88.20Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: aws-load-balancer-controller-6bb4b459dc-6vqvq
+Container: aws-load-balancer-controller
+
+當前配置:
+  CPU Request: 未設定
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.005 cores
+  CPU 平均值: 0.002 cores
+  Memory 最大值: 34.15Mi
+  Memory 平均值: 30.85Mi
+
+問題:
+  ⚠️  未設定 CPU request
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 CPU request 為 0.006 cores
+  ✅ 建議設定 Memory request 為 40.98Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: aws-load-balancer-controller-6bb4b459dc-m2zlz
+Container: aws-load-balancer-controller
+
+當前配置:
+  CPU Request: 未設定
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.003 cores
+  CPU 平均值: 0.001 cores
+  Memory 最大值: 28.82Mi
+  Memory 平均值: 26.73Mi
+
+問題:
+  ⚠️  未設定 CPU request
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 CPU request 為 0.004 cores
+  ✅ 建議設定 Memory request 為 34.59Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: aws-node-7qrdj
+Container: aws-node
+
+當前配置:
+  CPU Request: 0.025 cores
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.006 cores
+  CPU 平均值: 0.003 cores
+  Memory 最大值: 48.63Mi
+  Memory 平均值: 34.96Mi
+
+問題:
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 Memory request 為 58.36Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: aws-node-7qrdj
+Container: aws-eks-nodeagent
+
+當前配置:
+  CPU Request: 0.025 cores
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.07m
+  CPU 平均值: 0.02m
+  Memory 最大值: 14.70Mi
+  Memory 平均值: 13.12Mi
+
+問題:
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 Memory request 為 17.63Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: aws-node-cqgcs
+Container: aws-node
+
+當前配置:
+  CPU Request: 0.025 cores
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.006 cores
+  CPU 平均值: 0.003 cores
+  Memory 最大值: 59.36Mi
+  Memory 平均值: 51.43Mi
+
+問題:
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 Memory request 為 71.23Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: aws-node-cqgcs
+Container: aws-eks-nodeagent
+
+當前配置:
+  CPU Request: 0.025 cores
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.07m
+  CPU 平均值: 0.02m
+  Memory 最大值: 12.95Mi
+  Memory 平均值: 12.73Mi
+
+問題:
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 Memory request 為 15.54Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: aws-node-mt7lc
+Container: aws-node
+
+當前配置:
+  CPU Request: 0.025 cores
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.005 cores
+  CPU 平均值: 0.003 cores
+  Memory 最大值: 51.34Mi
+  Memory 平均值: 43.28Mi
+
+問題:
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 Memory request 為 61.61Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: aws-node-mt7lc
+Container: aws-eks-nodeagent
+
+當前配置:
+  CPU Request: 0.025 cores
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.07m
+  CPU 平均值: 0.02m
+  Memory 最大值: 13.32Mi
+  Memory 平均值: 12.68Mi
+
+問題:
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 Memory request 為 15.98Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: aws-node-n6chp
+Container: aws-node
+
+當前配置:
+  CPU Request: 0.025 cores
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.006 cores
+  CPU 平均值: 0.003 cores
+  Memory 最大值: 50.49Mi
+  Memory 平均值: 38.60Mi
+
+問題:
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 Memory request 為 60.59Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: aws-node-n6chp
+Container: aws-eks-nodeagent
+
+當前配置:
+  CPU Request: 0.025 cores
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.11m
+  CPU 平均值: 0.02m
+  Memory 最大值: 15.09Mi
+  Memory 平均值: 13.34Mi
+
+問題:
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 Memory request 為 18.10Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: aws-node-v86kf
+Container: aws-node
+
+當前配置:
+  CPU Request: 0.025 cores
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.005 cores
+  CPU 平均值: 0.003 cores
+  Memory 最大值: 50.97Mi
+  Memory 平均值: 40.54Mi
+
+問題:
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 Memory request 為 61.16Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: aws-node-v86kf
+Container: aws-eks-nodeagent
+
+當前配置:
+  CPU Request: 0.025 cores
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.08m
+  CPU 平均值: 0.02m
+  Memory 最大值: 13.25Mi
+  Memory 平均值: 12.70Mi
+
+問題:
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 Memory request 為 15.90Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: aws-node-vfdx6
+Container: aws-node
+
+當前配置:
+  CPU Request: 0.025 cores
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.005 cores
+  CPU 平均值: 0.003 cores
+  Memory 最大值: 48.20Mi
+  Memory 平均值: 39.68Mi
+
+問題:
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 Memory request 為 57.83Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: aws-node-vfdx6
+Container: aws-eks-nodeagent
+
+當前配置:
+  CPU Request: 0.025 cores
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.07m
+  CPU 平均值: 0.02m
+  Memory 最大值: 13.86Mi
+  Memory 平均值: 12.80Mi
+
+問題:
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 Memory request 為 16.63Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: aws-node-xm7qm
+Container: aws-node
+
+當前配置:
+  CPU Request: 0.025 cores
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.003 cores
+  CPU 平均值: 0.003 cores
+  Memory 最大值: 47.10Mi
+  Memory 平均值: 39.00Mi
+
+問題:
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 Memory request 為 56.52Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: aws-node-xm7qm
+Container: aws-eks-nodeagent
+
+當前配置:
+  CPU Request: 0.025 cores
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.06m
+  CPU 平均值: 0.02m
+  Memory 最大值: 12.89Mi
+  Memory 平均值: 12.68Mi
+
+問題:
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 Memory request 為 15.47Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: kube-proxy-25bsn
+Container: kube-proxy
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.022 cores
+  CPU 平均值: 0.52m
+  Memory 最大值: 33.18Mi
+  Memory 平均值: 24.03Mi
+
+問題:
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 Memory request 為 39.81Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: kube-proxy-h966t
+Container: kube-proxy
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.015 cores
+  CPU 平均值: 0.56m
+  Memory 最大值: 30.03Mi
+  Memory 平均值: 26.64Mi
+
+問題:
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 Memory request 為 36.04Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: kube-proxy-hmx9r
+Container: kube-proxy
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.023 cores
+  CPU 平均值: 0.55m
+  Memory 最大值: 29.76Mi
+  Memory 平均值: 24.33Mi
+
+問題:
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 Memory request 為 35.71Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: kube-proxy-m2lv7
+Container: kube-proxy
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.022 cores
+  CPU 平均值: 0.52m
+  Memory 最大值: 32.72Mi
+  Memory 平均值: 25.05Mi
+
+問題:
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 Memory request 為 39.27Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: kube-proxy-rp2n4
+Container: kube-proxy
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.013 cores
+  CPU 平均值: 0.54m
+  Memory 最大值: 31.07Mi
+  Memory 平均值: 26.69Mi
+
+問題:
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 Memory request 為 37.29Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: kube-proxy-s45zn
+Container: kube-proxy
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.022 cores
+  CPU 平均值: 0.53m
+  Memory 最大值: 31.79Mi
+  Memory 平均值: 24.11Mi
+
+問題:
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 Memory request 為 38.14Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: kube-proxy-z4g5g
+Container: kube-proxy
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.024 cores
+  CPU 平均值: 0.54m
+  Memory 最大值: 30.02Mi
+  Memory 平均值: 24.22Mi
+
+問題:
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 Memory request 為 36.02Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: loggzip-uploader
+Pod: loggzip-uploader-2tt87
+Container: loggzip
+
+當前配置:
+  CPU Request: 未設定
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.270 cores
+  CPU 平均值: 0.54m
+  Memory 最大值: 567.34Mi
+  Memory 平均值: 163.02Mi
+
+問題:
+  ⚠️  未設定 CPU request
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 CPU request 為 0.324 cores
+  ✅ 建議設定 Memory request 為 680.81Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: loggzip-uploader
+Pod: loggzip-uploader-7v7zp
+Container: loggzip
+
+當前配置:
+  CPU Request: 未設定
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 1.021 cores
+  CPU 平均值: 0.007 cores
+  Memory 最大值: 2.21Gi
+  Memory 平均值: 210.18Mi
+
+問題:
+  ⚠️  未設定 CPU request
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 CPU request 為 1.225 cores
+  ✅ 建議設定 Memory request 為 2.65Gi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: loggzip-uploader
+Pod: loggzip-uploader-9h445
+Container: loggzip
+
+當前配置:
+  CPU Request: 未設定
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.341 cores
+  CPU 平均值: 0.81m
+  Memory 最大值: 607.38Mi
+  Memory 平均值: 238.31Mi
+
+問題:
+  ⚠️  未設定 CPU request
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 CPU request 為 0.410 cores
+  ✅ 建議設定 Memory request 為 728.86Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: loggzip-uploader
+Pod: loggzip-uploader-ffsff
+Container: loggzip
+
+當前配置:
+  CPU Request: 未設定
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 1.030 cores
+  CPU 平均值: 0.002 cores
+  Memory 最大值: 1.23Gi
+  Memory 平均值: 223.51Mi
+
+問題:
+  ⚠️  未設定 CPU request
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 CPU request 為 1.236 cores
+  ✅ 建議設定 Memory request 為 1.48Gi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: loggzip-uploader
+Pod: loggzip-uploader-kz7hx
+Container: loggzip
+
+當前配置:
+  CPU Request: 未設定
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.634 cores
+  CPU 平均值: 0.001 cores
+  Memory 最大值: 981.98Mi
+  Memory 平均值: 395.46Mi
+
+問題:
+  ⚠️  未設定 CPU request
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 CPU request 為 0.761 cores
+  ✅ 建議設定 Memory request 為 1.15Gi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: loggzip-uploader
+Pod: loggzip-uploader-rj6wg
+Container: loggzip
+
+當前配置:
+  CPU Request: 未設定
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.09m
+  CPU 平均值: 0.00m
+  Memory 最大值: 6.55Mi
+  Memory 平均值: 1.59Mi
+
+問題:
+  ⚠️  未設定 CPU request
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 CPU request 為 0.11m
+  ✅ 建議設定 Memory request 為 7.86Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: loggzip-uploader
+Pod: loggzip-uploader-ss2z6
+Container: loggzip
+
+當前配置:
+  CPU Request: 未設定
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.466 cores
+  CPU 平均值: 0.001 cores
+  Memory 最大值: 932.97Mi
+  Memory 平均值: 394.93Mi
+
+問題:
+  ⚠️  未設定 CPU request
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 CPU request 為 0.559 cores
+  ✅ 建議設定 Memory request 為 1.09Gi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: monitoring
+Pod: alertmanager-prometheus-kube-prometheus-alertmanager-0
+Container: config-reloader
+
+當前配置:
+  CPU Request: 未設定
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.20m
+  CPU 平均值: 0.10m
+  Memory 最大值: 16.40Mi
+  Memory 平均值: 13.98Mi
+
+問題:
+  ⚠️  未設定 CPU request
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 CPU request 為 0.24m
+  ✅ 建議設定 Memory request 為 19.68Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: monitoring
+Pod: prometheus-prometheus-kube-prometheus-prometheus-0
+Container: config-reloader
+
+當前配置:
+  CPU Request: 未設定
+  CPU Limit: 未設定
+  Memory Request: 未設定
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.17m
+  CPU 平均值: 0.13m
+  Memory 最大值: 17.51Mi
+  Memory 平均值: 14.27Mi
+
+問題:
+  ⚠️  未設定 CPU request
+  ⚠️  未設定 Memory request
+
+建議:
+  ✅ 建議設定 CPU request 為 0.21m
+  ✅ 建議設定 Memory request 為 21.01Mi
+
+----------------------------------------------------------------------------------------------------
+
+
+====================================================================================================
+🟢 可優化
+====================================================================================================
+
+Namespace: adapterapi-prd
+Pod: adapterapi-74d5bd8d48-cw5gm
+Container: adapterapi
+
+當前配置:
+  CPU Request: 0.200 cores
+  CPU Limit: 0.400 cores
+  Memory Request: 40.00Mi
+  Memory Limit: 100.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.001 cores
+  CPU 平均值: 0.001 cores
+  Memory 最大值: 17.90Mi
+  Memory 平均值: 15.56Mi
+
+問題:
+  ⚠️  CPU request 平均使用率過低 (0.5%)
+
+建議:
+  ✅ 可降低 CPU request 到 0.010 cores
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: arcade-gate-prd
+Pod: arcade-gate-0
+Container: arcade-gate
+
+當前配置:
+  CPU Request: 0.800 cores
+  CPU Limit: 1.500 cores
+  Memory Request: 2.00Gi
+  Memory Limit: 4.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.013 cores
+  CPU 平均值: 0.013 cores
+  Memory 最大值: 2.69Mi
+  Memory 平均值: 2.69Mi
+
+問題:
+  ⚠️  CPU request 平均使用率過低 (1.6%)
+  ⚠️  Memory request 平均使用率過低 (0.1%)
+
+建議:
+  ✅ 可降低 CPU request 到 0.025 cores
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: arcadebingo-prd
+Pod: arcadebingo-0
+Container: arcadebingo
+
+當前配置:
+  CPU Request: 0.030 cores
+  CPU Limit: 0.080 cores
+  Memory Request: 400.00Mi
+  Memory Limit: 700.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.20m
+  CPU 平均值: 0.20m
+  Memory 最大值: 5.59Mi
+  Memory 平均值: 4.16Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.0%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: argocd
+Pod: argocd-applicationset-controller-d69fbd959-4rvhr
+Container: applicationset-controller
+
+當前配置:
+  CPU Request: 0.050 cores
+  CPU Limit: 0.300 cores
+  Memory Request: 256.00Mi
+  Memory Limit: 512.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.005 cores
+  CPU 平均值: 0.46m
+  Memory 最大值: 36.80Mi
+  Memory 平均值: 23.95Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (9.4%)
+
+建議:
+  ✅ 可降低 Memory request 到 35.93Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: argocd
+Pod: argocd-dex-server-94547c8d5-fnbb6
+Container: dex-server
+
+當前配置:
+  CPU Request: 0.050 cores
+  CPU Limit: 0.200 cores
+  Memory Request: 128.00Mi
+  Memory Limit: 256.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.88m
+  CPU 平均值: 0.12m
+  Memory 最大值: 30.10Mi
+  Memory 平均值: 29.16Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (22.8%)
+
+建議:
+  ✅ 可降低 Memory request 到 43.74Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: argocd
+Pod: argocd-notifications-controller-7684b9f486-8bn9l
+Container: notifications-controller
+
+當前配置:
+  CPU Request: 0.050 cores
+  CPU Limit: 0.200 cores
+  Memory Request: 128.00Mi
+  Memory Limit: 256.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.001 cores
+  CPU 平均值: 0.65m
+  Memory 最大值: 43.96Mi
+  Memory 平均值: 37.05Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (28.9%)
+
+建議:
+  ✅ 可降低 Memory request 到 55.57Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: argocd
+Pod: argocd-repo-server-7cb7cd7d86-dlh2f
+Container: repo-server
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 1.000 cores
+  Memory Request: 512.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.035 cores
+  CPU 平均值: 0.001 cores
+  Memory 最大值: 47.90Mi
+  Memory 平均值: 36.09Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (7.0%)
+
+建議:
+  ✅ 可降低 Memory request 到 54.14Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: argocd
+Pod: argocd-server-55d464ccb9-vnxbj
+Container: server
+
+當前配置:
+  CPU Request: 0.050 cores
+  CPU Limit: 0.500 cores
+  Memory Request: 256.00Mi
+  Memory Limit: 512.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.008 cores
+  CPU 平均值: 0.002 cores
+  Memory 最大值: 61.58Mi
+  Memory 平均值: 51.19Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (20.0%)
+
+建議:
+  ✅ 可降低 Memory request 到 76.78Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: aviator-prd
+Pod: aviator-0
+Container: aviator
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.080 cores
+  Memory Request: 600.00Mi
+  Memory Limit: 900.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.012 cores
+  CPU 平均值: 0.007 cores
+  Memory 最大值: 2.73Mi
+  Memory 平均值: 2.73Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (0.5%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: aviator2-prd
+Pod: aviator2-0
+Container: aviator2
+
+當前配置:
+  CPU Request: 0.080 cores
+  CPU Limit: 0.150 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 800.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.021 cores
+  CPU 平均值: 0.010 cores
+  Memory 最大值: 2.75Mi
+  Memory 平均值: 2.75Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.4%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: aviator2xin-prd
+Pod: aviator2xin-0
+Container: aviator2xin
+
+當前配置:
+  CPU Request: 0.080 cores
+  CPU Limit: 0.150 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 800.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.006 cores
+  CPU 平均值: 0.005 cores
+  Memory 最大值: 2.41Mi
+  Memory 平均值: 2.41Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.2%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: bg-gate-prd
+Pod: bg-gate-0
+Container: bg-gate
+
+當前配置:
+  CPU Request: 0.200 cores
+  CPU Limit: 0.500 cores
+  Memory Request: 4.00Gi
+  Memory Limit: 6.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.016 cores
+  CPU 平均值: 0.011 cores
+  Memory 最大值: 812.65Mi
+  Memory 平均值: 568.83Mi
+
+問題:
+  ⚠️  CPU request 平均使用率過低 (5.5%)
+  ⚠️  Memory request 平均使用率過低 (13.9%)
+
+建議:
+  ✅ 可降低 CPU request 到 0.022 cores
+  ✅ 可降低 Memory request 到 853.24Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: bingbingbingo-prd
+Pod: bingbingbingo-0
+Container: bingbingbingo
+
+當前配置:
+  CPU Request: 0.030 cores
+  CPU Limit: 0.080 cores
+  Memory Request: 400.00Mi
+  Memory Limit: 700.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.02m
+  CPU 平均值: 0.02m
+  Memory 最大值: 6.13Mi
+  Memory 平均值: 6.13Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.5%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: bingobells-prd
+Pod: bingobells-0
+Container: bingobells
+
+當前配置:
+  CPU Request: 0.030 cores
+  CPU Limit: 0.080 cores
+  Memory Request: 400.00Mi
+  Memory Limit: 700.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.02m
+  CPU 平均值: 0.02m
+  Memory 最大值: 6.01Mi
+  Memory 平均值: 6.01Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.5%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: bonusbingo-prd
+Pod: bonusbingo-0
+Container: bonusbingo
+
+當前配置:
+  CPU Request: 0.060 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 1.50Gi
+  Memory Limit: 3.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.025 cores
+  CPU 平均值: 0.010 cores
+  Memory 最大值: 509.33Mi
+  Memory 平均值: 212.97Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (13.9%)
+
+建議:
+  ✅ 可降低 Memory request 到 319.46Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: center-prd
+Pod: center-0
+Container: center
+
+當前配置:
+  CPU Request: 0.200 cores
+  CPU Limit: 0.500 cores
+  Memory Request: 500.00Mi
+  Memory Limit: 1000.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.004 cores
+  CPU 平均值: 0.86m
+  Memory 最大值: 238.96Mi
+  Memory 平均值: 111.89Mi
+
+問題:
+  ⚠️  CPU request 平均使用率過低 (0.4%)
+  ⚠️  Memory request 平均使用率過低 (22.4%)
+
+建議:
+  ✅ 可降低 CPU request 到 0.010 cores
+  ✅ 可降低 Memory request 到 167.84Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: crash-prd
+Pod: crash-0
+Container: crash
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.080 cores
+  Memory Request: 120.00Mi
+  Memory Limit: 180.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.006 cores
+  CPU 平均值: 0.005 cores
+  Memory 最大值: 2.74Mi
+  Memory 平均值: 2.74Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (2.3%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: crashcl-prd
+Pod: crashcl-0
+Container: crashcl
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.080 cores
+  Memory Request: 120.00Mi
+  Memory Limit: 160.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.006 cores
+  CPU 平均值: 0.005 cores
+  Memory 最大值: 2.71Mi
+  Memory 平均值: 2.71Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (2.3%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: crashgr-prd
+Pod: crashgr-0
+Container: crashgr
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.080 cores
+  Memory Request: 400.00Mi
+  Memory Limit: 700.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.006 cores
+  CPU 平均值: 0.005 cores
+  Memory 最大值: 2.76Mi
+  Memory 平均值: 2.76Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (0.7%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: crashne-prd
+Pod: crashne-0
+Container: crashne
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.080 cores
+  Memory Request: 120.00Mi
+  Memory Limit: 180.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.006 cores
+  CPU 平均值: 0.005 cores
+  Memory 最大值: 2.78Mi
+  Memory 平均值: 2.78Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (2.3%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: diamonds-prd
+Pod: diamonds-0
+Container: diamonds
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.007 cores
+  CPU 平均值: 0.004 cores
+  Memory 最大值: 49.04Mi
+  Memory 平均值: 39.12Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (19.6%)
+
+建議:
+  ✅ 可降低 Memory request 到 58.68Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: dice-prd
+Pod: dice-0
+Container: dice
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.019 cores
+  CPU 平均值: 0.005 cores
+  Memory 最大值: 2.80Mi
+  Memory 平均值: 2.80Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.4%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: dragontower-prd
+Pod: dragontower-0
+Container: dragontower
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.016 cores
+  CPU 平均值: 0.005 cores
+  Memory 最大值: 2.71Mi
+  Memory 平均值: 2.71Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.4%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: egghuntbingo-prd
+Pod: egghuntbingo-0
+Container: egghuntbingo
+
+當前配置:
+  CPU Request: 0.050 cores
+  CPU Limit: 0.100 cores
+  Memory Request: 500.00Mi
+  Memory Limit: 800.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.012 cores
+  CPU 平均值: 0.004 cores
+  Memory 最大值: 184.09Mi
+  Memory 平均值: 142.44Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (28.5%)
+
+建議:
+  ✅ 可降低 Memory request 到 213.66Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: goldenclover-prd
+Pod: goldenclover-0
+Container: goldenclover
+
+當前配置:
+  CPU Request: 0.200 cores
+  CPU Limit: 0.500 cores
+  Memory Request: 500.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.005 cores
+  CPU 平均值: 0.003 cores
+  Memory 最大值: 237.43Mi
+  Memory 平均值: 143.36Mi
+
+問題:
+  ⚠️  CPU request 平均使用率過低 (1.7%)
+  ⚠️  Memory request 平均使用率過低 (28.7%)
+
+建議:
+  ✅ 可降低 CPU request 到 0.010 cores
+  ✅ 可降低 Memory request 到 215.04Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: hash-gate-prd
+Pod: hash-gate-0
+Container: hash-gate
+
+當前配置:
+  CPU Request: 0.800 cores
+  CPU Limit: 1.500 cores
+  Memory Request: 2.00Gi
+  Memory Limit: 4.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.018 cores
+  CPU 平均值: 0.014 cores
+  Memory 最大值: 136.73Mi
+  Memory 平均值: 136.73Mi
+
+問題:
+  ⚠️  CPU request 平均使用率過低 (1.8%)
+  ⚠️  Memory request 平均使用率過低 (6.7%)
+
+建議:
+  ✅ 可降低 CPU request 到 0.029 cores
+  ✅ 可降低 Memory request 到 205.09Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: hilocl-prd
+Pod: hilocl-0
+Container: hilocl
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.014 cores
+  CPU 平均值: 0.006 cores
+  Memory 最大值: 2.40Mi
+  Memory 平均值: 2.40Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.2%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: hilogr-prd
+Pod: hilogr-0
+Container: hilogr
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.009 cores
+  CPU 平均值: 0.005 cores
+  Memory 最大值: 61.22Mi
+  Memory 平均值: 46.21Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (23.1%)
+
+建議:
+  ✅ 可降低 Memory request 到 69.31Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: hilone-prd
+Pod: hilone-0
+Container: hilone
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.012 cores
+  CPU 平均值: 0.005 cores
+  Memory 最大值: 80.74Mi
+  Memory 平均值: 58.62Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (29.3%)
+
+建議:
+  ✅ 可降低 Memory request 到 87.93Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: istio-system
+Pod: istiod-78c747c594-tl9gg
+Container: discovery
+
+當前配置:
+  CPU Request: 0.500 cores
+  CPU Limit: 未設定
+  Memory Request: 2.00Gi
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.086 cores
+  CPU 平均值: 0.002 cores
+  Memory 最大值: 156.86Mi
+  Memory 平均值: 69.05Mi
+
+問題:
+  ⚠️  CPU request 平均使用率過低 (0.4%)
+  ⚠️  Memory request 平均使用率過低 (3.4%)
+
+建議:
+  ✅ 可降低 CPU request 到 0.010 cores
+  ✅ 可降低 Memory request 到 103.58Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: keno-prd
+Pod: keno-0
+Container: keno
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.010 cores
+  CPU 平均值: 0.005 cores
+  Memory 最大值: 2.41Mi
+  Memory 平均值: 2.41Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.2%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: cluster-autoscaler-9bc857945-gvjf8
+Container: cluster-autoscaler
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 0.100 cores
+  Memory Request: 600.00Mi
+  Memory Limit: 600.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.006 cores
+  CPU 平均值: 0.002 cores
+  Memory 最大值: 53.95Mi
+  Memory 平均值: 46.23Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (7.7%)
+
+建議:
+  ✅ 可降低 Memory request 到 69.34Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: metrics-server-6b777dc784-mzddp
+Container: metrics-server
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 未設定
+  Memory Request: 200.00Mi
+  Memory Limit: 400.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.007 cores
+  CPU 平均值: 0.005 cores
+  Memory 最大值: 43.57Mi
+  Memory 平均值: 32.39Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (16.2%)
+
+建議:
+  ✅ 可降低 Memory request 到 48.58Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: kube-system
+Pod: metrics-server-6b777dc784-t446s
+Container: metrics-server
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 未設定
+  Memory Request: 200.00Mi
+  Memory Limit: 400.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.007 cores
+  CPU 平均值: 0.005 cores
+  Memory 最大值: 44.17Mi
+  Memory 平均值: 32.38Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (16.2%)
+
+建議:
+  ✅ 可降低 Memory request 到 48.57Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: limbo-prd
+Pod: limbo-0
+Container: limbo
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.023 cores
+  CPU 平均值: 0.010 cores
+  Memory 最大值: 2.77Mi
+  Memory 平均值: 2.77Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.4%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: limbogr-prd
+Pod: limbogr-0
+Container: limbogr
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.008 cores
+  CPU 平均值: 0.004 cores
+  Memory 最大值: 2.40Mi
+  Memory 平均值: 2.40Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.2%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: lostruins-prd
+Pod: lostruins-0
+Container: lostruins
+
+當前配置:
+  CPU Request: 0.030 cores
+  CPU Limit: 0.070 cores
+  Memory Request: 140.00Mi
+  Memory Limit: 230.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.02m
+  CPU 平均值: 0.02m
+  Memory 最大值: 5.44Mi
+  Memory 平均值: 5.44Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (3.9%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: loyaltyapi-prd
+Pod: loyaltyapi-8497c69f65-gwr9w
+Container: loyaltyapi
+
+當前配置:
+  CPU Request: 0.600 cores
+  CPU Limit: 1.200 cores
+  Memory Request: 4.00Gi
+  Memory Limit: 5.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.037 cores
+  CPU 平均值: 0.015 cores
+  Memory 最大值: 305.80Mi
+  Memory 平均值: 240.03Mi
+
+問題:
+  ⚠️  CPU request 平均使用率過低 (2.5%)
+  ⚠️  Memory request 平均使用率過低 (5.9%)
+
+建議:
+  ✅ 可降低 CPU request 到 0.030 cores
+  ✅ 可降低 Memory request 到 360.04Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: luckydropcoc-prd
+Pod: luckydropcoc-0
+Container: luckydropcoc
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.74m
+  CPU 平均值: 0.74m
+  Memory 最大值: 12.10Mi
+  Memory 平均值: 8.87Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (4.4%)
+
+建議:
+  ✅ 可降低 Memory request 到 13.30Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: luckydropgx-prd
+Pod: luckydropgx-0
+Container: luckydropgx
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.23m
+  CPU 平均值: 0.23m
+  Memory 最大值: 2.81Mi
+  Memory 平均值: 2.81Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.4%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: luckydropoly-prd
+Pod: luckydropoly-0
+Container: luckydropoly
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.15m
+  CPU 平均值: 0.15m
+  Memory 最大值: 2.76Mi
+  Memory 平均值: 2.76Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.4%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: luckyhilo-prd
+Pod: luckyhilo-0
+Container: luckyhilo
+
+當前配置:
+  CPU Request: 0.150 cores
+  CPU Limit: 0.280 cores
+  Memory Request: 800.00Mi
+  Memory Limit: 1.20Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.026 cores
+  CPU 平均值: 0.011 cores
+  Memory 最大值: 676.00Ki
+  Memory 平均值: 676.00Ki
+
+問題:
+  ⚠️  CPU request 平均使用率過低 (7.1%)
+  ⚠️  Memory request 平均使用率過低 (0.1%)
+
+建議:
+  ✅ 可降低 CPU request 到 0.021 cores
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: magicbingo-prd
+Pod: magicbingo-0
+Container: magicbingo
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.080 cores
+  Memory Request: 500.00Mi
+  Memory Limit: 800.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.23m
+  CPU 平均值: 0.23m
+  Memory 最大值: 6.00Mi
+  Memory 平均值: 4.64Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (0.9%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: maplebingo-prd
+Pod: maplebingo-0
+Container: maplebingo
+
+當前配置:
+  CPU Request: 0.030 cores
+  CPU Limit: 0.070 cores
+  Memory Request: 400.00Mi
+  Memory Limit: 600.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.01m
+  CPU 平均值: 0.01m
+  Memory 最大值: 6.12Mi
+  Memory 平均值: 6.12Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.5%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: mines-prd
+Pod: mines-0
+Container: mines
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.019 cores
+  CPU 平均值: 0.008 cores
+  Memory 最大值: 2.41Mi
+  Memory 平均值: 2.41Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.2%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: minesca-prd
+Pod: minesca-0
+Container: minesca
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 0.160 cores
+  Memory Request: 1.00Gi
+  Memory Limit: 1.50Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.001 cores
+  CPU 平均值: 0.001 cores
+  Memory 最大值: 12.18Mi
+  Memory 平均值: 12.07Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.2%)
+
+建議:
+  ✅ 可降低 Memory request 到 18.11Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: minescl-prd
+Pod: minescl-0
+Container: minescl
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.017 cores
+  CPU 平均值: 0.008 cores
+  Memory 最大值: 2.78Mi
+  Memory 平均值: 2.78Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.4%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: minesgr-prd
+Pod: minesgr-0
+Container: minesgr
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.023 cores
+  CPU 平均值: 0.009 cores
+  Memory 最大值: 2.75Mi
+  Memory 平均值: 2.75Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.4%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: minesma-prd
+Pod: minesma-0
+Container: minesma
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.002 cores
+  CPU 平均值: 0.002 cores
+  Memory 最大值: 19.92Mi
+  Memory 平均值: 19.90Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (10.0%)
+
+建議:
+  ✅ 可降低 Memory request 到 29.86Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: minesne-prd
+Pod: minesne-0
+Container: minesne
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 0.170 cores
+  Memory Request: 900.00Mi
+  Memory Limit: 1.30Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.028 cores
+  CPU 平均值: 0.012 cores
+  Memory 最大值: 2.80Mi
+  Memory 平均值: 2.80Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (0.3%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: minespm-prd
+Pod: minespm-0
+Container: minespm
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.014 cores
+  CPU 平均值: 0.006 cores
+  Memory 最大值: 2.41Mi
+  Memory 平均值: 2.41Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.2%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: minesraider-prd
+Pod: minesraider-0
+Container: minesraider
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.019 cores
+  CPU 平均值: 0.005 cores
+  Memory 最大值: 72.30Mi
+  Memory 平均值: 53.09Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (26.5%)
+
+建議:
+  ✅ 可降低 Memory request 到 79.64Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: monitoring
+Pod: alertmanager-prometheus-kube-prometheus-alertmanager-0
+Container: alertmanager
+
+當前配置:
+  CPU Request: 未設定
+  CPU Limit: 未設定
+  Memory Request: 200.00Mi
+  Memory Limit: 未設定
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.40m
+  CPU 平均值: 0.35m
+  Memory 最大值: 26.23Mi
+  Memory 平均值: 22.17Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (11.1%)
+  ⚠️  未設定 CPU request
+
+建議:
+  ✅ 可降低 Memory request 到 33.26Mi
+  ✅ 建議設定 CPU request 為 0.48m
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: monitoring
+Pod: prometheus-kube-prometheus-operator-c46dbff56-kg9qf
+Container: kube-prometheus-stack
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 0.200 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 400.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.003 cores
+  CPU 平均值: 0.002 cores
+  Memory 最大值: 23.61Mi
+  Memory 平均值: 20.98Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (10.5%)
+
+建議:
+  ✅ 可降低 Memory request 到 31.47Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: monitoring
+Pod: prometheus-prometheus-kube-prometheus-prometheus-0
+Container: prometheus
+
+當前配置:
+  CPU Request: 0.500 cores
+  CPU Limit: 1.000 cores
+  Memory Request: 2.00Gi
+  Memory Limit: 4.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.196 cores
+  CPU 平均值: 0.066 cores
+  Memory 最大值: 991.86Mi
+  Memory 平均值: 575.63Mi
+
+問題:
+  ⚠️  CPU request 平均使用率過低 (13.2%)
+  ⚠️  Memory request 平均使用率過低 (28.1%)
+
+建議:
+  ✅ 可降低 CPU request 到 0.132 cores
+  ✅ 可降低 Memory request 到 863.44Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: multiboomers-prd
+Pod: multiboomers-0
+Container: multiboomers
+
+當前配置:
+  CPU Request: 0.100 cores
+  CPU Limit: 0.500 cores
+  Memory Request: 300.00Mi
+  Memory Limit: 600.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.007 cores
+  CPU 平均值: 0.005 cores
+  Memory 最大值: 49.55Mi
+  Memory 平均值: 41.79Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (13.9%)
+
+建議:
+  ✅ 可降低 Memory request 到 62.68Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: multihilo-prd
+Pod: multihilo-0
+Container: multihilo
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.005 cores
+  CPU 平均值: 0.003 cores
+  Memory 最大值: 2.42Mi
+  Memory 平均值: 2.42Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.2%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: odinbingo-prd
+Pod: odinbingo-0
+Container: odinbingo
+
+當前配置:
+  CPU Request: 0.070 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 320.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.02m
+  CPU 平均值: 0.02m
+  Memory 最大值: 5.70Mi
+  Memory 平均值: 5.66Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (2.8%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: plinko-prd
+Pod: plinko-0
+Container: plinko
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.64m
+  CPU 平均值: 0.64m
+  Memory 最大值: 2.77Mi
+  Memory 平均值: 2.77Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.4%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: plinkocl-prd
+Pod: plinkocl-0
+Container: plinkocl
+
+當前配置:
+  CPU Request: 0.120 cores
+  CPU Limit: 0.200 cores
+  Memory Request: 1.80Gi
+  Memory Limit: 2.80Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.034 cores
+  CPU 平均值: 0.012 cores
+  Memory 最大值: 196.57Mi
+  Memory 平均值: 115.08Mi
+
+問題:
+  ⚠️  CPU request 平均使用率過低 (10.1%)
+  ⚠️  Memory request 平均使用率過低 (6.2%)
+
+建議:
+  ✅ 可降低 CPU request 到 0.024 cores
+  ✅ 可降低 Memory request 到 172.62Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: plinkone-prd
+Pod: plinkone-0
+Container: plinkone
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.65m
+  CPU 平均值: 0.65m
+  Memory 最大值: 2.40Mi
+  Memory 平均值: 2.40Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.2%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: steampunk-prd
+Pod: steampunk-0
+Container: steampunk
+
+當前配置:
+  CPU Request: 0.050 cores
+  CPU Limit: 0.100 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 300.00Mi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.26m
+  CPU 平均值: 0.26m
+  Memory 最大值: 6.11Mi
+  Memory 平均值: 4.87Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (2.4%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: videopoker-prd
+Pod: videopoker-0
+Container: videopoker
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.007 cores
+  CPU 平均值: 0.004 cores
+  Memory 最大值: 2.42Mi
+  Memory 平均值: 2.42Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.2%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: wheel-prd
+Pod: wheel-0
+Container: wheel
+
+當前配置:
+  CPU Request: 0.040 cores
+  CPU Limit: 0.120 cores
+  Memory Request: 200.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.008 cores
+  CPU 平均值: 0.004 cores
+  Memory 最大值: 2.39Mi
+  Memory 平均值: 2.39Mi
+
+問題:
+  ⚠️  Memory request 平均使用率過低 (1.2%)
+
+建議:
+  ✅ 可降低 Memory request 到 10.00Mi
+
+----------------------------------------------------------------------------------------------------
+
+Namespace: wilddiggr-prd
+Pod: wilddiggr-0
+Container: wilddiggr
+
+當前配置:
+  CPU Request: 0.200 cores
+  CPU Limit: 0.500 cores
+  Memory Request: 500.00Mi
+  Memory Limit: 1.00Gi
+
+實際使用（過去 7 天）:
+  CPU 最大值: 0.007 cores
+  CPU 平均值: 0.004 cores
+  Memory 最大值: 237.91Mi
+  Memory 平均值: 143.58Mi
+
+問題:
+  ⚠️  CPU request 平均使用率過低 (2.0%)
+  ⚠️  Memory request 平均使用率過低 (28.7%)
+
+建議:
+  ✅ 可降低 CPU request 到 0.010 cores
+  ✅ 可降低 Memory request 到 215.37Mi
+
+----------------------------------------------------------------------------------------------------
+
