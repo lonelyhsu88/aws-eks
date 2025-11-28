@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  bmm-rng-demo:
+    build: .
+    container_name: bmm-rng-demo
+    ports:
+      - "8000:8000"
+    volumes:
+      # BMM_RNG.py will be uploaded here during audit
+      - ./BMM_RNG.py:/app/BMM_RNG.py:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  nginx:
+    image: nginx:alpine
+    container_name: bmm-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - bmm-rng-demo
+    restart: unless-stopped

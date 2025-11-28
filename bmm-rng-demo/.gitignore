@@ -1,0 +1,14 @@
+# SSH keys and sensitive files
+*.pem
+instance-info.txt
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Docker
+.docker/
+
+# OS
+.DS_Store
