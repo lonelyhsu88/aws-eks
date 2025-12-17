@@ -162,13 +162,19 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 **Key Observation**: Critical hash-gate-0 gateway service was prioritized and recovered within 4 seconds of game service pods. Based on typical health check + startup time (~2-3 minutes), the gateway was likely serving traffic by **14:43-14:45 HKT**.
 
 #### Wave 2: gemini-hash Node Pod (14:54:10 HKT)
-*Second migration after temporary node cleanup*
+*Second migration due to unstable node failure*
 
 | HKT Time | Pod Name | Namespace | Type | Recovery Duration |
 |----------|----------|-----------|------|-------------------|
 | 14:54:10 | minesck-0 | minesck-prd | Game Service | ~2-3 min |
 
-**Key Observation**: This pod experienced a second migration, explaining the extended downtime for this specific service (~13 minutes total vs. ~3 minutes for Wave 1 pods).
+**Critical Discovery - Unstable Node Cascading Failure**:
+- **14:41:13**: minesck-0 initially migrated to node **i-00822ee644501bc0a** (launched at 14:41:41)
+- **14:51:42**: Node **i-00822ee644501bc0a was terminated by ASG** after only **10 minutes of operation**
+- **14:54:10**: minesck-0 **forced to migrate a second time** to stable node i-01b39c5c35027af62
+- **Root Cause**: The node that Wave 1 pods migrated to was itself unstable, failing health checks and being terminated by ASG
+- **Impact**: Only minesck-0 was affected because other Wave 1 pods were scheduled to stable nodes (existing nodes from 12/15 and 11/10)
+- **Total Downtime**: ~13 minutes (first migration + 10 min on unstable node + second migration)
 
 #### Wave 3: gemini-bg Node Pods (15:11:49-15:11:50 HKT)
 *Triggered after gemini-bg final node replacement completed*
@@ -196,12 +202,13 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 ```
 14:27:09  ━━ Node failure detected
 14:41:36  ━━ Manual Max capacity increase (3→5)
-14:41:41  ━━ New node launched (ap-east-1a)
+14:41:41  ━━ New node launched (ap-east-1a) - i-00822ee644501bc0a
 14:41:13  ✅ Wave 1: First pods start migrating (6 game services)
 14:41:17  ✅ Wave 1: hash-gate-0 starts (critical gateway)
 14:43-45  ✅ Wave 1: Services ready and serving traffic
-14:54:10  ✅ Wave 2: minesck-0 second migration
-14:56:27  ━━ Final node replacement successful
+14:51:42  ❌ Unstable node i-00822ee644501bc0a terminated (only 10 min lifespan)
+14:54:10  ✅ Wave 2: minesck-0 forced second migration
+14:56:27  ━━ Final stable node replacement successful
 15:11:49  ✅ Wave 3: gemini-bg pods start migrating
 15:13-14  ✅ Wave 3: All services fully operational
 ```
@@ -209,9 +216,10 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 **Key Insights**:
 1. **Rapid Initial Recovery**: Critical hash-gate service recovered within ~14 minutes of initial failure (14:27→14:41-45)
 2. **Efficient Scheduler**: Kubernetes scheduled 6 pods within 4 seconds in Wave 1
-3. **Double Migration Impact**: minesck-0 experienced significantly longer downtime due to two migrations
-4. **Final Recovery**: Complete system restoration achieved 46 minutes after initial failure
-5. **User Report Validation**: Prometheus monitoring showing recovery at 14:45 HKT aligns perfectly with Wave 1 Pod readiness timeline
+3. **Unstable Node Cascading Failure**: minesck-0 experienced significantly longer downtime (~13 min) due to being initially scheduled to an unstable node (i-00822ee644501bc0a) that only survived 10 minutes before ASG termination
+4. **Node Stability Risk**: New nodes launched during infrastructure crisis may not immediately pass health checks, creating cascading failures that extend recovery time
+5. **Final Recovery**: Complete system restoration achieved 46 minutes after initial failure
+6. **User Report Validation**: Prometheus monitoring showing recovery at 14:45 HKT aligns perfectly with Wave 1 Pod readiness timeline
 
 ---
 
@@ -697,6 +705,96 @@ spec:
 - Load balancing behavior
 - Session persistence
 - Failover scenarios
+
+#### Action 2.4: Implement Enhanced Node Health Checks
+**Objective**: Prevent pods from scheduling to unstable nodes during infrastructure crisis
+
+**Root Cause Reference**: Wave 2 incident where minesck-0 was scheduled to node i-00822ee644501bc0a which failed after only 10 minutes, forcing a second migration and extending downtime to 13 minutes.
+
+**Implementation**:
+
+**Step 1 - Configure ASG Health Check Grace Period**:
+```bash
+# Increase health check grace period to allow proper node initialization
+aws autoscaling update-auto-scaling-group \
+  --auto-scaling-group-name eks-gemini-hash-becd1c1a-397a-63f3-d535-1b140077cf55 \
+  --health-check-grace-period 600 \  # 10 minutes (increased from default 300s)
+  --region ap-east-1
+
+# Apply to all node groups
+for asg in $(aws autoscaling describe-auto-scaling-groups \
+  --region ap-east-1 \
+  --query 'AutoScalingGroups[?contains(AutoScalingGroupName, `gemini`)].AutoScalingGroupName' \
+  --output text); do
+  aws autoscaling update-auto-scaling-group \
+    --auto-scaling-group-name "$asg" \
+    --health-check-grace-period 600 \
+    --region ap-east-1
+done
+```
+
+**Step 2 - Add Node Readiness Gates**:
+```yaml
+# Configure custom node readiness conditions
+apiVersion: v1
+kind: Node
+metadata:
+  name: node-example
+spec:
+  readinessGates:
+  - conditionType: "CustomNodeStabilityCheck"
+```
+
+**Step 3 - Implement Node Taint for New Nodes**:
+```bash
+# Add startup taint to prevent immediate scheduling
+# Configure in launch template user data:
+#!/bin/bash
+# Taint node on startup
+kubectl taint nodes $(hostname) node.kubernetes.io/not-ready=true:NoSchedule
+
+# Wait for stability checks (5 minutes)
+sleep 300
+
+# Run custom health checks
+/opt/scripts/node-stability-check.sh
+
+# Remove taint if healthy
+if [ $? -eq 0 ]; then
+  kubectl taint nodes $(hostname) node.kubernetes.io/not-ready:NoSchedule-
+fi
+```
+
+**Step 4 - Monitor Node Age Before Scheduling Critical Pods**:
+```yaml
+# Add node affinity to prefer mature nodes for critical services
+affinity:
+  nodeAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      preference:
+        matchExpressions:
+        - key: node.kubernetes.io/age
+          operator: Gt
+          values:
+          - "300"  # Prefer nodes older than 5 minutes
+```
+
+**Expected Outcome**:
+- New nodes undergo proper stabilization period before accepting pods
+- Reduced risk of cascading failures from unstable nodes
+- Prevented scenarios like minesck-0 Wave 2 double migration
+- **Cost Impact**: $0 (configuration only)
+
+**Success Metrics**:
+- Zero pod double-migrations due to node instability
+- Node failure rate < 1% within first 10 minutes of launch
+- Average pod migration count per incident: 1.0 (vs. current 1.07)
+
+**Testing Required**:
+- Simulate node failure immediately after launch
+- Verify taint removal timing
+- Validate critical pod scheduling behavior
 
 ### 7.3 Medium-Term Improvements (Priority 3 - This Quarter)
 

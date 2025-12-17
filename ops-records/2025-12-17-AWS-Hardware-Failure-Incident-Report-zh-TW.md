@@ -162,13 +162,19 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 **關鍵觀察**：關鍵的 hash-gate-0 閘道服務在遊戲服務 Pod 之後 4 秒內優先恢復。基於典型的健康檢查和啟動時間（約 2-3 分鐘），閘道可能在 **14:43-14:45 HKT** 開始提供服務。
 
 #### 第二波：gemini-hash 節點 Pod（14:54:10 HKT）
-*臨時節點清理後的第二次遷移*
+*由於不穩定節點故障導致的第二次遷移*
 
 | HKT 時間 | Pod 名稱 | Namespace | 類型 | 恢復時長 |
 |----------|----------|-----------|------|----------|
 | 14:54:10 | minesck-0 | minesck-prd | 遊戲服務 | 約2-3分鐘 |
 
-**關鍵觀察**：此 Pod 經歷了第二次遷移，說明了此特定服務的延長停機時間（總共約 13 分鐘 vs. 第一波 Pod 的約 3 分鐘）。
+**關鍵發現 - 不穩定節點級聯故障**：
+- **14:41:13**：minesck-0 最初遷移到節點 **i-00822ee644501bc0a**（於 14:41:41 啟動）
+- **14:51:42**：節點 **i-00822ee644501bc0a 被 ASG 終止**，僅運行了 **10 分鐘**
+- **14:54:10**：minesck-0 **被迫第二次遷移**到穩定節點 i-01b39c5c35027af62
+- **根本原因**：第一波 Pod 遷移到的節點本身不穩定，未通過健康檢查後被 ASG 終止
+- **影響範圍**：只有 minesck-0 受影響，因為其他第一波 Pod 被調度到穩定節點（12/15 和 11/10 的現有節點）
+- **總停機時間**：約 13 分鐘（第一次遷移 + 在不穩定節點上 10 分鐘 + 第二次遷移）
 
 #### 第三波：gemini-bg 節點 Pod（15:11:49-15:11:50 HKT）
 *gemini-bg 最終節點替換完成後觸發*
@@ -196,12 +202,13 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 ```
 14:27:09  ━━ 偵測到節點故障
 14:41:36  ━━ 人工增加 Max 容量（3→5）
-14:41:41  ━━ 新節點啟動（ap-east-1a）
+14:41:41  ━━ 新節點啟動（ap-east-1a）- i-00822ee644501bc0a
 14:41:13  ✅ 第一波：首批 Pod 開始遷移（6 個遊戲服務）
 14:41:17  ✅ 第一波：hash-gate-0 啟動（關鍵閘道）
 14:43-45  ✅ 第一波：服務就緒並開始提供服務
-14:54:10  ✅ 第二波：minesck-0 第二次遷移
-14:56:27  ━━ 最終節點替換成功
+14:51:42  ❌ 不穩定節點 i-00822ee644501bc0a 被終止（僅存活 10 分鐘）
+14:54:10  ✅ 第二波：minesck-0 被迫第二次遷移
+14:56:27  ━━ 最終穩定節點替換成功
 15:11:49  ✅ 第三波：gemini-bg Pod 開始遷移
 15:13-14  ✅ 第三波：所有服務完全運作
 ```
@@ -209,9 +216,10 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 **關鍵見解**：
 1. **快速初始恢復**：關鍵 hash-gate 服務在初始故障後約 14 分鐘內恢復（14:27→14:41-45）
 2. **高效調度器**：Kubernetes 在第一波中於 4 秒內調度了 6 個 Pod
-3. **雙重遷移影響**：minesck-0 由於兩次遷移經歷了顯著更長的停機時間
-4. **最終恢復**：初始故障後 46 分鐘達成完整系統恢復
-5. **用戶報告驗證**：Prometheus 監控顯示 14:45 HKT 的恢復時間與第一波 Pod 就緒時間軸完全吻合
+3. **不穩定節點級聯故障**：minesck-0 由於被最初調度到僅存活 10 分鐘就被 ASG 終止的不穩定節點（i-00822ee644501bc0a），經歷了顯著更長的停機時間（約 13 分鐘）
+4. **節點穩定性風險**：在基礎設施危機期間啟動的新節點可能無法立即通過健康檢查，造成延長恢復時間的級聯故障
+5. **最終恢復**：初始故障後 46 分鐘達成完整系統恢復
+6. **用戶報告驗證**：Prometheus 監控顯示 14:45 HKT 的恢復時間與第一波 Pod 就緒時間軸完全吻合
 
 ---
 
@@ -697,6 +705,96 @@ spec:
 - 負載平衡行為
 - Session 持久性
 - 容錯移轉情境
+
+#### 行動 2.4：實施增強節點健康檢查
+**目標**：防止 Pod 在基礎設施危機期間被調度到不穩定節點
+
+**根本原因參考**：第二波事件中，minesck-0 被調度到節點 i-00822ee644501bc0a，該節點僅運行 10 分鐘後失敗，導致被迫第二次遷移，將停機時間延長至 13 分鐘。
+
+**實施方案**：
+
+**步驟 1 - 配置 ASG 健康檢查寬限期**：
+```bash
+# 增加健康檢查寬限期以允許適當的節點初始化
+aws autoscaling update-auto-scaling-group \
+  --auto-scaling-group-name eks-gemini-hash-becd1c1a-397a-63f3-d535-1b140077cf55 \
+  --health-check-grace-period 600 \  # 10 分鐘（從預設 300 秒增加）
+  --region ap-east-1
+
+# 應用到所有節點組
+for asg in $(aws autoscaling describe-auto-scaling-groups \
+  --region ap-east-1 \
+  --query 'AutoScalingGroups[?contains(AutoScalingGroupName, `gemini`)].AutoScalingGroupName' \
+  --output text); do
+  aws autoscaling update-auto-scaling-group \
+    --auto-scaling-group-name "$asg" \
+    --health-check-grace-period 600 \
+    --region ap-east-1
+done
+```
+
+**步驟 2 - 添加節點就緒閘道**：
+```yaml
+# 配置自定義節點就緒條件
+apiVersion: v1
+kind: Node
+metadata:
+  name: node-example
+spec:
+  readinessGates:
+  - conditionType: "CustomNodeStabilityCheck"
+```
+
+**步驟 3 - 為新節點實施污點標記**：
+```bash
+# 添加啟動污點以防止立即調度
+# 在啟動模板 user data 中配置：
+#!/bin/bash
+# 啟動時標記節點污點
+kubectl taint nodes $(hostname) node.kubernetes.io/not-ready=true:NoSchedule
+
+# 等待穩定性檢查（5 分鐘）
+sleep 300
+
+# 運行自定義健康檢查
+/opt/scripts/node-stability-check.sh
+
+# 如果健康則移除污點
+if [ $? -eq 0 ]; then
+  kubectl taint nodes $(hostname) node.kubernetes.io/not-ready:NoSchedule-
+fi
+```
+
+**步驟 4 - 在調度關鍵 Pod 前監控節點年齡**：
+```yaml
+# 添加節點親和性以優先選擇成熟節點用於關鍵服務
+affinity:
+  nodeAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      preference:
+        matchExpressions:
+        - key: node.kubernetes.io/age
+          operator: Gt
+          values:
+          - "300"  # 優先選擇超過 5 分鐘的節點
+```
+
+**預期結果**：
+- 新節點在接受 Pod 前經過適當的穩定期
+- 降低不穩定節點造成級聯故障的風險
+- 防止類似 minesck-0 第二波雙重遷移的情況
+- **成本影響**：$0（僅配置）
+
+**成功指標**：
+- 因節點不穩定導致的 Pod 雙重遷移為零
+- 節點啟動後前 10 分鐘內的故障率 < 1%
+- 每次事件的平均 Pod 遷移次數：1.0（vs. 目前 1.07）
+
+**需要測試**：
+- 模擬節點啟動後立即失敗
+- 驗證污點移除時機
+- 驗證關鍵 Pod 調度行為
 
 ### 7.3 中期改善（優先級 3 - 本季）
 
