@@ -230,13 +230,20 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 
 **Recovery Timeline with Unstable Nodes**:
 ```
-14:27:09  ━━ Node failure detected
+14:22:00  🚨 Prometheus: KubeNodeNotReady (pending) - Node ip-172-31-53-101
+14:22:00  🚨 Prometheus: KubeNodeUnreachable (pending) - Node ip-172-31-53-101
+14:27:00  🚨 Prometheus: Node completely failed (KubeNodeNotReady resolved→Unreachable)
+14:27:09  ━━ Kubernetes: Node failure detected in cluster
+14:37:00  🚨 Prometheus: KubeNodeUnreachable (FIRING) - Critical alert triggered
+14:37:00  🚨 Prometheus: KubePdbNotEnoughHealthyPods (FIRING) - Multiple services affected
 14:41:36  ━━ Manual Max capacity increase (3→5) + gemini-bg Desired: 2→3
 14:41:36  ━━ gemini-bg node launched - i-01b37ac4e8793faa7 (ap-east-1a) (Unstable Node #1)
 14:41:41  ━━ gemini-hash node launched - i-00822ee644501bc0a (ap-east-1a) (Unstable Node #2)
 14:41:13  ✅ Wave 1: First pods start migrating (6 game services)
 14:41:17  ✅ Wave 1: hash-gate-0 starts (critical gateway)
+14:42:00  🚨 Prometheus: PodNotReady (pending) - hash-gate-0, minesck-0, minesne-0, plinkocl-0
 14:43-45  ✅ Wave 1: Services ready and serving traffic
+14:45:00  🚨 Prometheus: PodNotReady (FIRING) - minesck-0 (on unstable node)
 14:51:41  ❌ Unstable Node #1 (i-01b37ac4e8793faa7, ap-east-1a, gemini-bg) terminated (10 min)
 14:51:42  ❌ Unstable Node #2 (i-00822ee644501bc0a, ap-east-1a, gemini-hash) terminated (10 min)
 14:51:41  👤 Operator manually reduced gemini-bg Desired: 3→2 (cautious approach)
@@ -258,15 +265,16 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 | #3 | i-089d9cd8124ffa27f | gemini-hash | 14:56:27 | 15:04:58 | ap-east-1b | 8 min | No pod impact |
 
 **Key Insights**:
-1. **Rapid Initial Recovery**: Critical hash-gate service recovered within ~14 minutes of initial failure (14:27→14:41-45)
-2. **Efficient Scheduler**: Kubernetes scheduled 6 pods within 4 seconds in Wave 1
-3. **Three Consecutive Unstable Nodes**: Infrastructure crisis produced **three unstable nodes** (10 min, 10 min, 8 min lifespans) across two node groups, indicating widespread AWS hardware instability
-4. **Cascading Failure Impact**: minesck-0 experienced double migration (~13 min downtime) due to Unstable Node #2
-5. **Prudent Operational Decision**: The 20-minute Wave 3 delay was **deliberate operator caution** after observing three consecutive node failures, not a system malfunction
-6. **Risk Management Success**: Operator's decision to pause and verify stability **prevented potential fourth unstable node** and additional cascading failures
-7. **Final Recovery**: Complete system restoration achieved 46 minutes after initial failure
-8. **User Report Validation**: Prometheus monitoring showing recovery at 14:45 HKT aligns perfectly with Wave 1 Pod readiness timeline
-9. **Node Stability Pattern**: All three unstable nodes failed within 8-10 minutes, suggesting consistent health check failure threshold
+1. **Early Detection by Prometheus**: Prometheus detected node anomaly at **14:22:00 HKT** (5 minutes before Kubernetes), providing early warning through KubeNodeNotReady alert. Critical alerts (FIRING) triggered at 14:37:00, enabling proactive response.
+2. **Rapid Initial Recovery**: Critical hash-gate service recovered within ~19 minutes of first alert (14:22→14:41-45)
+3. **Efficient Scheduler**: Kubernetes scheduled 6 pods within 4 seconds in Wave 1
+4. **Three Consecutive Unstable Nodes**: Infrastructure crisis produced **three unstable nodes** (10 min, 10 min, 8 min lifespans) across two node groups, indicating widespread AWS hardware instability
+5. **Cascading Failure Impact**: minesck-0 experienced double migration (~13 min downtime) due to Unstable Node #2
+6. **Prudent Operational Decision**: The 20-minute Wave 3 delay was **deliberate operator caution** after observing three consecutive node failures, not a system malfunction
+7. **Risk Management Success**: Operator's decision to pause and verify stability **prevented potential fourth unstable node** and additional cascading failures
+8. **Final Recovery**: Complete system restoration achieved 51 minutes after initial alert (14:22→15:13)
+9. **Monitoring Validation**: Prometheus Pod-level alerts (14:42, 14:45) perfectly correlated with Kubernetes pod migration events
+10. **Node Stability Pattern**: All three unstable nodes failed within 8-10 minutes, suggesting consistent health check failure threshold
 
 ---
 

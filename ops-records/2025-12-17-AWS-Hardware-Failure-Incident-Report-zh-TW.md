@@ -230,13 +230,20 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 
 **含不穩定節點的恢復時間軸**：
 ```
-14:27:09  ━━ 偵測到節點故障
+14:22:00  🚨 Prometheus：KubeNodeNotReady（pending）- 節點 ip-172-31-53-101
+14:22:00  🚨 Prometheus：KubeNodeUnreachable（pending）- 節點 ip-172-31-53-101
+14:27:00  🚨 Prometheus：節點完全故障（KubeNodeNotReady resolved→Unreachable）
+14:27:09  ━━ Kubernetes：叢集偵測到節點故障
+14:37:00  🚨 Prometheus：KubeNodeUnreachable（FIRING）- 重大告警觸發
+14:37:00  🚨 Prometheus：KubePdbNotEnoughHealthyPods（FIRING）- 多項服務受影響
 14:41:36  ━━ 人工增加 Max 容量（3→5）+ gemini-bg Desired: 2→3
 14:41:36  ━━ gemini-bg 節點啟動 - i-01b37ac4e8793faa7 (ap-east-1a)（不穩定節點 #1）
 14:41:41  ━━ gemini-hash 節點啟動 - i-00822ee644501bc0a (ap-east-1a)（不穩定節點 #2）
 14:41:13  ✅ 第一波：首批 Pod 開始遷移（6 個遊戲服務）
 14:41:17  ✅ 第一波：hash-gate-0 啟動（關鍵閘道）
+14:42:00  🚨 Prometheus：PodNotReady（pending）- hash-gate-0、minesck-0、minesne-0、plinkocl-0
 14:43-45  ✅ 第一波：服務就緒並開始提供服務
+14:45:00  🚨 Prometheus：PodNotReady（FIRING）- minesck-0（在不穩定節點上）
 14:51:41  ❌ 不穩定節點 #1 (i-01b37ac4e8793faa7, ap-east-1a, gemini-bg) 終止（10 分鐘）
 14:51:42  ❌ 不穩定節點 #2 (i-00822ee644501bc0a, ap-east-1a, gemini-hash) 終止（10 分鐘）
 14:51:41  👤 運維人員主動降低 gemini-bg Desired: 3→2（謹慎方法）
@@ -258,12 +265,16 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 | #3 | i-089d9cd8124ffa27f | gemini-hash | 14:56:27 | 15:04:58 | ap-east-1b | 8 分鐘 | 無 Pod 影響 |
 
 **關鍵見解**：
-1. **快速初始恢復**：關鍵 hash-gate 服務在初始故障後約 14 分鐘內恢復（14:27→14:41-45）
-2. **高效調度器**：Kubernetes 在第一波中於 4 秒內調度了 6 個 Pod
-3. **不穩定節點級聯故障**：minesck-0 由於被最初調度到僅存活 10 分鐘就被 ASG 終止的不穩定節點（i-00822ee644501bc0a），經歷了顯著更長的停機時間（約 13 分鐘）
-4. **節點穩定性風險**：在基礎設施危機期間啟動的新節點可能無法立即通過健康檢查，造成延長恢復時間的級聯故障
-5. **最終恢復**：初始故障後 46 分鐘達成完整系統恢復
-6. **用戶報告驗證**：Prometheus 監控顯示 14:45 HKT 的恢復時間與第一波 Pod 就緒時間軸完全吻合
+1. **Prometheus 早期偵測**：Prometheus 在 **14:22:00 HKT** 偵測到節點異常（比 Kubernetes 早 5 分鐘），透過 KubeNodeNotReady 告警提供早期預警。重大告警（FIRING）在 14:37:00 觸發，促成主動回應。
+2. **快速初始恢復**：關鍵 hash-gate 服務在首次告警後約 19 分鐘內恢復（14:22→14:41-45）
+3. **高效調度器**：Kubernetes 在第一波中於 4 秒內調度了 6 個 Pod
+4. **三個連續不穩定節點**：基礎設施危機在兩個節點組中產生**三個不穩定節點**（10 分鐘、10 分鐘、8 分鐘存活時長），顯示廣泛的 AWS 硬體不穩定性
+5. **級聯故障影響**：minesck-0 由於不穩定節點 #2 經歷雙重遷移（約 13 分鐘停機）
+6. **謹慎的運維決策**：第三波的 20 分鐘延遲是觀察到三個連續節點故障後的**審慎運維決策**，而非系統故障
+7. **風險管理成功**：運維人員暫停並驗證穩定性的決策**防止了潛在的第四個不穩定節點**和額外的級聯故障
+8. **最終恢復**：首次告警後 51 分鐘達成完整系統恢復（14:22→15:13）
+9. **監控驗證**：Prometheus Pod 層級告警（14:42、14:45）與 Kubernetes Pod 遷移事件完全關聯
+10. **節點穩定性模式**：所有三個不穩定節點都在 8-10 分鐘內故障，顯示一致的健康檢查失敗閾值
 
 ---
 
