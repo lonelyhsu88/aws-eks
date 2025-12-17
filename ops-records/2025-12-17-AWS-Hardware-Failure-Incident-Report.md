@@ -10,16 +10,17 @@
 
 ## Executive Summary
 
-On December 17, 2025, AWS experienced a hardware availability issue in the ap-east-1 (Hong Kong) region affecting our production EKS cluster `gemini-game-prd`. The incident was automatically detected and resolved by AWS infrastructure and our Auto Scaling Groups without manual intervention, demonstrating the effectiveness of our high-availability architecture.
+On December 17, 2025, AWS experienced a hardware availability issue in the ap-east-1 (Hong Kong) region affecting our production EKS cluster `gemini-game-prd`. The incident was automatically detected by AWS infrastructure and our Auto Scaling Groups. A critical manual intervention at 14:41 to increase ASG Max capacity from 3 to 5 was essential to enable successful cross-AZ failover, demonstrating both the effectiveness of our automated systems and the importance of timely human decision-making during capacity constraints.
 
 **Key Metrics**:
-- **Incident Duration**: 32 minutes 48 seconds (14:23-14:56 HKT)
+- **Incident Duration**: 32 minutes 48 seconds (14:23-14:56 HKT) - AWS hardware issue
+- **Full Recovery Time**: 49 minutes (14:23-15:12 HKT) - Including all services
 - **Services Impacted**: 10 out of 90+ services (11% of total)
 - **Maximum Downtime**: 15-20 minutes (hash-gate gateway service)
 - **Average Downtime**: 2-3 minutes (game services)
 - **Data Loss**: Zero
-- **Manual Intervention Required**: Zero
-- **System Recovery**: Fully Automatic
+- **Manual Intervention**: Critical capacity adjustment at 14:41 (Max: 3→5)
+- **System Recovery**: Automated detection + Manual capacity adjustment
 
 **Incident Severity**: **P2 - High**
 **Business Impact**: **Low to Medium** (limited scope, fast recovery)
@@ -73,26 +74,41 @@ AWS Health Dashboard reported an EC2 Instance Availability Issue affecting Accou
 | Time (HKT) | Event Type | Description | System Response | Status |
 |------------|-----------|-------------|-----------------|--------|
 | **14:23:12** | 🔴 **Incident Start** | AWS detected hardware failure | AWS Health Event initiated | Alert |
+| 14:27:09 | 🔴 Node Failure | Node i-007f3dd92b10101e6 failed EC2 health check | ASG initiated replacement | Failing |
 | 14:33:44 | ⚠️ Launch Failure | gemini-hash launch failed (ap-east-1b) | Retry mechanism activated | Retrying |
 | 14:35:06 | ⚠️ Launch Failure | gemini-hash launch failed (ap-east-1b) | Continue retry | Retrying |
 | 14:40:00 | 📧 Notification | AWS Health notification email sent | Team notified (+17 min delay) | Aware |
-| 14:41:30 | 🔄 Node Launch | gemini-hash: 2 instances launched | Temporary recovery | Recovering |
-| 14:41:36 | 🔄 Node Launch | gemini-bg: Temporary node launched | Pod migration started | Recovering |
-| 14:41:52 - 14:54:15 | ⚠️ Launch Failures | gemini-hash: **10 consecutive failures** | ap-east-1b capacity exhausted | Critical |
+| **14:41:21** | 👤 **Manual Action** | **User adjusted desired: 2→3** | Initiated additional capacity | Intervening |
+| 14:41:30 | 🔄 Node Launch | gemini-hash: Instance i-01b39c5c launched (ap-east-1c) | Cross-AZ failover attempt | Recovering |
+| **14:41:36** | 👤 **CRITICAL Manual Intervention** | **User increased Max: 3→5, Desired: 3→4** | **Enabled elastic capacity for cross-AZ failover** | **Intervening** |
+| 14:41:41 | 🔄 Node Launch | gemini-hash: Instance i-00822ee644501bc0a launched (ap-east-1a) | Additional capacity secured | Recovering |
+| 14:41:52 - 14:54:15 | ⚠️ Launch Failures | gemini-hash: **10 consecutive failures** in ap-east-1b | Capacity exhausted, trying other AZs | Critical |
 | 14:51:41 | 🔄 Node Termination | gemini-bg: Temporary node terminated | Second migration triggered | Recovering |
-| **14:56:00** | ✅ **AWS Resolution** | Hardware issue resolved | Infrastructure stable | Resolved |
-| 14:56:27 | ✅ Node Success | gemini-hash: Launched in ap-east-1a | AZ failover successful | Recovering |
+| **14:56:00** | ⚙️ **AWS Hardware Fixed** | **AWS resolved hardware issue** (nodes not yet ready) | AWS infrastructure stabilized | AWS-Resolved |
+| 14:56:27 | ✅ Node Success | gemini-hash: Final node launched in ap-east-1a | AZ failover successful | Recovering |
 | 15:04:58 | 🔄 Node Cleanup | gemini-hash: Old instance terminated | Cleanup complete | Stable |
 | 15:11:49-15:13:13 | 🔄 Pod Migration | Final pod migrations completed | All services restarted | Recovering |
-| **15:12:07** | ✅ **Full Recovery** | gemini-bg: Final node launched | System fully operational | Resolved |
+| **15:12:07** | ✅ **Full Recovery** | gemini-bg: Final node launched | **System fully operational** | **Resolved** |
 
 ### 2.2 Critical Observations
 
-1. **AWS Detection to Resolution**: 32 minutes 48 seconds
-2. **First Launch Failure to Success**: ~23 minutes
-3. **Total Launch Failures**: **15 attempts** (unprecedented)
-4. **Application Recovery Window**: 14:23 - 15:12 (~49 minutes)
-5. **Notification Delay**: 17 minutes (AWS email vs. actual start)
+1. **Manual Intervention Was Critical**: User's capacity adjustment (Max: 3→5) at 14:41:36 was essential for enabling cross-AZ failover. Without this intervention, ASG would have been limited to sequential retry attempts in ap-east-1b, significantly delaying recovery.
+
+2. **Three Distinct Resolution Points**:
+   - 14:56:00: AWS hardware issue resolved (infrastructure level)
+   - 14:56:27: Replacement node successfully launched
+   - 15:12:07: All services fully operational
+
+3. **AWS Infrastructure Resolution vs. Service Recovery**:
+   - AWS hardware fixed: 32 minutes 48 seconds (14:23-14:56)
+   - Full service recovery: 49 minutes (14:23-15:12)
+   - Gap: 16 minutes for pod rescheduling and service restart
+
+4. **Total Launch Failures**: **15 attempts** (unprecedented) - All failures in ap-east-1b due to InsufficientInstanceCapacity
+
+5. **Capacity Constraint Impact**: First launch failure to success took ~23 minutes, demonstrating the critical importance of elastic capacity headroom for cross-AZ failover scenarios
+
+6. **Notification Delay**: 17 minutes (AWS Health email vs. actual incident start) - This delay meant the team learned about the incident after critical decisions were already needed
 
 ### 2.3 Launch Failure Analysis
 
@@ -265,9 +281,11 @@ Note: This is a conservative estimate. Actual impact may be lower due to:
 | **Pod Rescheduling** | < 5 min | 2-3 min | ⭐⭐⭐⭐⭐ |
 | **Service Recovery** | < 30 min | 20-49 min | ⭐⭐⭐ |
 | **Data Integrity** | 100% | 100% | ⭐⭐⭐⭐⭐ |
-| **Manual Intervention** | 0 | 0 | ⭐⭐⭐⭐⭐ |
+| **Manual Intervention** | Minimal | 1 critical action (capacity adjustment) | ⭐⭐⭐⭐ |
 
-**Overall Rating**: **A (4.7/5.0)**
+**Overall Rating**: **A- (4.5/5.0)**
+
+**Note**: Manual intervention at 14:41:36 to increase Max capacity from 3 to 5 was essential for enabling efficient cross-AZ failover. This demonstrates the importance of having sufficient elastic capacity configured proactively, rather than reactively during incidents.
 
 ### 5.2 Architecture Resilience Assessment
 
@@ -290,12 +308,20 @@ Note: This is a conservative estimate. Actual impact may be lower due to:
 ### 5.3 Incident Response Timeline
 
 **Human Response**:
+- **14:27-14:40**: Incident occurring, team not yet aware (AWS Health notification delay)
 - **14:40**: Notification received (+17 min after incident start)
-- **14:40-15:00**: Monitoring and assessment
-- **15:00-15:30**: Post-incident capacity adjustment (gemini-hash Max: 3→5)
-- **15:30-16:00**: Impact analysis and documentation
+- **14:40-14:41**: Rapid assessment of situation
+- **14:41:21**: First manual action: Increased Desired capacity from 2 to 3
+- **14:41:36**: **Critical intervention**: Increased Max capacity from 3 to 5 and Desired from 3 to 4
+- **14:41-14:56**: Monitoring recovery progress across multiple AZs
+- **14:56-15:12**: Monitoring final pod migrations and service recovery
+- **15:12+**: Post-incident analysis and documentation
 
-**Key Observation**: System fully recovered before human intervention was required, validating automation strategy.
+**Key Observations**:
+1. **Rapid Response**: Team responded within ~1 minute of notification despite 17-minute delay
+2. **Critical Decision**: Manual capacity adjustment at 14:41:36 unblocked ASG's ability to perform cross-AZ failover
+3. **Hybrid Recovery**: System automated detection and replacement, but human intervention was essential to provide adequate elastic capacity for multi-AZ failover scenarios
+4. **Lesson Learned**: Proactive capacity planning (sufficient Max values) would eliminate need for reactive intervention during incidents
 
 ---
 
@@ -927,30 +953,31 @@ Priority 4 (Long-term - This Year):
 The December 17, 2025 AWS hardware failure incident demonstrated both the strengths and weaknesses of our current EKS infrastructure:
 
 **✅ Strengths**:
-- Fully automatic detection and recovery
-- Zero manual intervention required
-- No data loss
-- Effective Auto Scaling and Kubernetes self-healing
+- Automatic failure detection by AWS Health and ASG mechanisms
+- Rapid human response within ~1 minute of notification
+- Effective coordination between automated systems and human decision-making
+- No data loss throughout the incident
+- Kubernetes self-healing successfully rescheduled all affected pods
 - Monitoring and observability maintained throughout
 
 **⚠️ Weaknesses**:
-- Insufficient elastic capacity in some node groups
-- Single instance type dependency caused prolonged recovery
+- Insufficient elastic capacity required reactive manual intervention (Max: 3→5)
+- Single instance type dependency caused 15 consecutive launch failures
 - Single replica critical services created unnecessary downtime
-- Notification delay of 17 minutes
-- Multiple single points of failure identified
+- Notification delay of 17 minutes meant team learned about incident late
+- Multiple single points of failure identified (ArgoCD, gateways, Redis)
 
 ### 10.2 Key Learnings
 
-1. **Automation Works**: Our investment in Auto Scaling Groups and Kubernetes self-healing paid off. The incident resolved automatically without human intervention.
+1. **Hybrid Approach Works Best**: Our automated systems (ASG, Kubernetes self-healing) provided the foundation for recovery, but timely human decision-making (capacity adjustment at 14:41:36) was essential to unblock cross-AZ failover. The incident validated both automation investment and the importance of rapid human response.
 
-2. **Capacity Planning Matters**: The gemini-hash node group's insufficient Max capacity (3) became apparent when 15 launch attempts failed. The emergency increase to Max=5 was necessary and effective.
+2. **Proactive Capacity Planning Is Critical**: The gemini-hash node group's insufficient Max capacity (3) required emergency manual adjustment to Max=5 during the incident. This reactive intervention demonstrates that elastic capacity should be configured proactively with adequate headroom (100-150%) rather than requiring adjustment during incidents.
 
-3. **Single Points of Failure Are Risky**: Services running as single replicas (ArgoCD, gateways, Redis) create unnecessary vulnerability. The ArgoCD situation is particularly critical as it's a single node hosting all 7 pods.
+3. **Single Points of Failure Are High Risk**: Services running as single replicas (ArgoCD, gateways, Redis) create unnecessary vulnerability and extended downtime. The ArgoCD situation is particularly critical as it's a single node hosting all 7 pods, creating a single point of failure for all GitOps deployments.
 
-4. **Instance Type Diversity Is Essential**: Relying on a single instance type (c5a.xlarge) made us vulnerable to capacity shortages. This will be addressed through mixed instances policies.
+4. **Instance Type Diversity Is Essential**: Relying on a single instance type (c5a.xlarge) made us vulnerable to capacity shortages, resulting in 15 consecutive launch failures in ap-east-1b. This will be addressed through mixed instances policies to provide automatic fallback options.
 
-5. **Monitoring and Alerting Need Improvement**: The 17-minute notification delay meant we learned about the incident after it was already well underway.
+5. **Real-Time Alerting Is Mandatory**: The 17-minute notification delay meant the team learned about the incident after critical decisions were already needed. Proactive AWS Health event alerting via EventBridge would reduce this delay from 17 minutes to < 1 minute.
 
 ### 10.3 Risk Assessment
 
