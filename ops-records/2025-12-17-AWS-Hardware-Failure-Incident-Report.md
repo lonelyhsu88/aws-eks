@@ -234,19 +234,25 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 14:22:00  🚨 Prometheus: KubeNodeUnreachable (pending) - Node ip-172-31-53-101
 14:27:00  🚨 Prometheus: Node completely failed (KubeNodeNotReady resolved→Unreachable)
 14:27:09  ━━ Kubernetes: Node failure detected in cluster
-14:37:00  🚨 Prometheus: KubeNodeUnreachable (FIRING) - Critical alert triggered
-14:37:00  🚨 Prometheus: KubePdbNotEnoughHealthyPods (FIRING) - Multiple services affected
+14:36:00  ✅ Prometheus: KubeNodeUnreachable (pending) → Resolved
+14:37:00  🔥 Prometheus: KubeNodeUnreachable (FIRING) - Critical alert triggered
+14:37:00  🔥 Prometheus: KubePdbNotEnoughHealthyPods (FIRING) - Multiple services affected
+14:41:00  ✅ Prometheus: KubeNodeUnreachable (FIRING) → Resolved (replacement nodes active)
 14:41:36  ━━ Manual Max capacity increase (3→5) + gemini-bg Desired: 2→3
 14:41:36  ━━ gemini-bg node launched - i-01b37ac4e8793faa7 (ap-east-1a) (Unstable Node #1)
 14:41:41  ━━ gemini-hash node launched - i-00822ee644501bc0a (ap-east-1a) (Unstable Node #2)
 14:41:13  ✅ Wave 1: First pods start migrating (6 game services)
 14:41:17  ✅ Wave 1: hash-gate-0 starts (critical gateway)
 14:42:00  🚨 Prometheus: PodNotReady (pending) - hash-gate-0, minesck-0, minesne-0, plinkocl-0
+14:43:00  ✅ Prometheus: PodNotReady (pending) → Resolved - hash-gate-0, minesne-0, plinkocl-0
 14:43-45  ✅ Wave 1: Services ready and serving traffic
-14:45:00  🚨 Prometheus: PodNotReady (FIRING) - minesck-0 (on unstable node)
+14:44:00  ✅ Prometheus: PodNotReady (pending) → Resolved - minesck-0
+14:45:00  🔥 Prometheus: PodNotReady (FIRING) - minesck-0 (on unstable node)
 14:51:41  ❌ Unstable Node #1 (i-01b37ac4e8793faa7, ap-east-1a, gemini-bg) terminated (10 min)
 14:51:42  ❌ Unstable Node #2 (i-00822ee644501bc0a, ap-east-1a, gemini-hash) terminated (10 min)
 14:51:41  👤 Operator manually reduced gemini-bg Desired: 3→2 (cautious approach)
+14:53:00  ✅ Prometheus: PodNotReady (FIRING) → Resolved - minesck-0 (migrated from unstable node)
+14:53:00  ✅ Prometheus: KubePdbNotEnoughHealthyPods (FIRING) → Resolved (all services healthy)
 14:54:10  ✅ Wave 2: minesck-0 forced second migration (due to Unstable Node #2)
 14:56:27  ━━ gemini-hash node launched - i-089d9cd8124ffa27f (ap-east-1b) (Unstable Node #3)
 15:04:58  ❌ Unstable Node #3 (i-089d9cd8124ffa27f, ap-east-1b, gemini-hash) terminated (8 min)
@@ -272,9 +278,10 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 5. **Cascading Failure Impact**: minesck-0 experienced double migration (~13 min downtime) due to Unstable Node #2
 6. **Prudent Operational Decision**: The 20-minute Wave 3 delay was **deliberate operator caution** after observing three consecutive node failures, not a system malfunction
 7. **Risk Management Success**: Operator's decision to pause and verify stability **prevented potential fourth unstable node** and additional cascading failures
-8. **Final Recovery**: Complete system restoration achieved 51 minutes after initial alert (14:22→15:13)
-9. **Monitoring Validation**: Prometheus Pod-level alerts (14:42, 14:45) perfectly correlated with Kubernetes pod migration events
-10. **Node Stability Pattern**: All three unstable nodes failed within 8-10 minutes, suggesting consistent health check failure threshold
+8. **Alert Resolution Timeline**: Critical node-level FIRING alerts resolved within 4 minutes (14:37→14:41), most pod alerts cleared within 1-2 minutes, final critical alerts resolved at 14:53 (31 minutes from first detection)
+9. **Final Recovery**: Complete system restoration achieved 51 minutes after initial alert (14:22→15:13)
+10. **Monitoring Validation**: Prometheus alert lifecycle (pending→firing→resolved) perfectly correlated with Kubernetes events, validating monitoring accuracy
+11. **Node Stability Pattern**: All three unstable nodes failed within 8-10 minutes, suggesting consistent health check failure threshold
 
 ---
 

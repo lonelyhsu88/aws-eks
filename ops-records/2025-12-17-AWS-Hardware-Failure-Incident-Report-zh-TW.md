@@ -234,19 +234,25 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 14:22:00  🚨 Prometheus：KubeNodeUnreachable（pending）- 節點 ip-172-31-53-101
 14:27:00  🚨 Prometheus：節點完全故障（KubeNodeNotReady resolved→Unreachable）
 14:27:09  ━━ Kubernetes：叢集偵測到節點故障
-14:37:00  🚨 Prometheus：KubeNodeUnreachable（FIRING）- 重大告警觸發
-14:37:00  🚨 Prometheus：KubePdbNotEnoughHealthyPods（FIRING）- 多項服務受影響
+14:36:00  ✅ Prometheus：KubeNodeUnreachable（pending）→ Resolved
+14:37:00  🔥 Prometheus：KubeNodeUnreachable（FIRING）- 重大告警觸發
+14:37:00  🔥 Prometheus：KubePdbNotEnoughHealthyPods（FIRING）- 多項服務受影響
+14:41:00  ✅ Prometheus：KubeNodeUnreachable（FIRING）→ Resolved（替換節點已就緒）
 14:41:36  ━━ 人工增加 Max 容量（3→5）+ gemini-bg Desired: 2→3
 14:41:36  ━━ gemini-bg 節點啟動 - i-01b37ac4e8793faa7 (ap-east-1a)（不穩定節點 #1）
 14:41:41  ━━ gemini-hash 節點啟動 - i-00822ee644501bc0a (ap-east-1a)（不穩定節點 #2）
 14:41:13  ✅ 第一波：首批 Pod 開始遷移（6 個遊戲服務）
 14:41:17  ✅ 第一波：hash-gate-0 啟動（關鍵閘道）
 14:42:00  🚨 Prometheus：PodNotReady（pending）- hash-gate-0、minesck-0、minesne-0、plinkocl-0
+14:43:00  ✅ Prometheus：PodNotReady（pending）→ Resolved - hash-gate-0、minesne-0、plinkocl-0
 14:43-45  ✅ 第一波：服務就緒並開始提供服務
-14:45:00  🚨 Prometheus：PodNotReady（FIRING）- minesck-0（在不穩定節點上）
+14:44:00  ✅ Prometheus：PodNotReady（pending）→ Resolved - minesck-0
+14:45:00  🔥 Prometheus：PodNotReady（FIRING）- minesck-0（在不穩定節點上）
 14:51:41  ❌ 不穩定節點 #1 (i-01b37ac4e8793faa7, ap-east-1a, gemini-bg) 終止（10 分鐘）
 14:51:42  ❌ 不穩定節點 #2 (i-00822ee644501bc0a, ap-east-1a, gemini-hash) 終止（10 分鐘）
 14:51:41  👤 運維人員主動降低 gemini-bg Desired: 3→2（謹慎方法）
+14:53:00  ✅ Prometheus：PodNotReady（FIRING）→ Resolved - minesck-0（已從不穩定節點遷移）
+14:53:00  ✅ Prometheus：KubePdbNotEnoughHealthyPods（FIRING）→ Resolved（所有服務健康）
 14:54:10  ✅ 第二波：minesck-0 被迫第二次遷移（因不穩定節點 #2）
 14:56:27  ━━ gemini-hash 節點啟動 - i-089d9cd8124ffa27f (ap-east-1b)（不穩定節點 #3）
 15:04:58  ❌ 不穩定節點 #3 (i-089d9cd8124ffa27f, ap-east-1b, gemini-hash) 終止（8 分鐘）
@@ -272,9 +278,10 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 5. **級聯故障影響**：minesck-0 由於不穩定節點 #2 經歷雙重遷移（約 13 分鐘停機）
 6. **謹慎的運維決策**：第三波的 20 分鐘延遲是觀察到三個連續節點故障後的**審慎運維決策**，而非系統故障
 7. **風險管理成功**：運維人員暫停並驗證穩定性的決策**防止了潛在的第四個不穩定節點**和額外的級聯故障
-8. **最終恢復**：首次告警後 51 分鐘達成完整系統恢復（14:22→15:13）
-9. **監控驗證**：Prometheus Pod 層級告警（14:42、14:45）與 Kubernetes Pod 遷移事件完全關聯
-10. **節點穩定性模式**：所有三個不穩定節點都在 8-10 分鐘內故障，顯示一致的健康檢查失敗閾值
+8. **告警解決時間軸**：關鍵節點級別 FIRING 告警在 4 分鐘內解決（14:37→14:41），大多數 Pod 告警在 1-2 分鐘內清除，最終關鍵告警在 14:53 解決（首次偵測後 31 分鐘）
+9. **最終恢復**：首次告警後 51 分鐘達成完整系統恢復（14:22→15:13）
+10. **監控驗證**：Prometheus 告警生命週期（pending→firing→resolved）與 Kubernetes 事件完全關聯，驗證監控準確性
+11. **節點穩定性模式**：所有三個不穩定節點都在 8-10 分鐘內故障，顯示一致的健康檢查失敗閾值
 
 ---
 
