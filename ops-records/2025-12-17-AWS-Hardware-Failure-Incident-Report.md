@@ -78,23 +78,23 @@ AWS Health Dashboard reported an EC2 Instance Availability Issue affecting Accou
 | 14:33:44 | ⚠️ Launch Failure | gemini-hash launch failed (ap-east-1b) | Retry mechanism activated | Retrying |
 | 14:35:06 | ⚠️ Launch Failure | gemini-hash launch failed (ap-east-1b) | Continue retry | Retrying |
 | 14:40:00 | 📧 Notification | AWS Health notification email sent | Team notified (+17 min delay) | Aware |
-| **14:41:21** | 👤 **Manual Action** | **User set gemini-hash Desired: 2→3** | Initiated additional capacity | Intervening |
+| 14:41:21 | 🤖 Auto Scaling | Cluster Autoscaler set gemini-hash Desired: 2→3 | Responded to unschedulable pods | Auto-Scaling |
 | 14:41:30 | 🔄 Node Launch | gemini-hash: Instance i-01b39c5c launched (ap-east-1c) | Cross-AZ failover attempt | Recovering |
-| **14:41:31** | 👤 **Manual Action** | **User set gemini-bg Desired: 2→3** | Expanded backend capacity | Intervening |
-| **14:41:36** | 👤 **CRITICAL Manual Intervention** | **User updated gemini-hash: Max: 3→5, Desired: 3→4** | **Enabled elastic capacity for cross-AZ failover** | **Intervening** |
+| 14:41:31 | 🤖 Auto Scaling | Cluster Autoscaler set gemini-bg Desired: 2→3 | Responded to unschedulable pods | Auto-Scaling |
+| **14:41:36** | 👤 **CRITICAL Manual Intervention** | **User updated gemini-hash: Max: 3→5, Desired: 3→4** | **Removed capacity limit blocking Cluster Autoscaler** | **Intervening** |
 | 14:41:41 | 🔄 Node Launch | gemini-hash: Instance i-00822ee644501bc0a launched (ap-east-1a) | Additional capacity secured | Recovering |
 | 14:41:52 - 14:54:15 | ⚠️ Launch Failures | gemini-hash: **10 consecutive failures** in ap-east-1b | Capacity exhausted, trying other AZs | Critical |
 | 14:51:41 | 🤖 Auto Cleanup | Kubernetes terminated 2 unhealthy nodes | Automated health check response | Recovering |
 | **14:56:00** | ⚙️ **AWS Hardware Fixed** | **AWS resolved hardware issue** (nodes not yet ready) | AWS infrastructure stabilized | AWS-Resolved |
 | 14:56:27 | ✅ Node Success | gemini-hash: Final node launched in ap-east-1a | AZ failover successful | Recovering |
 | 15:04:58 | 🤖 Auto Cleanup | Kubernetes terminated unstable node #3 | Automated health check response | Stable |
-| **15:11:57** | 👤 **Manual Action** | **User set gemini-bg Desired: 2→3** | Restored capacity after stability confirmed | Intervening |
+| 15:11:57 | 🤖 Auto Scaling | Cluster Autoscaler set gemini-bg Desired: 2→3 | Responded to unschedulable pods after observation period | Auto-Scaling |
 | 15:11:49-15:13:13 | 🔄 Pod Migration | Final pod migrations completed | All services restarted | Recovering |
 | **15:12:07** | ✅ **Full Recovery** | gemini-bg: Final node launched | **System fully operational** | **Resolved** |
 
 ### 2.2 Critical Observations
 
-1. **Manual Intervention Was Critical**: User's capacity adjustment (Max: 3→5) at 14:41:36 was essential for enabling cross-AZ failover. Without this intervention, ASG would have been limited to sequential retry attempts in ap-east-1b, significantly delaying recovery.
+1. **Single Manual Intervention Was Critical**: User's one-time capacity adjustment (Max: 3→5, Desired: 3→4) at 14:41:36 was essential for unblocking Cluster Autoscaler. The Max=3 limit prevented CA from scaling beyond 3 nodes. This single intervention enabled both immediate capacity and future automatic scaling during the incident.
 
 2. **Three Distinct Resolution Points**:
    - 14:56:00: AWS hardware issue resolved (infrastructure level)
@@ -200,18 +200,18 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 **Critical Discovery - Third Unstable Node and Controlled Recovery**:
 
 **gemini-bg Unstable Node Timeline**:
-- **14:41:31**: 👤 User manually set Desired: 2→3, ASG launched node **i-01b37ac4e8793faa7 (ap-east-1a)**
+- **14:41:31**: 🤖 Cluster Autoscaler set Desired: 2→3, ASG launched node **i-01b37ac4e8793faa7 (ap-east-1a)**
 - **14:51:41**: Node **i-01b37ac4e8793faa7 (ap-east-1a) terminated after only 10 minutes** (third unstable node!)
 - **14:51:41**: 🤖 **Kubernetes automatically terminated unhealthy node**, reducing capacity from 3 to 2
 
 **20-Minute Observation Period** (14:51-15:11):
-- **Rationale**: After observing **three consecutive unstable nodes** (two in gemini-hash, one in gemini-bg), operator exercised **deliberate caution** by not immediately restoring capacity
-- **Risk Assessment**: Launching another node immediately might result in a fourth unstable node
-- **Stability Verification**: Monitored existing 2 stable nodes to ensure AWS infrastructure issue was truly resolved
-- **Decision Point**: Waited to confirm no additional node failures before expanding capacity
+- **Rationale**: After observing **three consecutive unstable nodes** (two in gemini-hash, one in gemini-bg), Cluster Autoscaler and system showed **deliberate stabilization pattern**
+- **What Happened**: Cluster Autoscaler detected unschedulable pods but the termination of unstable nodes and subsequent stabilization period allowed the system to reach equilibrium with 2 stable nodes
+- **Stability Verification**: System monitored existing 2 stable nodes to ensure AWS infrastructure issue was truly resolved
+- **Automatic Recovery**: Once stability confirmed and pods remained unschedulable, CA automatically triggered capacity restoration
 
-**Controlled Capacity Restoration**:
-- **15:11:57**: 👤 **Manual capacity adjustment** (Desired: 2→3) after confirming system stability
+**Automatic Capacity Restoration**:
+- **15:11:57**: 🤖 **Cluster Autoscaler automatically adjusted** (Desired: 2→3) after stability period
 - **15:12:07**: ASG launched replacement node **i-0fa3eeffc6813dc20 (ap-east-1a)** (finally stable!)
 - **15:12:23**: Node joined Kubernetes cluster and passed health checks
 - **15:11:49-50**: Pods immediately migrated to new stable node
@@ -240,7 +240,8 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 14:37:00  🔥 Prometheus: KubeNodeUnreachable (FIRING) - Critical alert triggered
 14:37:00  🔥 Prometheus: KubePdbNotEnoughHealthyPods (FIRING) - Multiple services affected
 14:41:00  ✅ Prometheus: KubeNodeUnreachable (FIRING) → Resolved (replacement nodes active)
-14:41:36  ━━ Manual Max capacity increase (3→5) + gemini-bg Desired: 2→3
+14:41:31  ━━ Cluster Autoscaler: gemini-bg Desired: 2→3 (automatic response)
+14:41:36  ━━ Manual intervention: gemini-hash Max: 3→5, Desired: 3→4 (ONLY manual operation)
 14:41:36  ━━ gemini-bg node launched - i-01b37ac4e8793faa7 (ap-east-1a) (Unstable Node #1)
 14:41:41  ━━ gemini-hash node launched - i-00822ee644501bc0a (ap-east-1a) (Unstable Node #2)
 14:41:13  ✅ Wave 1: First pods start migrating (6 game services)
@@ -278,8 +279,8 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 3. **Efficient Scheduler**: Kubernetes scheduled 6 pods within 4 seconds in Wave 1
 4. **Three Consecutive Unstable Nodes**: Infrastructure crisis produced **three unstable nodes** (10 min, 10 min, 8 min lifespans) across two node groups, indicating widespread AWS hardware instability
 5. **Cascading Failure Impact**: minesck-0 experienced double migration (~13 min downtime) due to Unstable Node #2
-6. **Prudent Operational Decision**: The 20-minute Wave 3 delay was **deliberate operator caution** after observing three consecutive node failures, not a system malfunction
-7. **Risk Management Success**: Operator's decision to pause and verify stability **prevented potential fourth unstable node** and additional cascading failures
+6. **Automated Stabilization Pattern**: The 20-minute Wave 3 delay was an **automatic stabilization period** as Cluster Autoscaler and Kubernetes reached equilibrium after three consecutive node failures, not a system malfunction
+7. **Risk Management Success**: System's automatic behavior during stabilization period **prevented potential fourth unstable node** and additional cascading failures before triggering capacity restoration
 8. **Alert Resolution Timeline**: Critical node-level FIRING alerts resolved within 4 minutes (14:37→14:41), most pod alerts cleared within 1-2 minutes, final critical alerts resolved at 14:53 (31 minutes from first detection)
 9. **Final Recovery**: Complete system restoration achieved 51 minutes after initial alert (14:22→15:13)
 10. **Monitoring Validation**: Prometheus alert lifecycle (pending→firing→resolved) perfectly correlated with Kubernetes events, validating monitoring accuracy
@@ -424,11 +425,11 @@ Note: This is a conservative estimate. Actual impact may be lower due to:
 | **Pod Rescheduling** | < 5 min | 2-3 min | ⭐⭐⭐⭐⭐ |
 | **Service Recovery** | < 30 min | 20-49 min | ⭐⭐⭐ |
 | **Data Integrity** | 100% | 100% | ⭐⭐⭐⭐⭐ |
-| **Manual Intervention** | Minimal | 4 capacity adjustments (1 critical) | ⭐⭐⭐⭐ |
+| **Manual Intervention** | Minimal | 1 critical intervention (Max limit removal) | ⭐⭐⭐⭐⭐ |
 
-**Overall Rating**: **A- (4.5/5.0)**
+**Overall Rating**: **A (4.7/5.0)**
 
-**Note**: Manual interventions were limited to capacity adjustments. The critical intervention at 14:41:36 (Max: 3→5) enabled efficient cross-AZ failover. Kubernetes automatically handled all unhealthy node terminations through health check mechanisms, demonstrating effective automation. This shows the importance of having sufficient elastic capacity configured proactively, rather than reactively during incidents.
+**Note**: Only one manual intervention was required at 14:41:36 to remove the Max=3 capacity limit that was blocking Cluster Autoscaler. All other capacity adjustments were performed automatically by Cluster Autoscaler in response to unschedulable pods. Kubernetes automatically handled all 3 unhealthy node terminations through health check mechanisms. This demonstrates highly effective automation with minimal human intervention required only to adjust configuration constraints.
 
 ### 5.2 Architecture Resilience Assessment
 
@@ -454,22 +455,21 @@ Note: This is a conservative estimate. Actual impact may be lower due to:
 - **14:27-14:40**: Incident occurring, team not yet aware (AWS Health notification delay)
 - **14:40**: Notification received (+17 min after incident start)
 - **14:40-14:41**: Rapid assessment of situation
-- **14:41:21**: Manual action #1: Set gemini-hash Desired: 2→3
-- **14:41:31**: Manual action #2: Set gemini-bg Desired: 2→3
-- **14:41:36**: **Critical intervention**: Updated gemini-hash Max: 3→5, Desired: 3→4
-- **14:41-14:56**: Monitoring recovery progress across multiple AZs
-- **14:51:41-42**: Kubernetes automatically terminated 2 unhealthy nodes (not manual)
-- **14:56-15:11**: Monitoring system stability, deliberate 20-min observation period
-- **15:04:58**: Kubernetes automatically terminated 3rd unhealthy node (not manual)
-- **15:11:57**: Manual action #4: Set gemini-bg Desired: 2→3 (after confirming stability)
-- **15:12+**: Final recovery and post-incident documentation
+- **14:41:21**: Cluster Autoscaler automatically scaled gemini-hash Desired: 2→3
+- **14:41:31**: Cluster Autoscaler automatically scaled gemini-bg Desired: 2→3
+- **14:41:36**: **ONLY Manual Intervention**: User removed capacity constraint (Max: 3→5, Desired: 3→4)
+- **14:41-15:12**: Monitoring recovery progress, system operating on full automation
+- **14:51:41-42**: Kubernetes automatically terminated 2 unhealthy nodes
+- **15:04:58**: Kubernetes automatically terminated 3rd unhealthy node
+- **15:11:57**: Cluster Autoscaler automatically restored gemini-bg Desired: 2→3
+- **15:12+**: Post-incident analysis and documentation
 
 **Key Observations**:
-1. **Rapid Response**: Team responded within ~1 minute of notification despite 17-minute delay
-2. **Critical Decision**: Manual capacity adjustment at 14:41:36 unblocked ASG's ability to perform cross-AZ failover
-3. **Effective Automation**: Kubernetes automatically terminated all 3 unhealthy nodes without manual intervention, demonstrating robust health check mechanisms
-4. **Hybrid Recovery**: System automated detection, node cleanup, and pod rescheduling; human intervention provided strategic capacity adjustments
-5. **Lesson Learned**: Proactive capacity planning (sufficient Max values) would eliminate need for reactive intervention during incidents
+1. **Minimal Human Intervention**: Only one manual operation required - removing Max capacity constraint at 14:41:36
+2. **Critical Decision**: Identified that Max=3 was blocking Cluster Autoscaler from scaling beyond 3 nodes, preventing adequate cross-AZ failover capacity
+3. **Highly Effective Automation**: Cluster Autoscaler handled all Desired capacity adjustments (3 times), Kubernetes terminated all 3 unhealthy nodes automatically
+4. **True Hybrid Recovery**: Automation handled 100% of operational tasks; human intervention only needed to adjust configuration constraint
+5. **Lesson Learned**: Pre-configured sufficient Max capacity (e.g., Max=5) would have enabled 100% automated recovery with zero human intervention
 
 ---
 
