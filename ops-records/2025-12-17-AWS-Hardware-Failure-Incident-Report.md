@@ -78,15 +78,17 @@ AWS Health Dashboard reported an EC2 Instance Availability Issue affecting Accou
 | 14:33:44 | ⚠️ Launch Failure | gemini-hash launch failed (ap-east-1b) | Retry mechanism activated | Retrying |
 | 14:35:06 | ⚠️ Launch Failure | gemini-hash launch failed (ap-east-1b) | Continue retry | Retrying |
 | 14:40:00 | 📧 Notification | AWS Health notification email sent | Team notified (+17 min delay) | Aware |
-| **14:41:21** | 👤 **Manual Action** | **User adjusted desired: 2→3** | Initiated additional capacity | Intervening |
+| **14:41:21** | 👤 **Manual Action** | **User set gemini-hash Desired: 2→3** | Initiated additional capacity | Intervening |
 | 14:41:30 | 🔄 Node Launch | gemini-hash: Instance i-01b39c5c launched (ap-east-1c) | Cross-AZ failover attempt | Recovering |
-| **14:41:36** | 👤 **CRITICAL Manual Intervention** | **User increased Max: 3→5, Desired: 3→4** | **Enabled elastic capacity for cross-AZ failover** | **Intervening** |
+| **14:41:31** | 👤 **Manual Action** | **User set gemini-bg Desired: 2→3** | Expanded backend capacity | Intervening |
+| **14:41:36** | 👤 **CRITICAL Manual Intervention** | **User updated gemini-hash: Max: 3→5, Desired: 3→4** | **Enabled elastic capacity for cross-AZ failover** | **Intervening** |
 | 14:41:41 | 🔄 Node Launch | gemini-hash: Instance i-00822ee644501bc0a launched (ap-east-1a) | Additional capacity secured | Recovering |
 | 14:41:52 - 14:54:15 | ⚠️ Launch Failures | gemini-hash: **10 consecutive failures** in ap-east-1b | Capacity exhausted, trying other AZs | Critical |
-| 14:51:41 | 🔄 Node Termination | gemini-bg: Temporary node terminated | Second migration triggered | Recovering |
+| 14:51:41 | 🤖 Auto Cleanup | Kubernetes terminated 2 unhealthy nodes | Automated health check response | Recovering |
 | **14:56:00** | ⚙️ **AWS Hardware Fixed** | **AWS resolved hardware issue** (nodes not yet ready) | AWS infrastructure stabilized | AWS-Resolved |
 | 14:56:27 | ✅ Node Success | gemini-hash: Final node launched in ap-east-1a | AZ failover successful | Recovering |
-| 15:04:58 | 🔄 Node Cleanup | gemini-hash: Old instance terminated | Cleanup complete | Stable |
+| 15:04:58 | 🤖 Auto Cleanup | Kubernetes terminated unstable node #3 | Automated health check response | Stable |
+| **15:11:57** | 👤 **Manual Action** | **User set gemini-bg Desired: 2→3** | Restored capacity after stability confirmed | Intervening |
 | 15:11:49-15:13:13 | 🔄 Pod Migration | Final pod migrations completed | All services restarted | Recovering |
 | **15:12:07** | ✅ **Full Recovery** | gemini-bg: Final node launched | **System fully operational** | **Resolved** |
 
@@ -198,12 +200,12 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 **Critical Discovery - Third Unstable Node and Controlled Recovery**:
 
 **gemini-bg Unstable Node Timeline**:
-- **14:41:36**: Manual capacity adjustment (Desired: 2→3), ASG launched node **i-01b37ac4e8793faa7 (ap-east-1a)**
+- **14:41:31**: 👤 User manually set Desired: 2→3, ASG launched node **i-01b37ac4e8793faa7 (ap-east-1a)**
 - **14:51:41**: Node **i-01b37ac4e8793faa7 (ap-east-1a) terminated after only 10 minutes** (third unstable node!)
-- **14:51:41**: 👤 **Operator manually terminated the unstable node**, reducing Desired back to 2
+- **14:51:41**: 🤖 **Kubernetes automatically terminated unhealthy node**, reducing capacity from 3 to 2
 
 **20-Minute Observation Period** (14:51-15:11):
-- **Rationale**: After observing **three consecutive unstable nodes** (two in gemini-hash, one in gemini-bg), operator exercised **deliberate caution**
+- **Rationale**: After observing **three consecutive unstable nodes** (two in gemini-hash, one in gemini-bg), operator exercised **deliberate caution** by not immediately restoring capacity
 - **Risk Assessment**: Launching another node immediately might result in a fourth unstable node
 - **Stability Verification**: Monitored existing 2 stable nodes to ensure AWS infrastructure issue was truly resolved
 - **Decision Point**: Waited to confirm no additional node failures before expanding capacity
@@ -250,7 +252,7 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 14:45:00  🔥 Prometheus: PodNotReady (FIRING) - minesck-0 (on unstable node)
 14:51:41  ❌ Unstable Node #1 (i-01b37ac4e8793faa7, ap-east-1a, gemini-bg) terminated (10 min)
 14:51:42  ❌ Unstable Node #2 (i-00822ee644501bc0a, ap-east-1a, gemini-hash) terminated (10 min)
-14:51:41  👤 Operator manually reduced gemini-bg Desired: 3→2 (cautious approach)
+14:51:41  🤖 Kubernetes auto-terminated unhealthy nodes, capacity reduced (gemini-bg: 3→2, gemini-hash: 4→3)
 14:53:00  ✅ Prometheus: PodNotReady (FIRING) → Resolved - minesck-0 (migrated from unstable node)
 14:53:00  ✅ Prometheus: KubePdbNotEnoughHealthyPods (FIRING) → Resolved (all services healthy)
 14:54:10  ✅ Wave 2: minesck-0 forced second migration (due to Unstable Node #2)
@@ -422,11 +424,11 @@ Note: This is a conservative estimate. Actual impact may be lower due to:
 | **Pod Rescheduling** | < 5 min | 2-3 min | ⭐⭐⭐⭐⭐ |
 | **Service Recovery** | < 30 min | 20-49 min | ⭐⭐⭐ |
 | **Data Integrity** | 100% | 100% | ⭐⭐⭐⭐⭐ |
-| **Manual Intervention** | Minimal | 1 critical action (capacity adjustment) | ⭐⭐⭐⭐ |
+| **Manual Intervention** | Minimal | 4 capacity adjustments (1 critical) | ⭐⭐⭐⭐ |
 
 **Overall Rating**: **A- (4.5/5.0)**
 
-**Note**: Manual intervention at 14:41:36 to increase Max capacity from 3 to 5 was essential for enabling efficient cross-AZ failover. This demonstrates the importance of having sufficient elastic capacity configured proactively, rather than reactively during incidents.
+**Note**: Manual interventions were limited to capacity adjustments. The critical intervention at 14:41:36 (Max: 3→5) enabled efficient cross-AZ failover. Kubernetes automatically handled all unhealthy node terminations through health check mechanisms, demonstrating effective automation. This shows the importance of having sufficient elastic capacity configured proactively, rather than reactively during incidents.
 
 ### 5.2 Architecture Resilience Assessment
 
@@ -452,17 +454,22 @@ Note: This is a conservative estimate. Actual impact may be lower due to:
 - **14:27-14:40**: Incident occurring, team not yet aware (AWS Health notification delay)
 - **14:40**: Notification received (+17 min after incident start)
 - **14:40-14:41**: Rapid assessment of situation
-- **14:41:21**: First manual action: Increased Desired capacity from 2 to 3
-- **14:41:36**: **Critical intervention**: Increased Max capacity from 3 to 5 and Desired from 3 to 4
+- **14:41:21**: Manual action #1: Set gemini-hash Desired: 2→3
+- **14:41:31**: Manual action #2: Set gemini-bg Desired: 2→3
+- **14:41:36**: **Critical intervention**: Updated gemini-hash Max: 3→5, Desired: 3→4
 - **14:41-14:56**: Monitoring recovery progress across multiple AZs
-- **14:56-15:12**: Monitoring final pod migrations and service recovery
-- **15:12+**: Post-incident analysis and documentation
+- **14:51:41-42**: Kubernetes automatically terminated 2 unhealthy nodes (not manual)
+- **14:56-15:11**: Monitoring system stability, deliberate 20-min observation period
+- **15:04:58**: Kubernetes automatically terminated 3rd unhealthy node (not manual)
+- **15:11:57**: Manual action #4: Set gemini-bg Desired: 2→3 (after confirming stability)
+- **15:12+**: Final recovery and post-incident documentation
 
 **Key Observations**:
 1. **Rapid Response**: Team responded within ~1 minute of notification despite 17-minute delay
 2. **Critical Decision**: Manual capacity adjustment at 14:41:36 unblocked ASG's ability to perform cross-AZ failover
-3. **Hybrid Recovery**: System automated detection and replacement, but human intervention was essential to provide adequate elastic capacity for multi-AZ failover scenarios
-4. **Lesson Learned**: Proactive capacity planning (sufficient Max values) would eliminate need for reactive intervention during incidents
+3. **Effective Automation**: Kubernetes automatically terminated all 3 unhealthy nodes without manual intervention, demonstrating robust health check mechanisms
+4. **Hybrid Recovery**: System automated detection, node cleanup, and pod rescheduling; human intervention provided strategic capacity adjustments
+5. **Lesson Learned**: Proactive capacity planning (sufficient Max values) would eliminate need for reactive intervention during incidents
 
 ---
 
