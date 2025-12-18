@@ -185,7 +185,7 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 - **Impact**: No pod double-migrations (pods already on stable nodes from Wave 1/2)
 
 #### Wave 3: gemini-bg Node Pods (15:11:49-15:11:50 HKT)
-*Delayed by deliberate operational caution after observing unstable node pattern*
+*Delayed by automatic system stabilization period after three consecutive unstable nodes*
 
 | HKT Time | Pod Name | Namespace | Type | Recovery Duration |
 |----------|----------|-----------|------|-------------------|
