@@ -1,9 +1,16 @@
 #!/bin/bash
 # Create Jira OPS issue for GitLab Access Configuration
 
+# Check for required environment variables
+if [ -z "$JIRA_USER" ] || [ -z "$JIRA_TOKEN" ]; then
+  echo "Error: JIRA_USER and JIRA_TOKEN environment variables must be set"
+  echo "Usage: JIRA_USER=user@example.com JIRA_TOKEN=your_token $0"
+  exit 1
+fi
+
 # GitLab Access Configuration Issue
 curl -X POST "https://jira.ftgaming.cc/rest/api/2/issue" \
-  -u "lonely.h@jvd.tw:NjkzODA0MTA5MjU3OrqN9yqLDHE5UK2zqx5xgHVRKb9M" \
+  -u "$JIRA_USER:$JIRA_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "fields": {
@@ -22,7 +29,7 @@ echo ""
 
 # pip Installation Issue
 curl -X POST "https://jira.ftgaming.cc/rest/api/2/issue" \
-  -u "lonely.h@jvd.tw:NjkzODA0MTA5MjU3OrqN9yqLDHE5UK2zqx5xgHVRKb9M" \
+  -u "$JIRA_USER:$JIRA_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "fields": {

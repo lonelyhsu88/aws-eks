@@ -2,10 +2,17 @@
 # Create Jira OPS issue for GitLab Access Configuration and pip Installation
 # Using Bearer Token Authentication
 
+# Check for required environment variable
+if [ -z "$JIRA_BEARER_TOKEN" ]; then
+  echo "Error: JIRA_BEARER_TOKEN environment variable must be set"
+  echo "Usage: JIRA_BEARER_TOKEN=your_token $0"
+  exit 1
+fi
+
 # GitLab Access Configuration Issue
 echo "Creating Issue 1: GitLab Repository Access Configuration"
 curl -X POST "https://jira.ftgaming.cc/rest/api/2/issue" \
-  -H "Authorization: Bearer NjkzODA0MTA5MjU3OrqN9yqLDHE5UK2zqx5xgHVRKb9M" \
+  -H "Authorization: Bearer $JIRA_BEARER_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "fields": {
@@ -25,7 +32,7 @@ echo ""
 # pip Installation Issue
 echo "Creating Issue 2: pip Installation"
 curl -X POST "https://jira.ftgaming.cc/rest/api/2/issue" \
-  -H "Authorization: Bearer NjkzODA0MTA5MjU3OrqN9yqLDHE5UK2zqx5xgHVRKb9M" \
+  -H "Authorization: Bearer $JIRA_BEARER_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "fields": {
