@@ -259,8 +259,8 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 14:54:10  ✅ Wave 2: minesck-0 forced second migration (due to Unstable Node #2)
 14:56:27  ━━ gemini-hash node launched - i-089d9cd8124ffa27f (ap-east-1b) (Unstable Node #3)
 15:04:58  ❌ Unstable Node #3 (i-089d9cd8124ffa27f, ap-east-1b, gemini-hash) terminated (8 min)
-         ⏱️  20-minute observation period (verifying AWS infrastructure stability)
-15:11:57  👤 Operator manually increased gemini-bg Desired: 2→3 (after stability confirmed)
+         ⏱️  20-minute observation period (automatic system stabilization)
+15:11:57  🤖 Cluster Autoscaler: gemini-bg Desired: 2→3 (automatic response after observation)
 15:12:07  ✅ gemini-bg stable node launched - i-0fa3eeffc6813dc20 (ap-east-1a) (finally stable!)
 15:11:49  ✅ Wave 3: gemini-bg pods start migrating
 15:13-14  ✅ Wave 3: All services fully operational

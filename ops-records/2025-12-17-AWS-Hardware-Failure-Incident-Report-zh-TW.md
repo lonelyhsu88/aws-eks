@@ -259,8 +259,8 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 14:54:10  ✅ 第二波：minesck-0 被迫第二次遷移（因不穩定節點 #2）
 14:56:27  ━━ gemini-hash 節點啟動 - i-089d9cd8124ffa27f (ap-east-1b)（不穩定節點 #3）
 15:04:58  ❌ 不穩定節點 #3 (i-089d9cd8124ffa27f, ap-east-1b, gemini-hash) 終止（8 分鐘）
-         ⏱️  20 分鐘觀察期（驗證 AWS 基礎設施穩定性）
-15:11:57  👤 **用戶手動操作** gemini-bg Desired: 2→3（確認穩定性後）
+         ⏱️  20 分鐘觀察期（系統自動穩定期）
+15:11:57  🤖 Cluster Autoscaler：gemini-bg Desired: 2→3（觀察期後自動回應）
 15:12:07  ✅ gemini-bg 穩定節點啟動 - i-0fa3eeffc6813dc20 (ap-east-1a)（終於穩定！）
 15:11:49  ✅ 第三波：gemini-bg Pod 開始遷移
 15:13-14  ✅ 第三波：所有服務完全運作
