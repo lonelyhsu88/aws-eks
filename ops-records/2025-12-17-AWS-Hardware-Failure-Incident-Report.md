@@ -27,6 +27,43 @@ On December 17, 2025, AWS experienced a hardware availability issue in the ap-ea
 
 ---
 
+## ⚠️ Corrections (2025-12-20)
+
+**This report has been corrected based on real AWS API data and Cluster Autoscaler logs**
+
+### Corrected Errors
+
+1. **Capacity Shortage Failure Count**
+   - ❌ Original Report: 15 failures, 10 consecutive failures
+   - ✅ Actual Data: **At least 27 failures** (based on ASG activity logs)
+
+2. **Node Termination Reason**
+   - ❌ Original Report: Nodes terminated due to "Kubernetes health check failure"
+   - ✅ Actual Reason: **Cluster Autoscaler automatic scale down**
+   - Explanation: ASG logs show "user request", but these are scale down requests issued by CA through Kubernetes API, not manual operations
+
+3. **Pod Migration Path Uncertainty**
+   - ⚠️ Original Report: Definitively described pods' double migration paths
+   - ⚠️ Actual Status: **Cannot be confirmed** (Kubernetes events only retained for 1 hour, historical data expired)
+   - Explanation: Unable to verify through historical logs whether pods experienced double migration
+
+### Verified Facts (Based on AWS API)
+
+- ✅ Hardware failure node: i-007f3dd92b10101e6
+- ✅ Capacity shortage AZ: ap-east-1b (not ap-east-1c)
+- ✅ Manual operation count: **Only once** (14:41:36 adjusting MAX to 5)
+- ✅ Three node terminations: All were Cluster Autoscaler scale down operations
+- ✅ Current state: 7 pods running stably on i-01b39c5c35027af62
+
+### Data Sources
+
+- AWS Auto Scaling Group activity logs (6-week retention)
+- Current Cluster Autoscaler logs
+- kubectl get pods current state
+- ASG describe-auto-scaling-groups configuration
+
+---
+
 ## Table of Contents
 
 1. [Incident Overview](#incident-overview)
@@ -71,6 +108,11 @@ AWS Health Dashboard reported an EC2 Instance Availability Issue affecting Accou
 
 ### 2.1 Detailed Event Timeline
 
+**⚠️ Timestamp Definitions**:
+- **Node Launch Times**: Represent when **ASG received the launch request** (based on ASG activity logs), NOT when the node became Ready in Kubernetes
+- **Actual Node Ready Time**: Typically occurs **30-60 seconds after ASG launch request** (includes EC2 instance boot, kubelet registration, and health checks)
+- **Example**: A node showing "launched at 14:41:36" typically becomes Ready in Kubernetes around 14:42:06-14:42:36
+
 | Time (HKT) | Event Type | Description | System Response | Status |
 |------------|-----------|-------------|-----------------|--------|
 | **14:23:12** | 🔴 **Incident Start** | AWS detected hardware failure | AWS Health Event initiated | Alert |
@@ -83,11 +125,11 @@ AWS Health Dashboard reported an EC2 Instance Availability Issue affecting Accou
 | 14:41:31 | 🤖 Auto Scaling | Cluster Autoscaler set gemini-bg Desired: 2→3 | Responded to unschedulable pods | Auto-Scaling |
 | **14:41:36** | 👤 **CRITICAL Manual Intervention** | **User updated gemini-hash: Max: 3→5, Desired: 3→4** | **Removed capacity limit blocking Cluster Autoscaler** | **Intervening** |
 | 14:41:41 | 🔄 Node Launch | gemini-hash: Instance i-00822ee644501bc0a launched (ap-east-1a) | Additional capacity secured | Recovering |
-| 14:41:52 - 14:54:15 | ⚠️ Launch Failures | gemini-hash: **10 consecutive failures** in ap-east-1b | Capacity exhausted, trying other AZs | Critical |
-| 14:51:41 | 🤖 Auto Cleanup | Kubernetes terminated 2 unhealthy nodes | Automated health check response | Recovering |
+| 14:41:52 - 14:54:15 | ⚠️ Launch Failures | gemini-hash: **At least 27 failures** in ap-east-1b | Capacity exhausted, trying other AZs | Critical |
+| 14:51:41 | 🤖 Auto Scale Down | Cluster Autoscaler terminated 2 nodes (deemed unnecessary) | CA scale down operation | Recovering |
 | **14:56:00** | ⚙️ **AWS Hardware Fixed** | **AWS resolved hardware issue** (nodes not yet ready) | AWS infrastructure stabilized | AWS-Resolved |
 | 14:56:27 | ✅ Node Success | gemini-hash: Final node launched in ap-east-1a | AZ failover successful | Recovering |
-| 15:04:58 | 🤖 Auto Cleanup | Kubernetes terminated unstable node #3 | Automated health check response | Stable |
+| 15:04:58 | 🤖 Auto Scale Down | Cluster Autoscaler terminated node #3 (deemed unnecessary) | CA scale down operation | Stable |
 | 15:11:57 | 🤖 Auto Scaling | Cluster Autoscaler set gemini-bg Desired: 2→3 | Responded to unschedulable pods after observation period | Auto-Scaling |
 | 15:11:49-15:13:13 | 🔄 Pod Migration | Final pod migrations completed | All services restarted | Recovering |
 | **15:12:07** | ✅ **Full Recovery** | gemini-bg: Final node launched | **System fully operational** | **Resolved** |
@@ -106,7 +148,7 @@ AWS Health Dashboard reported an EC2 Instance Availability Issue affecting Accou
    - Full service recovery: 49 minutes (14:23-15:12)
    - Gap: 16 minutes for pod rescheduling and service restart
 
-4. **Total Launch Failures**: **15 attempts** (unprecedented) - All failures in ap-east-1b due to InsufficientInstanceCapacity
+4. **Total Launch Failures**: **At least 27 attempts** (unprecedented) - All failures in ap-east-1b due to InsufficientInstanceCapacity
 
 5. **Capacity Constraint Impact**: First launch failure to success took ~23 minutes, demonstrating the critical importance of elastic capacity headroom for cross-AZ failover scenarios
 
@@ -116,8 +158,10 @@ AWS Health Dashboard reported an EC2 Instance Availability Issue affecting Accou
 
 **gemini-hash Node Group Launch Failures**:
 
+**⚠️ Note**: This timeline shows **13 documented failure timestamps**. However, ASG activity logs indicate **at least 27 total failures** occurred. The additional 14+ failures may have been recorded in ASG logs without detailed timestamps being preserved in the available CloudWatch or ASG activity export.
+
 ```
-Failure Timeline:
+Failure Timeline (13 documented timestamps from total 27+ failures):
 14:33:44 ━━ Failed (ap-east-1b)
 14:35:06 ━━ Failed (ap-east-1b)
 14:41:52 ━━ Failed (ap-east-1b)
@@ -149,7 +193,13 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 **Detailed Pod Recovery Timeline** (based on actual Pod creation timestamps):
 
 #### Wave 1: gemini-hash Node Pods (14:41:13-14:41:17 HKT)
-*Triggered immediately after new node i-00822ee644501bc0a became Ready in ap-east-1a*
+*Migrated to existing healthy nodes in the cluster (nodes that were already running before the incident)*
+
+**Node Migration Path**:
+- **Initial Migration Target**: Wave 1 pods likely migrated to **i-0a767b5cf0c79ec7f** (ap-east-1a), the only remaining healthy gemini-hash node (launched 2025-11-10, pre-incident)
+- **Final Stable Node**: **i-01b39c5c35027af62** (ap-east-1c), launched at 14:41:30 during the incident, became the stable destination for all affected pods
+- **Current State**: All 7 pods currently running on i-01b39c5c35027af62, which has remained stable since launch
+- **⚠️ Migration Path Uncertainty**: Cannot confirm exact migration sequence due to expired Kubernetes events (1-hour retention)
 
 | HKT Time | Pod Name | Namespace | Type | Recovery Duration |
 |----------|----------|-----------|------|-------------------|
@@ -164,28 +214,28 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 **Key Observation**: Critical hash-gate-0 gateway service was prioritized and recovered within 4 seconds of game service pods. Based on typical health check + startup time (~2-3 minutes), the gateway was likely serving traffic by **14:43-14:45 HKT**.
 
 #### Wave 2: gemini-hash Node Pod (14:54:10 HKT)
-*Second migration due to unstable node failure*
+*⚠️ Pod recreation (cannot confirm if second migration occurred)*
 
 | HKT Time | Pod Name | Namespace | Type | Recovery Duration |
 |----------|----------|-----------|------|-------------------|
 | 14:54:10 | minesck-0 | minesck-prd | Game Service | ~2-3 min |
 
-**Critical Discovery - First Unstable Node Cascading Failure**:
-- **14:41:13**: minesck-0 initially migrated to node **i-00822ee644501bc0a (ap-east-1a)** (gemini-hash, launched at 14:41:41)
-- **14:51:42**: Node **i-00822ee644501bc0a (ap-east-1a) was terminated by ASG** after only **10 minutes of operation**
-- **14:54:10**: minesck-0 **forced to migrate a second time** to stable node i-01b39c5c35027af62 (ap-east-1c)
-- **Root Cause**: The node that Wave 1 pods migrated to was itself unstable, failing health checks and being terminated by ASG
-- **Impact**: Only minesck-0 was affected because other Wave 1 pods were scheduled to stable nodes (existing nodes from 12/15 and 11/10)
-- **Total Downtime**: ~13 minutes (first migration + 10 min on unstable node + second migration)
+**Pod Migration History Cannot Be Fully Confirmed**:
+- **14:41:13**: minesck-0 pod was recreated (based on current pod age)
+- **14:51:42**: Node **i-00822ee644501bc0a (ap-east-1a) was scaled down by Cluster Autoscaler** after only **10 minutes of operation**
+- **Current State**: minesck-0 now running on stable node i-01b39c5c35027af62 (ap-east-1c)
+- **⚠️ Cannot Confirm**: Due to Kubernetes events only being retained for 1 hour, cannot confirm actual pod migration path (whether it experienced double migration, when it migrated to final node, etc.)
+- **Impact Scope**: Based on available evidence, cannot determine which pods experienced single or multiple migrations
+- **Data Limitation**: Historical pod scheduling events have expired, can only confirm current state and pod age
 
-**Second Unstable Node Discovery** (14:56-15:04):
+**Second Node Scale Down** (14:56-15:04):
 - **14:56:27**: ASG launched another replacement node **i-089d9cd8124ffa27f (ap-east-1b)** (gemini-hash)
-- **15:04:58**: Node **i-089d9cd8124ffa27f (ap-east-1b) terminated after only 8 minutes**
-- **Pattern**: Second consecutive unstable node in gemini-hash node group
-- **Impact**: No pod double-migrations (pods already on stable nodes from Wave 1/2)
+- **15:04:58**: Node **i-089d9cd8124ffa27f (ap-east-1b) was scaled down by Cluster Autoscaler** after only 8 minutes
+- **Reason**: Cluster Autoscaler deemed this node unnecessary (low resource utilization or pods could migrate to other nodes)
+- **Impact**: ⚠️ Cannot confirm if any pods were affected (historical events expired)
 
 #### Wave 3: gemini-bg Node Pods (15:11:49-15:11:50 HKT)
-*Delayed by automatic system stabilization period after three consecutive unstable nodes*
+*Delayed by automatic system stabilization period after three node scale downs*
 
 | HKT Time | Pod Name | Namespace | Type | Recovery Duration |
 |----------|----------|-----------|------|-------------------|
@@ -197,16 +247,27 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 | 15:11:50 | odinbingo-0 | odinbingo-prd | Bingo Game | ~2-3 min |
 | 15:11:50 | wilddiggr-0 | wilddiggr-prd | Arcade Game | ~2-3 min |
 
-**Critical Discovery - Third Unstable Node and Controlled Recovery**:
+**Critical Discovery - Third Scale Down and Controlled Recovery**:
 
-**gemini-bg Unstable Node Timeline**:
+**gemini-bg Node Scale Down Timeline**:
 - **14:41:31**: 🤖 Cluster Autoscaler set Desired: 2→3, ASG launched node **i-01b37ac4e8793faa7 (ap-east-1a)**
-- **14:51:41**: Node **i-01b37ac4e8793faa7 (ap-east-1a) terminated after only 10 minutes** (third unstable node!)
-- **14:51:41**: 🤖 **Kubernetes automatically terminated unhealthy node**, reducing capacity from 3 to 2
+- **14:51:41**: Node **i-01b37ac4e8793faa7 (ap-east-1a) was scaled down by Cluster Autoscaler** after only 10 minutes
+- **Reason**: 🤖 **Cluster Autoscaler deemed this node unnecessary** (pods could migrate to other nodes or low resource utilization), reducing capacity from 3 to 2
 
 **20-Minute Observation Period** (14:51-15:11):
-- **Rationale**: After observing **three consecutive unstable nodes** (two in gemini-hash, one in gemini-bg), Cluster Autoscaler and system showed **deliberate stabilization pattern**
-- **What Happened**: Cluster Autoscaler detected unschedulable pods but the termination of unstable nodes and subsequent stabilization period allowed the system to reach equilibrium with 2 stable nodes
+
+**Time Calculation**:
+- **Period Start**: 14:51:41 (first scale down event - gemini-bg node #1)
+- **Period End**: 15:11:57 (CA automatic capacity restoration)
+- **Total Duration**: 20 minutes 16 seconds
+- **Events During Period**:
+  - 14:51:41: Node #1 scaled down (gemini-bg)
+  - 14:51:42: Node #2 scaled down (gemini-hash)
+  - 15:04:58: Node #3 scaled down (gemini-hash)
+
+**Why This Period Exists**:
+- **Rationale**: After observing **three node scale down operations** (two in gemini-hash, one in gemini-bg), the system showed **deliberate stabilization pattern**
+- **What Happened**: Cluster Autoscaler detected unschedulable pods but the node scale downs and subsequent stabilization period allowed the system to reach equilibrium with 2 stable nodes
 - **Stability Verification**: System monitored existing 2 stable nodes to ensure AWS infrastructure issue was truly resolved
 - **Automatic Recovery**: Once stability confirmed and pods remained unschedulable, CA automatically triggered capacity restoration
 
@@ -218,9 +279,9 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 - **15:13-14**: All services fully operational
 
 **Key Observation**:
-- The 20-minute delay was **not a system failure** but a **prudent operational decision**
+- The 20-minute delay was **not a system failure** but **Cluster Autoscaler's automatic stabilization process**
 - All gemini-bg pods migrated simultaneously within 1 second window, indicating efficient Kubernetes scheduler performance
-- This cautious approach **prevented potential fourth unstable node** and additional cascading failures
+- This automatic stabilization process ensures the system only scales up after capacity issues are resolved
 - Successfully validated: Node i-0fa3eeffc6813dc20 (ap-east-1a) has remained stable since launch
 
 ### 2.5 Pod Migration Analysis Summary
@@ -228,9 +289,9 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 **Total Pods Affected**: 15 business pods + system pods
 **Migration Windows**: 3 distinct waves
 **Fastest Recovery**: Wave 1 pods (2-3 minutes from creation to ready)
-**Longest Recovery**: minesck-0 (experienced 2 migrations, ~13 minutes total)
+**Longest Recovery**: minesck-0 (~13 minutes total) ⚠️ **Cannot confirm migration count due to expired events**
 
-**Recovery Timeline with Unstable Nodes**:
+**Complete Recovery Timeline**:
 ```
 14:22:00  🚨 Prometheus: KubeNodeNotReady (pending) - Node ip-172-31-53-101
 14:22:00  🚨 Prometheus: KubeNodeUnreachable (pending) - Node ip-172-31-53-101
@@ -239,26 +300,27 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 14:36:00  ✅ Prometheus: KubeNodeUnreachable (pending) → Resolved
 14:37:00  🔥 Prometheus: KubeNodeUnreachable (FIRING) - Critical alert triggered
 14:37:00  🔥 Prometheus: KubePdbNotEnoughHealthyPods (FIRING) - Multiple services affected
-14:41:00  ✅ Prometheus: KubeNodeUnreachable (FIRING) → Resolved (replacement nodes active)
+14:41:00  ✅ Prometheus: KubeNodeUnreachable (FIRING) → Resolved (replacement node ready)
+14:41:13  ✅ Wave 1: First pods start migrating (6 game services, to existing healthy nodes)
+14:41:17  ✅ Wave 1: hash-gate-0 starts (critical gateway)
+14:41:30  ━━ gemini-hash stable node launched - i-01b39c5c35027af62 (ap-east-1c)
 14:41:31  ━━ Cluster Autoscaler: gemini-bg Desired: 2→3 (automatic response)
 14:41:36  ━━ Manual intervention: gemini-hash Max: 3→5, Desired: 3→4 (ONLY manual operation)
-14:41:36  ━━ gemini-bg node launched - i-01b37ac4e8793faa7 (ap-east-1a) (Unstable Node #1)
-14:41:41  ━━ gemini-hash node launched - i-00822ee644501bc0a (ap-east-1a) (Unstable Node #2)
-14:41:13  ✅ Wave 1: First pods start migrating (6 game services)
-14:41:17  ✅ Wave 1: hash-gate-0 starts (critical gateway)
+14:41:36  ━━ gemini-bg node launched - i-01b37ac4e8793faa7 (ap-east-1a)
+14:41:41  ━━ gemini-hash node launched - i-00822ee644501bc0a (ap-east-1a)
 14:42:00  🚨 Prometheus: PodNotReady (pending) - hash-gate-0, minesck-0, minesne-0, plinkocl-0
 14:43:00  ✅ Prometheus: PodNotReady (pending) → Resolved - hash-gate-0, minesne-0, plinkocl-0
 14:43-45  ✅ Wave 1: Services ready and serving traffic
 14:44:00  ✅ Prometheus: PodNotReady (pending) → Resolved - minesck-0
-14:45:00  🔥 Prometheus: PodNotReady (FIRING) - minesck-0 (on unstable node)
-14:51:41  ❌ Unstable Node #1 (i-01b37ac4e8793faa7, ap-east-1a, gemini-bg) terminated (10 min)
-14:51:42  ❌ Unstable Node #2 (i-00822ee644501bc0a, ap-east-1a, gemini-hash) terminated (10 min)
-14:51:41  🤖 Kubernetes auto-terminated unhealthy nodes, capacity reduced (gemini-bg: 3→2, gemini-hash: 4→3)
-14:53:00  ✅ Prometheus: PodNotReady (FIRING) → Resolved - minesck-0 (migrated from unstable node)
+14:45:00  🔥 Prometheus: PodNotReady (FIRING) - minesck-0
+14:51:41  ❌ Node #1 (i-01b37ac4e8793faa7, ap-east-1a, gemini-bg) scaled down by CA (10 min)
+14:51:42  ❌ Node #2 (i-00822ee644501bc0a, ap-east-1a, gemini-hash) scaled down by CA (10 min)
+14:51:41  🤖 Cluster Autoscaler scale down operation (gemini-bg: 3→2, gemini-hash: 4→3)
+14:53:00  ✅ Prometheus: PodNotReady (FIRING) → Resolved - minesck-0
 14:53:00  ✅ Prometheus: KubePdbNotEnoughHealthyPods (FIRING) → Resolved (all services healthy)
-14:54:10  ✅ Wave 2: minesck-0 forced second migration (due to Unstable Node #2)
-14:56:27  ━━ gemini-hash node launched - i-089d9cd8124ffa27f (ap-east-1b) (Unstable Node #3)
-15:04:58  ❌ Unstable Node #3 (i-089d9cd8124ffa27f, ap-east-1b, gemini-hash) terminated (8 min)
+14:54:10  ⚠️ minesck-0 pod recreated (⚠️ Cannot confirm if experienced double migration)
+14:56:27  ━━ gemini-hash node launched - i-089d9cd8124ffa27f (ap-east-1b)
+15:04:58  ❌ Node #3 (i-089d9cd8124ffa27f, ap-east-1b, gemini-hash) scaled down by CA (8 min)
          ⏱️  20-minute observation period (automatic system stabilization)
 15:11:57  🤖 Cluster Autoscaler: gemini-bg Desired: 2→3 (automatic response after observation)
 15:12:07  ✅ gemini-bg stable node launched - i-0fa3eeffc6813dc20 (ap-east-1a) (finally stable!)
@@ -266,25 +328,25 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 15:13-14  ✅ Wave 3: All services fully operational
 ```
 
-**Three Unstable Nodes Summary**:
-| Node | Instance ID | Node Group | Launch Time | Termination | AZ | Lifespan | Impact |
-|------|-------------|------------|-------------|-------------|-----|----------|--------|
+**Three Nodes Scaled Down by Cluster Autoscaler Summary**:
+| Node | Instance ID | Node Group | Launch Time | Scale Down | AZ | Lifespan | Impact |
+|------|-------------|------------|-------------|------------|-----|----------|--------|
 | #1 | i-01b37ac4e8793faa7 | gemini-bg | 14:41:36 | 14:51:41 | ap-east-1a | 10 min | Wave 3 delayed |
-| #2 | i-00822ee644501bc0a | gemini-hash | 14:41:41 | 14:51:42 | ap-east-1a | 10 min | minesck-0 double migration |
+| #2 | i-00822ee644501bc0a | gemini-hash | 14:41:41 | 14:51:42 | ap-east-1a | 10 min | ⚠️ Cannot confirm pod migration path |
 | #3 | i-089d9cd8124ffa27f | gemini-hash | 14:56:27 | 15:04:58 | ap-east-1b | 8 min | No pod impact |
 
 **Key Insights**:
 1. **Early Detection by Prometheus**: Prometheus detected node anomaly at **14:22:00 HKT** (5 minutes before Kubernetes), providing early warning through KubeNodeNotReady alert. Critical alerts (FIRING) triggered at 14:37:00, enabling proactive response.
 2. **Rapid Initial Recovery**: Critical hash-gate service recovered within ~19 minutes of first alert (14:22→14:41-45)
 3. **Efficient Scheduler**: Kubernetes scheduled 6 pods within 4 seconds in Wave 1
-4. **Three Consecutive Unstable Nodes**: Infrastructure crisis produced **three unstable nodes** (10 min, 10 min, 8 min lifespans) across two node groups, indicating widespread AWS hardware instability
-5. **Cascading Failure Impact**: minesck-0 experienced double migration (~13 min downtime) due to Unstable Node #2
-6. **Automated Stabilization Pattern**: The 20-minute Wave 3 delay was an **automatic stabilization period** as Cluster Autoscaler and Kubernetes reached equilibrium after three consecutive node failures, not a system malfunction
-7. **Risk Management Success**: System's automatic behavior during stabilization period **prevented potential fourth unstable node** and additional cascading failures before triggering capacity restoration
+4. **Three Consecutive CA Scale Downs**: **Three nodes were scaled down by Cluster Autoscaler** (10 min, 10 min, 8 min lifespans) across two node groups after CA determined they were unnecessary
+5. **Pod Migration Path Uncertainty**: ⚠️ **Cannot confirm** if minesck-0 experienced double migration due to expired Kubernetes events (1-hour retention)
+6. **Automated Stabilization Pattern**: The 20-minute Wave 3 delay was an **automatic stabilization period** as Cluster Autoscaler and Kubernetes reached equilibrium after three consecutive scale down operations, not a system malfunction
+7. **Risk Management Success**: System's automatic behavior during stabilization period ensured proper capacity management before triggering final capacity restoration
 8. **Alert Resolution Timeline**: Critical node-level FIRING alerts resolved within 4 minutes (14:37→14:41), most pod alerts cleared within 1-2 minutes, final critical alerts resolved at 14:53 (31 minutes from first detection)
 9. **Final Recovery**: Complete system restoration achieved 51 minutes after initial alert (14:22→15:13)
 10. **Monitoring Validation**: Prometheus alert lifecycle (pending→firing→resolved) perfectly correlated with Kubernetes events, validating monitoring accuracy
-11. **Node Stability Pattern**: All three unstable nodes failed within 8-10 minutes, suggesting consistent health check failure threshold
+11. **CA Scale Down Pattern**: All three nodes were scaled down within 8-10 minutes of launch, indicating CA's standard unneeded-node evaluation period
 
 ---
 
@@ -302,7 +364,7 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 
 #### Factor 1: AWS Capacity Shortage
 - **Issue**: ap-east-1b AZ ran out of c5a.xlarge instances
-- **Impact**: 15 consecutive launch failures over 23 minutes
+- **Impact**: At least 27 launch failures over 23 minutes
 - **Severity**: High - Delayed recovery significantly
 
 #### Factor 2: Single Instance Type Dependency
@@ -346,15 +408,14 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 
 | Service | Type | Role | Downtime | Reason |
 |---------|------|------|----------|--------|
-| **hash-gate-0** | Gateway | Hash Games entry point | ~15-20 min | Experienced 2 migrations |
+| **hash-gate-0** | Gateway | Hash Games entry point | ~15-20 min | ⚠️ Cannot confirm migration count |
 
 **Impact Details**:
 - All hash game traffic routes through this gateway
-- Experienced both gemini-hash node replacements
-- First migration: 14:41 (temporary node)
-- Second migration: 14:56 (final node)
-- Pod restart time: ~2 minutes per migration
-- Connection recovery: ~1 minute per migration
+- Currently running on i-01b39c5c35027af62 (ap-east-1c)
+- Pod was recreated at 14:41:17 (based on current pod age)
+- ⚠️ **Cannot confirm**: Actual migration path and count due to expired Kubernetes events (1-hour retention)
+- Total downtime: ~15-20 minutes
 
 #### Medium Impact Services (2-3 min downtime)
 
@@ -429,12 +490,12 @@ Note: This is a conservative estimate. Actual impact may be lower due to:
 
 **Overall Rating**: **A (4.7/5.0)**
 
-**Note**: Only one manual intervention was required at 14:41:36 to remove the Max=3 capacity limit that was blocking Cluster Autoscaler. All other capacity adjustments were performed automatically by Cluster Autoscaler in response to unschedulable pods. Kubernetes automatically handled all 3 unhealthy node terminations through health check mechanisms. This demonstrates highly effective automation with minimal human intervention required only to adjust configuration constraints.
+**Note**: Only one manual intervention was required at 14:41:36 to remove the Max=3 capacity limit that was blocking Cluster Autoscaler. All other capacity adjustments were performed automatically by Cluster Autoscaler in response to unschedulable pods. Cluster Autoscaler automatically scaled down all 3 nodes after determining they were unnecessary. This demonstrates highly effective automation with minimal human intervention required only to adjust configuration constraints.
 
 ### 5.2 Architecture Resilience Assessment
 
 ✅ **Strengths Demonstrated**:
-1. **Auto Scaling Groups**: Correctly identified and replaced unhealthy nodes
+1. **Auto Scaling Groups**: Correctly launched replacement nodes for failed node
 2. **Capacity Rebalancing**: Proactively moved workloads from at-risk hardware
 3. **Cross-AZ Failover**: Successfully failed over to alternate AZs
 4. **Kubernetes Self-Healing**: Pods automatically rescheduled without intervention
@@ -459,15 +520,15 @@ Note: This is a conservative estimate. Actual impact may be lower due to:
 - **14:41:31**: Cluster Autoscaler automatically scaled gemini-bg Desired: 2→3
 - **14:41:36**: **ONLY Manual Intervention**: User removed capacity constraint (Max: 3→5, Desired: 3→4)
 - **14:41-15:12**: Monitoring recovery progress, system operating on full automation
-- **14:51:41-42**: Kubernetes automatically terminated 2 unhealthy nodes
-- **15:04:58**: Kubernetes automatically terminated 3rd unhealthy node
+- **14:51:41-42**: Cluster Autoscaler automatically scaled down 2 nodes after determining them unnecessary
+- **15:04:58**: Cluster Autoscaler automatically scaled down 3rd node after determining it unnecessary
 - **15:11:57**: Cluster Autoscaler automatically restored gemini-bg Desired: 2→3
 - **15:12+**: Post-incident analysis and documentation
 
 **Key Observations**:
 1. **Minimal Human Intervention**: Only one manual operation required - removing Max capacity constraint at 14:41:36
 2. **Critical Decision**: Identified that Max=3 was blocking Cluster Autoscaler from scaling beyond 3 nodes, preventing adequate cross-AZ failover capacity
-3. **Highly Effective Automation**: Cluster Autoscaler handled all Desired capacity adjustments (3 times), Kubernetes terminated all 3 unhealthy nodes automatically
+3. **Highly Effective Automation**: Cluster Autoscaler handled all Desired capacity adjustments (3 times) and scaled down 3 nodes automatically after determining them unnecessary
 4. **True Hybrid Recovery**: Automation handled 100% of operational tasks; human intervention only needed to adjust configuration constraint
 5. **Lesson Learned**: Pre-configured sufficient Max capacity (e.g., Max=5) would have enabled 100% automated recovery with zero human intervention
 
@@ -775,94 +836,59 @@ spec:
 - Session persistence
 - Failover scenarios
 
-#### Action 2.4: Implement Enhanced Node Health Checks
-**Objective**: Prevent pods from scheduling to unstable nodes during infrastructure crisis
+#### Action 2.4: Review Cluster Autoscaler Configuration
+**Objective**: Optimize CA scale-down behavior to minimize unnecessary pod migrations
 
-**Root Cause Reference**: Wave 2 incident where minesck-0 was scheduled to node i-00822ee644501bc0a which failed after only 10 minutes, forcing a second migration and extending downtime to 13 minutes.
+**Context**: During the incident, three nodes were scaled down by Cluster Autoscaler within 8-10 minutes of launch. ⚠️ **Note**: Cannot confirm actual pod migration paths due to expired Kubernetes events (1-hour retention).
 
 **Implementation**:
 
-**Step 1 - Configure ASG Health Check Grace Period**:
+**Step 1 - Review Cluster Autoscaler Scale-Down Configuration**:
 ```bash
-# Increase health check grace period to allow proper node initialization
-aws autoscaling update-auto-scaling-group \
-  --auto-scaling-group-name eks-gemini-hash-becd1c1a-397a-63f3-d535-1b140077cf55 \
-  --health-check-grace-period 600 \  # 10 minutes (increased from default 300s)
-  --region ap-east-1
+# Check current CA deployment configuration
+kubectl get deployment cluster-autoscaler -n kube-system -o yaml | grep -A 20 "args:"
 
-# Apply to all node groups
-for asg in $(aws autoscaling describe-auto-scaling-groups \
-  --region ap-east-1 \
-  --query 'AutoScalingGroups[?contains(AutoScalingGroupName, `gemini`)].AutoScalingGroupName' \
-  --output text); do
-  aws autoscaling update-auto-scaling-group \
-    --auto-scaling-group-name "$asg" \
-    --health-check-grace-period 600 \
-    --region ap-east-1
-done
+# Key parameters to review:
+# --scale-down-unneeded-time=10m (default: 10 minutes)
+# --scale-down-utilization-threshold=0.5 (default: 50%)
+# --scale-down-delay-after-add=10m (delay scale-down after scale-up)
 ```
 
-**Step 2 - Add Node Readiness Gates**:
+**Step 2 - Consider Adjusting CA Scale-Down Timing**:
 ```yaml
-# Configure custom node readiness conditions
-apiVersion: v1
-kind: Node
-metadata:
-  name: node-example
-spec:
-  readinessGates:
-  - conditionType: "CustomNodeStabilityCheck"
+# If frequent scale-downs during incidents are problematic:
+# Increase scale-down-unneeded-time to allow more stabilization
+args:
+  - --scale-down-unneeded-time=15m  # Increased from 10m
+  - --scale-down-delay-after-add=15m  # Longer delay after scale-up
+  - --scale-down-delay-after-failure=5m  # Delay after node failure
 ```
 
-**Step 3 - Implement Node Taint for New Nodes**:
+**Step 3 - Review Node Utilization Thresholds**:
 ```bash
-# Add startup taint to prevent immediate scheduling
-# Configure in launch template user data:
-#!/bin/bash
-# Taint node on startup
-kubectl taint nodes $(hostname) node.kubernetes.io/not-ready=true:NoSchedule
+# Analyze whether nodes were truly unnecessary when scaled down
+kubectl top nodes
+kubectl describe nodes | grep -A 5 "Allocated resources"
 
-# Wait for stability checks (5 minutes)
-sleep 300
-
-# Run custom health checks
-/opt/scripts/node-stability-check.sh
-
-# Remove taint if healthy
-if [ $? -eq 0 ]; then
-  kubectl taint nodes $(hostname) node.kubernetes.io/not-ready:NoSchedule-
-fi
-```
-
-**Step 4 - Monitor Node Age Before Scheduling Critical Pods**:
-```yaml
-# Add node affinity to prefer mature nodes for critical services
-affinity:
-  nodeAffinity:
-    preferredDuringSchedulingIgnoredDuringExecution:
-    - weight: 100
-      preference:
-        matchExpressions:
-        - key: node.kubernetes.io/age
-          operator: Gt
-          values:
-          - "300"  # Prefer nodes older than 5 minutes
+# If nodes are being scaled down prematurely, consider:
+# - Adjusting --scale-down-utilization-threshold
+# - Adding PodDisruptionBudgets for critical services
 ```
 
 **Expected Outcome**:
-- New nodes undergo proper stabilization period before accepting pods
-- Reduced risk of cascading failures from unstable nodes
-- Prevented scenarios like minesck-0 Wave 2 double migration
-- **Cost Impact**: $0 (configuration only)
+- Optimized CA behavior to reduce unnecessary scale-down operations
+- Better balance between cost optimization and service stability
+- Reduced risk of pod migrations during incident recovery
+- **Cost Impact**: Minimal (slightly higher node retention time)
 
 **Success Metrics**:
-- Zero pod double-migrations due to node instability
-- Node failure rate < 1% within first 10 minutes of launch
-- Average pod migration count per incident: 1.0 (vs. current 1.07)
+- Reduced frequency of CA scale-downs within 15 minutes of node launch
+- Improved cluster stability during incident recovery
+- Maintained cost efficiency through appropriate scale-down timing
 
 **Testing Required**:
-- Simulate node failure immediately after launch
-- Verify taint removal timing
+- Monitor CA scale-down behavior during incident recovery
+- Verify scale-down timing aligns with configured parameters
 - Validate critical pod scheduling behavior
 
 ### 7.3 Medium-Term Improvements (Priority 3 - This Quarter)

@@ -8,6 +8,43 @@
 
 ---
 
+## ⚠️ 修正說明（2025-12-20）
+
+**本報告已基於真實 AWS API 數據和 Cluster Autoscaler 日誌進行修正**
+
+### 修正的錯誤
+
+1. **容量短缺失敗次數**
+   - ❌ 原報告：15 次失敗、10 次連續失敗
+   - ✅ 實際數據：**至少 27 次失敗**（基於 ASG activity logs）
+
+2. **節點終止原因**
+   - ❌ 原報告：節點因「Kubernetes 健康檢查失敗」而終止
+   - ✅ 實際原因：**Cluster Autoscaler 自動 scale down**
+   - 說明：ASG 日誌顯示 "user request"，但這是 CA 通過 Kubernetes API 發出的 scale down 請求，不是人工操作
+
+3. **Pod 遷移路徑的不確定性**
+   - ⚠️ 原報告：確定描述了 pods 的雙重遷移路徑
+   - ⚠️ 實際狀況：**無法確認**（Kubernetes events 僅保留 1 小時，歷史數據已過期）
+   - 說明：無法通過歷史日誌驗證 pods 是否經歷雙重遷移
+
+### 證實的事實（基於 AWS API）
+
+- ✅ 硬體故障節點：i-007f3dd92b10101e6
+- ✅ 容量不足的 AZ：ap-east-1b（不是 ap-east-1c）
+- ✅ 人工操作次數：**僅一次**（14:41:36 調整 MAX 到 5）
+- ✅ 三次節點終止：全部是 Cluster Autoscaler scale down
+- ✅ 當前狀態：7 個 pods 穩定運行在 i-01b39c5c35027af62 上
+
+### 數據來源
+
+- AWS Auto Scaling Group activity logs（6 週保留期）
+- Cluster Autoscaler 當前日誌
+- kubectl get pods 當前狀態
+- ASG describe-auto-scaling-groups 配置
+
+---
+
 ## 摘要
 
 2025年12月17日，AWS 在 ap-east-1（香港）區域發生硬體可用性問題，影響我們的正式環境 EKS 叢集 `gemini-game-prd`。該事故由 AWS 基礎設施和我們的 Auto Scaling Groups 自動偵測。在 14:41 時，關鍵的人工介入（將 ASG Max 容量從 3 增加到 5）對於實現成功的跨可用區容錯移轉至關重要，展現了自動化系統的有效性以及在容量受限情況下及時人為決策的重要性。
@@ -71,6 +108,11 @@ AWS Health Dashboard 報告了影響帳戶 470013648166 在 ap-east-1 區域的 
 
 ### 2.1 詳細事件時間軸
 
+**⚠️ 時間戳定義說明**：
+- **節點啟動時間**：代表 **ASG 收到啟動請求的時間**（基於 ASG activity logs），**並非**節點在 Kubernetes 中變為 Ready 的時間
+- **實際節點 Ready 時間**：通常在 **ASG 啟動請求後 30-60 秒**發生（包含 EC2 實例啟動、kubelet 註冊、健康檢查）
+- **範例**：顯示「14:41:36 啟動」的節點，通常在 14:42:06-14:42:36 左右在 Kubernetes 中變為 Ready
+
 | 時間（HKT） | 事件類型 | 描述 | 系統回應 | 狀態 |
 |------------|---------|------|----------|------|
 | **14:23:12** | 🔴 **事故開始** | AWS 偵測到硬體故障 | AWS Health Event 啟動 | 警示 |
@@ -83,11 +125,11 @@ AWS Health Dashboard 報告了影響帳戶 470013648166 在 ap-east-1 區域的 
 | 14:41:31 | 🤖 自動擴展 | Cluster Autoscaler 設定 gemini-bg Desired: 2→3 | 回應無法調度的 Pod | 自動擴容 |
 | **14:41:36** | 👤 **關鍵人工介入** | **使用者更新 gemini-hash Max: 3→5, Desired: 3→4** | **移除阻擋 Cluster Autoscaler 的容量限制** | **介入中** |
 | 14:41:41 | 🔄 節點啟動 | gemini-hash：實例 i-00822ee644501bc0a 啟動（ap-east-1a） | 確保額外容量 | 恢復中 |
-| 14:41:52 - 14:54:15 | ⚠️ 啟動失敗 | gemini-hash：**連續 10 次失敗**於 ap-east-1b | 容量耗盡，嘗試其他 AZ | 嚴重 |
-| 14:51:41 | 🤖 自動清理 | Kubernetes 終止 2 個不健康節點 | 自動健康檢查回應 | 恢復中 |
+| 14:41:52 - 14:54:15 | ⚠️ 啟動失敗 | gemini-hash：**至少 27 次失敗**於 ap-east-1b | 容量耗盡，嘗試其他 AZ | 嚴重 |
+| 14:51:41 | 🤖 自動 Scale Down | Cluster Autoscaler 終止 2 個節點（判定不需要） | CA scale down 操作 | 恢復中 |
 | **14:56:00** | ⚙️ **AWS 硬體修復** | **AWS 解決硬體問題**（節點尚未就緒） | AWS 基礎設施穩定 | AWS-已解決 |
 | 14:56:27 | ✅ 節點成功 | gemini-hash：最終節點於 ap-east-1a 啟動 | AZ 容錯移轉成功 | 恢復中 |
-| 15:04:58 | 🤖 自動清理 | Kubernetes 終止不穩定節點 #3 | 自動健康檢查回應 | 穩定 |
+| 15:04:58 | 🤖 自動 Scale Down | Cluster Autoscaler 終止節點 #3（判定不需要） | CA scale down 操作 | 穩定 |
 | 15:11:57 | 🤖 自動擴展 | Cluster Autoscaler 設定 gemini-bg Desired: 2→3 | 觀察期後回應無法調度的 Pod | 自動擴容 |
 | 15:11:49-15:13:13 | 🔄 Pod 遷移 | 最終 Pod 遷移完成 | 所有服務重啟 | 恢復中 |
 | **15:12:07** | ✅ **完全恢復** | gemini-bg：最終節點啟動 | **系統完全運作** | **已解決** |
@@ -106,7 +148,7 @@ AWS Health Dashboard 報告了影響帳戶 470013648166 在 ap-east-1 區域的 
    - 完整服務恢復：49 分鐘（14:23-15:12）
    - 差距：16 分鐘用於 Pod 重新排程和服務重啟
 
-4. **總啟動失敗次數**：**15 次嘗試**（前所未有）- 所有失敗皆發生於 ap-east-1b，原因為 InsufficientInstanceCapacity
+4. **總啟動失敗次數**：**至少 27 次嘗試**（前所未有）- 所有失敗皆發生於 ap-east-1b，原因為 InsufficientInstanceCapacity
 
 5. **容量限制影響**：首次啟動失敗到成功耗時約 23 分鐘，展現了彈性容量餘裕對於跨 AZ 容錯移轉情境的關鍵重要性
 
@@ -116,8 +158,10 @@ AWS Health Dashboard 報告了影響帳戶 470013648166 在 ap-east-1 區域的 
 
 **gemini-hash 節點群組啟動失敗**：
 
+**⚠️ 注意**：此時間軸顯示了 **13 個已記錄的失敗時間戳**。然而，ASG 活動日誌顯示**至少發生了 27 次失敗**。額外的 14+ 次失敗可能已記錄在 ASG 日誌中，但詳細時間戳未保留在可用的 CloudWatch 或 ASG 活動匯出中。
+
 ```
-失敗時間軸：
+失敗時間軸（從總共 27+ 次失敗中記錄的 13 個時間戳）：
 14:33:44 ━━ 失敗（ap-east-1b）
 14:35:06 ━━ 失敗（ap-east-1b）
 14:41:52 ━━ 失敗（ap-east-1b）
@@ -149,7 +193,13 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 **詳細 Pod 恢復時間軸**（基於實際 Pod 創建時間戳）：
 
 #### 第一波：gemini-hash 節點 Pod（14:41:13-14:41:17 HKT）
-*新節點 i-00822ee644501bc0a 在 ap-east-1a 變為 Ready 後立即觸發*
+*遷移到叢集中已存在的健康節點（事件發生前就已運行的節點）*
+
+**節點遷移路徑**：
+- **初始遷移目標**：第一波 Pod 可能遷移到 **i-0a767b5cf0c79ec7f** (ap-east-1a)，這是唯一剩餘的健康 gemini-hash 節點（2025-11-10 啟動，事件前就存在）
+- **最終穩定節點**：**i-01b39c5c35027af62** (ap-east-1c)，於事件期間的 14:41:30 啟動，成為所有受影響 Pod 的穩定目標節點
+- **當前狀態**：所有 7 個 Pod 目前都在 i-01b39c5c35027af62 上運行，該節點自啟動以來一直保持穩定
+- **⚠️ 遷移路徑不確定性**：由於 Kubernetes events 僅保留 1 小時，無法確認確切的遷移順序
 
 | HKT 時間 | Pod 名稱 | Namespace | 類型 | 恢復時長 |
 |----------|----------|-----------|------|----------|
@@ -164,28 +214,28 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 **關鍵觀察**：關鍵的 hash-gate-0 閘道服務在遊戲服務 Pod 之後 4 秒內優先恢復。基於典型的健康檢查和啟動時間（約 2-3 分鐘），閘道可能在 **14:43-14:45 HKT** 開始提供服務。
 
 #### 第二波：gemini-hash 節點 Pod（14:54:10 HKT）
-*由於不穩定節點故障導致的第二次遷移*
+*⚠️ Pod 重新創建（無法確認是否經歷第二次遷移）*
 
 | HKT 時間 | Pod 名稱 | Namespace | 類型 | 恢復時長 |
 |----------|----------|-----------|------|----------|
 | 14:54:10 | minesck-0 | minesck-prd | 遊戲服務 | 約2-3分鐘 |
 
-**關鍵發現 - 第一個不穩定節點級聯故障**：
-- **14:41:13**：minesck-0 最初遷移到節點 **i-00822ee644501bc0a (ap-east-1a)**（gemini-hash，於 14:41:41 啟動）
-- **14:51:42**：節點 **i-00822ee644501bc0a (ap-east-1a) 被 ASG 終止**，僅運行了 **10 分鐘**
-- **14:54:10**：minesck-0 **被迫第二次遷移**到穩定節點 i-01b39c5c35027af62 (ap-east-1c)
-- **根本原因**：第一波 Pod 遷移到的節點本身不穩定，未通過健康檢查後被 ASG 終止
-- **影響範圍**：只有 minesck-0 受影響，因為其他第一波 Pod 被調度到穩定節點（12/15 和 11/10 的現有節點）
-- **總停機時間**：約 13 分鐘（第一次遷移 + 在不穩定節點上 10 分鐘 + 第二次遷移）
+**關鍵發現 - Pod 遷移歷史無法完整確認**：
+- **14:41:13**：minesck-0 Pod 被重新創建（根據當前 Pod age）
+- **14:51:42**：節點 **i-00822ee644501bc0a (ap-east-1a) 被 Cluster Autoscaler scale down**，僅運行了 **10 分鐘**
+- **當前狀態**：minesck-0 現在運行在穩定節點 i-01b39c5c35027af62 (ap-east-1c)
+- **⚠️ 無法確認**：由於 Kubernetes events 僅保留 1 小時，無法確認 Pod 的實際遷移路徑（是否經歷雙重遷移、何時遷移到最終節點等）
+- **影響範圍**：根據現有證據，無法確定哪些 Pod 經歷了單次或多次遷移
+- **數據限制**：歷史 Pod 調度事件已過期，僅能確認當前狀態和 Pod 年齡
 
-**第二個不穩定節點發現**（14:56-15:04）：
+**第二個節點 Scale Down**（14:56-15:04）：
 - **14:56:27**：ASG 啟動另一個替換節點 **i-089d9cd8124ffa27f (ap-east-1b)**（gemini-hash）
-- **15:04:58**：節點 **i-089d9cd8124ffa27f (ap-east-1b) 僅運行 8 分鐘後終止**
-- **模式**：gemini-hash 節點組中連續第二個不穩定節點
-- **影響**：無 Pod 雙重遷移（Pod 已在第一波/第二波遷移到穩定節點）
+- **15:04:58**：節點 **i-089d9cd8124ffa27f (ap-east-1b) 被 Cluster Autoscaler scale down**，僅運行 8 分鐘
+- **原因**：Cluster Autoscaler 判定該節點不需要（資源利用率低或 pods 可遷移到其他節點）
+- **影響**：⚠️ 無法確認是否有 Pod 受影響（歷史事件已過期）
 
 #### 第三波：gemini-bg 節點 Pod（15:11:49-15:11:50 HKT）
-*系統在三個連續不穩定節點後的自動穩定期導致延遲*
+*系統在三個節點 scale down 後的自動穩定期導致延遲*
 
 | HKT 時間 | Pod 名稱 | Namespace | 類型 | 恢復時長 |
 |----------|----------|-----------|------|----------|
@@ -197,16 +247,27 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 | 15:11:50 | odinbingo-0 | odinbingo-prd | Bingo 遊戲 | 約2-3分鐘 |
 | 15:11:50 | wilddiggr-0 | wilddiggr-prd | 街機遊戲 | 約2-3分鐘 |
 
-**關鍵發現 - 第三個不穩定節點與受控恢復**：
+**關鍵發現 - 第三個 Scale Down 與受控恢復**：
 
-**gemini-bg 不穩定節點時間軸**：
+**gemini-bg 節點 Scale Down 時間軸**：
 - **14:41:31**：🤖 **Cluster Autoscaler 設定 Desired: 2→3**，ASG 啟動節點 **i-01b37ac4e8793faa7 (ap-east-1a)**
-- **14:51:41**：節點 **i-01b37ac4e8793faa7 僅運行 10 分鐘後終止**（第三個不穩定節點！）
-- **14:51:41**：🤖 **Kubernetes 自動終止不健康節點**，容量降為 2
+- **14:51:41**：節點 **i-01b37ac4e8793faa7 被 Cluster Autoscaler scale down**，僅運行 10 分鐘
+- **原因**：🤖 **Cluster Autoscaler 判定不需要該節點**（pods 可遷移到其他節點或資源利用率低），容量降為 2
 
 **20 分鐘觀察期**（14:51-15:11）：
-- **原因**：觀察到**三個連續不穩定節點**（gemini-hash 兩個，gemini-bg 一個）後，Cluster Autoscaler 和系統展現**自動穩定化模式**
-- **實際情況**：Cluster Autoscaler 偵測到無法調度的 Pod，但不穩定節點的終止和後續穩定化期間使系統與 2 個穩定節點達到平衡狀態
+
+**時間計算**：
+- **期間開始**：14:51:41（第一次 scale down 事件 - gemini-bg 節點 #1）
+- **期間結束**：15:11:57（CA 自動恢復容量）
+- **總時長**：20 分 16 秒
+- **期間內事件**：
+  - 14:51:41: 節點 #1 被 scale down（gemini-bg）
+  - 14:51:42: 節點 #2 被 scale down（gemini-hash）
+  - 15:04:58: 節點 #3 被 scale down（gemini-hash）
+
+**此期間存在的原因**：
+- **原因**：觀察到**三個節點被 Cluster Autoscaler scale down**（gemini-hash 兩個，gemini-bg 一個）後，系統展現**自動穩定化模式**
+- **實際情況**：Cluster Autoscaler 偵測到無法調度的 Pod，但節點的 scale down 和後續穩定化期間使系統與 2 個穩定節點達到平衡狀態
 - **穩定性驗證**：系統監控現有 2 個穩定節點，確保 AWS 基礎設施問題真正解決
 - **自動恢復**：一旦確認穩定且 Pod 仍無法調度，CA 自動觸發容量恢復
 
@@ -218,9 +279,9 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 - **15:13-14**：所有服務完全運作
 
 **關鍵觀察**：
-- 20 分鐘延遲**不是系統故障**而是**自動穩定化過程**
+- 20 分鐘延遲**不是系統故障**而是**Cluster Autoscaler 的自動穩定化過程**
 - 所有 gemini-bg Pod 在 1 秒時間窗口內同時遷移，顯示 Kubernetes 調度器的高效性能
-- 這種自動穩定化過程**防止了潛在的第四個不穩定節點**和額外的級聯故障
+- 這種自動穩定化過程確保系統在容量問題解決後才擴容
 - 成功驗證：節點 i-0fa3eeffc6813dc20 (ap-east-1a) 自啟動以來一直保持穩定
 
 ### 2.5 Pod 遷移分析摘要
@@ -228,9 +289,9 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 **受影響的 Pod 總數**：15 個業務 Pod + 系統 Pod
 **遷移時間窗口**：3 個不同的波次
 **最快恢復**：第一波 Pod（從創建到就緒 2-3 分鐘）
-**最長恢復**：minesck-0（經歷 2 次遷移，總共約 13 分鐘）
+**⚠️ 無法確認**：由於 Kubernetes events 歷史數據已過期，無法確認具體的遷移次數和路徑
 
-**含不穩定節點的恢復時間軸**：
+**完整恢復時間軸**：
 ```
 14:22:00  🚨 Prometheus：KubeNodeNotReady（pending）- 節點 ip-172-31-53-101
 14:22:00  🚨 Prometheus：KubeNodeUnreachable（pending）- 節點 ip-172-31-53-101
@@ -240,25 +301,26 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 14:37:00  🔥 Prometheus：KubeNodeUnreachable（FIRING）- 重大告警觸發
 14:37:00  🔥 Prometheus：KubePdbNotEnoughHealthyPods（FIRING）- 多項服務受影響
 14:41:00  ✅ Prometheus：KubeNodeUnreachable（FIRING）→ Resolved（替換節點已就緒）
+14:41:13  ✅ 第一波：首批 Pod 開始遷移（6 個遊戲服務，遷移到已存在的健康節點）
+14:41:17  ✅ 第一波：hash-gate-0 啟動（關鍵閘道）
+14:41:30  ━━ gemini-hash 穩定節點啟動 - i-01b39c5c35027af62 (ap-east-1c)
 14:41:31  ━━ Cluster Autoscaler：gemini-bg Desired: 2→3（自動回應）
 14:41:36  ━━ 人工介入：gemini-hash Max: 3→5, Desired: 3→4（唯一人工操作）
-14:41:36  ━━ gemini-bg 節點啟動 - i-01b37ac4e8793faa7 (ap-east-1a)（不穩定節點 #1）
-14:41:41  ━━ gemini-hash 節點啟動 - i-00822ee644501bc0a (ap-east-1a)（不穩定節點 #2）
-14:41:13  ✅ 第一波：首批 Pod 開始遷移（6 個遊戲服務）
-14:41:17  ✅ 第一波：hash-gate-0 啟動（關鍵閘道）
+14:41:36  ━━ gemini-bg 節點啟動 - i-01b37ac4e8793faa7 (ap-east-1a)
+14:41:41  ━━ gemini-hash 節點啟動 - i-00822ee644501bc0a (ap-east-1a)
 14:42:00  🚨 Prometheus：PodNotReady（pending）- hash-gate-0、minesck-0、minesne-0、plinkocl-0
 14:43:00  ✅ Prometheus：PodNotReady（pending）→ Resolved - hash-gate-0、minesne-0、plinkocl-0
 14:43-45  ✅ 第一波：服務就緒並開始提供服務
 14:44:00  ✅ Prometheus：PodNotReady（pending）→ Resolved - minesck-0
-14:45:00  🔥 Prometheus：PodNotReady（FIRING）- minesck-0（在不穩定節點上）
-14:51:41  ❌ 不穩定節點 #1 (i-01b37ac4e8793faa7, ap-east-1a, gemini-bg) 終止（10 分鐘）
-14:51:42  ❌ 不穩定節點 #2 (i-00822ee644501bc0a, ap-east-1a, gemini-hash) 終止（10 分鐘）
-14:51:41  🤖 Kubernetes 自動清理不健康節點（gemini-bg: 3→2, gemini-hash: 4→3）
-14:53:00  ✅ Prometheus：PodNotReady（FIRING）→ Resolved - minesck-0（已從不穩定節點遷移）
+14:45:00  🔥 Prometheus：PodNotReady（FIRING）- minesck-0
+14:51:41  ❌ 節點 #1 (i-01b37ac4e8793faa7, ap-east-1a, gemini-bg) 被 CA scale down（10 分鐘）
+14:51:42  ❌ 節點 #2 (i-00822ee644501bc0a, ap-east-1a, gemini-hash) 被 CA scale down（10 分鐘）
+14:51:41  🤖 Cluster Autoscaler scale down 操作（gemini-bg: 3→2, gemini-hash: 4→3）
+14:53:00  ✅ Prometheus：PodNotReady（FIRING）→ Resolved - minesck-0
 14:53:00  ✅ Prometheus：KubePdbNotEnoughHealthyPods（FIRING）→ Resolved（所有服務健康）
-14:54:10  ✅ 第二波：minesck-0 被迫第二次遷移（因不穩定節點 #2）
-14:56:27  ━━ gemini-hash 節點啟動 - i-089d9cd8124ffa27f (ap-east-1b)（不穩定節點 #3）
-15:04:58  ❌ 不穩定節點 #3 (i-089d9cd8124ffa27f, ap-east-1b, gemini-hash) 終止（8 分鐘）
+14:54:10  ⚠️ minesck-0 Pod 被重新創建（⚠️ 無法確認是否經歷雙重遷移）
+14:56:27  ━━ gemini-hash 節點啟動 - i-089d9cd8124ffa27f (ap-east-1b)
+15:04:58  ❌ 節點 #3 (i-089d9cd8124ffa27f, ap-east-1b, gemini-hash) 被 CA scale down（8 分鐘）
          ⏱️  20 分鐘觀察期（系統自動穩定期）
 15:11:57  🤖 Cluster Autoscaler：gemini-bg Desired: 2→3（觀察期後自動回應）
 15:12:07  ✅ gemini-bg 穩定節點啟動 - i-0fa3eeffc6813dc20 (ap-east-1a)（終於穩定！）
@@ -266,25 +328,25 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 15:13-14  ✅ 第三波：所有服務完全運作
 ```
 
-**三個不穩定節點摘要**：
+**三個節點 Scale Down 摘要**：
 | 節點 | Instance ID | 節點組 | 啟動時間 | 終止時間 | AZ | 存活時長 | 影響 |
 |------|-------------|--------|----------|----------|-----|----------|------|
 | #1 | i-01b37ac4e8793faa7 | gemini-bg | 14:41:36 | 14:51:41 | ap-east-1a | 10 分鐘 | 第三波延遲 |
-| #2 | i-00822ee644501bc0a | gemini-hash | 14:41:41 | 14:51:42 | ap-east-1a | 10 分鐘 | minesck-0 雙重遷移 |
-| #3 | i-089d9cd8124ffa27f | gemini-hash | 14:56:27 | 15:04:58 | ap-east-1b | 8 分鐘 | 無 Pod 影響 |
+| #2 | i-00822ee644501bc0a | gemini-hash | 14:41:41 | 14:51:42 | ap-east-1a | 10 分鐘 | ⚠️ 無法確認 |
+| #3 | i-089d9cd8124ffa27f | gemini-hash | 14:56:27 | 15:04:58 | ap-east-1b | 8 分鐘 | ⚠️ 無法確認 |
 
 **關鍵見解**：
 1. **Prometheus 早期偵測**：Prometheus 在 **14:22:00 HKT** 偵測到節點異常（比 Kubernetes 早 5 分鐘），透過 KubeNodeNotReady 告警提供早期預警。重大告警（FIRING）在 14:37:00 觸發，促成主動回應。
 2. **快速初始恢復**：關鍵 hash-gate 服務在首次告警後約 19 分鐘內恢復（14:22→14:41-45）
 3. **高效調度器**：Kubernetes 在第一波中於 4 秒內調度了 6 個 Pod
-4. **三個連續不穩定節點**：基礎設施危機在兩個節點組中產生**三個不穩定節點**（10 分鐘、10 分鐘、8 分鐘存活時長），顯示廣泛的 AWS 硬體不穩定性
-5. **級聯故障影響**：minesck-0 由於不穩定節點 #2 經歷雙重遷移（約 13 分鐘停機）
-6. **自動穩定化模式**：第三波的 20 分鐘延遲是**系統自動穩定期**，Cluster Autoscaler 和 Kubernetes 在三個連續節點故障後達到平衡，而非系統故障
-7. **風險管理成功**：系統在穩定期間的**自動行為**在觸發容量恢復前**防止了潛在的第四個不穩定節點**和額外的級聯故障
+4. **三個連續 Scale Down 操作**：Cluster Autoscaler 在兩個節點組中執行**三次 scale down**（10 分鐘、10 分鐘、8 分鐘後），符合 CA 的 scale-down-unneeded-time 默認值（10 分鐘）
+5. **Pod 遷移影響**：⚠️ 由於 Kubernetes events 歷史數據已過期，無法確認 pods 的實際遷移路徑和次數
+6. **自動穩定化模式**：第三波的 20 分鐘延遲是**系統自動穩定期**，Cluster Autoscaler 在三個連續 scale down 操作後等待系統穩定，而非系統故障
+7. **風險管理成功**：系統在穩定期間的**自動行為**確保容量問題解決後才擴容，避免額外的 scale down 循環
 8. **告警解決時間軸**：關鍵節點級別 FIRING 告警在 4 分鐘內解決（14:37→14:41），大多數 Pod 告警在 1-2 分鐘內清除，最終關鍵告警在 14:53 解決（首次偵測後 31 分鐘）
 9. **最終恢復**：首次告警後 51 分鐘達成完整系統恢復（14:22→15:13）
 10. **監控驗證**：Prometheus 告警生命週期（pending→firing→resolved）與 Kubernetes 事件完全關聯，驗證監控準確性
-11. **節點穩定性模式**：所有三個不穩定節點都在 8-10 分鐘內故障，顯示一致的健康檢查失敗閾值
+11. **Cluster Autoscaler Scale Down 模式**：所有三個節點都在啟動後 8-10 分鐘內被 CA scale down，這正好符合 CA 的 scale-down-unneeded-time 默認值（10 分鐘）
 
 ---
 
@@ -302,7 +364,7 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 
 #### 因素 1：AWS 容量短缺
 - **問題**：ap-east-1b AZ 的 c5a.xlarge 實例用盡
-- **影響**：23 分鐘內連續 15 次啟動失敗
+- **影響**：23 分鐘內至少 27 次啟動失敗
 - **嚴重性**：高 - 顯著延遲恢復
 
 #### 因素 2：單一實例類型依賴
@@ -346,15 +408,14 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 
 | 服務 | 類型 | 角色 | 停機時間 | 原因 |
 |------|------|------|----------|------|
-| **hash-gate-0** | 閘道 | Hash 遊戲入口 | ~15-20 分鐘 | 經歷 2 次遷移 |
+| **hash-gate-0** | 閘道 | Hash 遊戲入口 | ~15-20 分鐘 | ⚠️ 無法確認遷移次數 |
 
 **影響詳情**：
 - 所有 hash 遊戲流量經由此閘道路由
-- 經歷兩次 gemini-hash 節點替換
-- 第一次遷移：14:41（臨時節點）
-- 第二次遷移：14:56（最終節點）
-- Pod 重啟時間：每次遷移約 2 分鐘
-- 連線恢復：每次遷移約 1 分鐘
+- 目前運行在 i-01b39c5c35027af62 (ap-east-1c)
+- Pod 於 14:41:17 重新創建（基於當前 pod age）
+- ⚠️ **無法確認**：由於 Kubernetes events 僅保留 1 小時，無法確認實際遷移路徑和次數
+- 總停機時間：約 15-20 分鐘
 
 #### 中等影響服務（2-3 分鐘停機）
 
@@ -429,7 +490,7 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 
 **整體評分**：**A（4.7/5.0）**
 
-**註記**：僅需一次人工介入（14:41:36）移除阻擋 Cluster Autoscaler 的 Max=3 容量限制。所有其他容量調整皆由 Cluster Autoscaler 自動執行以回應無法調度的 Pod。Kubernetes 透過健康檢查機制自動處理所有 3 個不健康節點的終止。這展現了高度有效的自動化，僅需最少的人工介入來調整配置限制。
+**註記**：僅需一次人工介入（14:41:36）移除阻擋 Cluster Autoscaler 的 Max=3 容量限制。所有其他容量調整皆由 Cluster Autoscaler 自動執行以回應無法調度的 Pod。Cluster Autoscaler 根據資源利用率和 pod 調度需求自動處理所有 3 個節點的 scale down 操作。這展現了高度有效的自動化，僅需最少的人工介入來調整配置限制。
 
 ### 5.2 架構韌性評估
 
@@ -459,15 +520,15 @@ Availability Zone in your request or choosing ap-east-1a, ap-east-1c.
 - **14:41:31**：Cluster Autoscaler 自動擴展 gemini-bg Desired: 2→3
 - **14:41:36**：**唯一人工介入**：使用者移除容量限制（Max: 3→5, Desired: 3→4）
 - **14:41-15:12**：監控恢復進度，系統在完全自動化下運行
-- **14:51:41-42**：Kubernetes 自動終止 2 個不健康節點
-- **15:04:58**：Kubernetes 自動終止第 3 個不健康節點
+- **14:51:41-42**：Cluster Autoscaler 自動 scale down 2 個節點
+- **15:04:58**：Cluster Autoscaler 自動 scale down 第 3 個節點
 - **15:11:57**：Cluster Autoscaler 自動恢復 gemini-bg Desired: 2→3
 - **15:12+**：事故後分析和文件記錄
 
 **關鍵觀察**：
 1. **最少人工介入**：僅需一次人工操作 - 在 14:41:36 移除 Max 容量限制
 2. **關鍵決策**：識別出 Max=3 阻擋了 Cluster Autoscaler 擴展超過 3 個節點，妨礙了足夠的跨 AZ 容錯移轉容量
-3. **高效自動化**：Cluster Autoscaler 處理所有 Desired 容量調整（3 次），Kubernetes 自動終止所有 3 個不健康節點
+3. **高效自動化**：Cluster Autoscaler 處理所有 Desired 容量調整（3 次 scale up + 3 次 scale down），完全自動化管理集群容量
 4. **真正的混合式恢復**：自動化處理 100% 的操作任務；人工介入僅需調整配置限制
 5. **學到的教訓**：預先配置足夠的 Max 容量（如 Max=5）將實現 100% 自動化恢復，無需任何人工介入
 
@@ -776,9 +837,9 @@ spec:
 - 容錯移轉情境
 
 #### 行動 2.4：實施增強節點健康檢查
-**目標**：防止 Pod 在基礎設施危機期間被調度到不穩定節點
+**目標**：確保節點穩定性，避免 Cluster Autoscaler 頻繁 scale down
 
-**根本原因參考**：第二波事件中，minesck-0 被調度到節點 i-00822ee644501bc0a，該節點僅運行 10 分鐘後失敗，導致被迫第二次遷移，將停機時間延長至 13 分鐘。
+**根本原因參考**：事件中，三個節點在啟動後 8-10 分鐘內被 Cluster Autoscaler scale down。適當的健康檢查寬限期可以避免節點在初始化完成前被判定為不需要。
 
 **實施方案**：
 
@@ -851,12 +912,12 @@ affinity:
 
 **預期結果**：
 - 新節點在接受 Pod 前經過適當的穩定期
-- 降低不穩定節點造成級聯故障的風險
-- 防止類似 minesck-0 第二波雙重遷移的情況
+- 降低節點頻繁 scale down 造成的服務中斷風險
+- 確保節點有足夠時間穩定後才承載 Pod
 - **成本影響**：$0（僅配置）
 
 **成功指標**：
-- 因節點不穩定導致的 Pod 雙重遷移為零
+- 減少節點啟動後短時間內被 scale down 的次數
 - 節點啟動後前 10 分鐘內的故障率 < 1%
 - 每次事件的平均 Pod 遷移次數：1.0（vs. 目前 1.07）
 
@@ -1200,7 +1261,7 @@ spec:
 
 **⚠️ 弱點**：
 - 彈性容量不足需要被動的人工介入（Max: 3→5）
-- 單一實例類型依賴導致 15 次連續啟動失敗
+- 單一實例類型依賴導致至少 27 次連續啟動失敗
 - 單副本關鍵服務造成不必要的停機
 - 通知延遲 17 分鐘意味著團隊較晚得知事故
 - 識別出多個單點故障（ArgoCD、閘道、Redis）
@@ -1213,7 +1274,7 @@ spec:
 
 3. **單點故障為高風險**：以單副本運行的服務（ArgoCD、閘道、Redis）造成不必要的脆弱性和延長的停機時間。ArgoCD 的情況特別嚴重，因為它是單一節點託管所有 7 個 pod，為所有 GitOps 部署創造了單點故障。
 
-4. **實例類型多樣性至關重要**：依賴單一實例類型（c5a.xlarge）使我們容易受到容量短缺的影響，導致 ap-east-1b 的 15 次連續啟動失敗。這將透過混合實例策略來解決，提供自動備援選項。
+4. **實例類型多樣性至關重要**：依賴單一實例類型（c5a.xlarge）使我們容易受到容量短缺的影響，導致 ap-east-1b 的至少 27 次連續啟動失敗。這將透過混合實例策略來解決，提供自動備援選項。
 
 5. **即時警報為必要條件**：17 分鐘的通知延遲意味著團隊在關鍵決策已需要時才得知事故。透過 EventBridge 進行主動 AWS Health 事件警報將把此延遲從 17 分鐘降低至 < 1 分鐘。
 
