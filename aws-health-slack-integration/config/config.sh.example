@@ -1,0 +1,101 @@
+#!/bin/bash
+# AWS Health to Slack Integration Configuration
+#
+# Copy this file to config.sh and fill in your values:
+#   cp config/config.sh.example config/config.sh
+#   vim config/config.sh
+
+# ============================================
+# Slack Configuration
+# ============================================
+
+# Slack Incoming Webhook URL
+# Create at: https://api.slack.com/apps → Your App → Incoming Webhooks
+# Example: https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXX
+SLACK_WEBHOOK_URL="https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+
+# Slack Channel (for reference, actual channel set in webhook configuration)
+SLACK_CHANNEL="#ops-alerts"
+
+# ============================================
+# AWS Configuration
+# ============================================
+
+# AWS Region
+AWS_REGION="ap-east-1"
+
+# AWS Account ID
+AWS_ACCOUNT_ID="470013648166"
+
+# ============================================
+# Resource Names
+# ============================================
+
+# SNS Topic Name
+SNS_TOPIC_NAME="ops-alerts-aws-health"
+
+# Lambda Function Name
+LAMBDA_FUNCTION_NAME="AWSHealthToSlack"
+
+# IAM Role Name
+IAM_ROLE_NAME="AWSHealthToSlackLambdaRole"
+
+# EventBridge Rule Name
+EVENTBRIDGE_RULE_NAME="aws-health-to-slack"
+
+# Dead Letter Queue Name
+DLQ_NAME="aws-health-lambda-dlq"
+
+# ============================================
+# Lambda Configuration
+# ============================================
+
+# Lambda Runtime
+LAMBDA_RUNTIME="python3.11"
+
+# Lambda Timeout (seconds)
+LAMBDA_TIMEOUT="30"
+
+# Lambda Memory Size (MB)
+LAMBDA_MEMORY="128"
+
+# ============================================
+# Monitoring Services
+# ============================================
+
+# Services to monitor for AWS Health events
+# Comma-separated list
+MONITORED_SERVICES="EC2,EKS,RDS,ELB,ELASTICLOADBALANCING"
+
+# Event Categories to monitor
+# Options: issue, scheduledChange, accountNotification, investigation
+EVENT_CATEGORIES="issue,scheduledChange,investigation"
+
+# ============================================
+# Optional: Advanced Configuration
+# ============================================
+
+# CloudWatch Log Retention (days)
+LOG_RETENTION_DAYS="7"
+
+# Tags for created resources
+RESOURCE_TAGS="Purpose=AWS-Health-Alerts,ManagedBy=DevOps,Environment=Production"
+
+# ============================================
+# Deployment Options
+# ============================================
+
+# Enable Dead Letter Queue
+ENABLE_DLQ="true"
+
+# Enable CloudWatch Dashboard
+ENABLE_DASHBOARD="true"
+
+# Enable CloudWatch Alarms
+ENABLE_ALARMS="true"
+
+# Dry run mode (set to true to see what would be created without actually creating)
+DRY_RUN="false"
+
+# Verbose output
+VERBOSE="false"

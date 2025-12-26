@@ -1,0 +1,43 @@
+{
+  "version": "0",
+  "id": "12345678-1234-1234-1234-123456789012",
+  "detail-type": "AWS Health Event",
+  "source": "aws.health",
+  "account": "470013648166",
+  "time": "2025-12-17T06:23:12Z",
+  "region": "ap-east-1",
+  "resources": [
+    "i-007f3dd92b10101e6",
+    "i-0a767b5cf0c79ec7f"
+  ],
+  "detail": {
+    "eventArn": "arn:aws:health:ap-east-1::event/EC2/AWS_EC2_INSTANCE_AVAILABILITY_ISSUE/AWS_EC2_INSTANCE_AVAILABILITY_ISSUE_20251217",
+    "service": "EC2",
+    "eventTypeCode": "AWS_EC2_INSTANCE_AVAILABILITY_ISSUE",
+    "eventTypeCategory": "issue",
+    "startTime": "2025-12-17T06:23:12Z",
+    "endTime": "2025-12-17T06:56:00Z",
+    "eventDescription": [
+      {
+        "language": "en_US",
+        "latestDescription": "Between Wed, 17 Dec 2025 06:23:12 GMT and Wed, 17 Dec 2025 06:56:00 GMT, a subset of EC2 instances were unavailable in the ap-east-1 Region. Your affected EC2 instance(s) are listed in the 'Affected resources' tab. The issue has been resolved and the service is operating normally."
+      }
+    ],
+    "affectedEntities": [
+      {
+        "entityValue": "i-007f3dd92b10101e6",
+        "tags": {
+          "Name": "gemini-hash-node-1",
+          "Environment": "production"
+        }
+      },
+      {
+        "entityValue": "i-0a767b5cf0c79ec7f",
+        "tags": {
+          "Name": "gemini-hash-node-2",
+          "Environment": "production"
+        }
+      }
+    ]
+  }
+}
