@@ -13,7 +13,7 @@ This document describes the production architecture for Gemini Gaming Platform d
 
 **Key Metrics**:
 - **Infrastructure**: 11 compute instances (40 vCPUs, 76 GB RAM)
-- **Storage**: 11.8 TB RDS PostgreSQL + 7 S3 buckets
+- **Storage**: 11.8 TB RDS PostgreSQL + 3 S3 buckets (EKS)
 - **Network**: Multi-AZ across 3 availability zones
 - **Services**: 78+ containerized microservices (19 games + 8 backend + DevOps tooling)
 - **Traffic**: 5 load balancers (4 ALB + 1 NLB)
@@ -265,7 +265,7 @@ graph TB
 
                 subgraph Data["💾 Data Layer"]
                     RDS["💽 RDS PostgreSQL<br/>5 Instances<br/>11.8 TB"]
-                    S3["🗄️ S3 Buckets (7)<br/>3 EKS + 4 Application"]
+                    S3["🗄️ S3 Buckets (3)<br/>EKS Infrastructure"]
                     ECR["📦 ECR<br/>29 Repositories"]
                 end
             end
@@ -1280,9 +1280,7 @@ resources:
 
 ### C. S3 Buckets Inventory
 
-**Total Buckets**: 7 (all in ap-east-1)
-
-#### EKS-Dedicated Buckets (3)
+**Total Buckets**: 3 (EKS infrastructure, all in ap-east-1)
 
 | Bucket Name | Purpose | EKS Usage | Versioning | Encryption |
 |-------------|---------|-----------|------------|-----------|
@@ -1295,15 +1293,6 @@ resources:
 - **Thanos**: Continuous metrics ingestion, 90-day retention, supports time-series queries
 - **Service Backup**: Application-initiated backups, retention varies by service
 
-#### Application Buckets (4)
-
-| Bucket Name | Purpose | Related Services | Public Access |
-|-------------|---------|------------------|---------------|
-| **gemini-campaigns-landing-pages** | Campaign landing page assets | Marketing/Promotion services | ❌ Blocked |
-| **gemini-comfyui** | ComfyUI AI-related data | AI/ML workloads | ❌ Blocked |
-| **gemini-daily-reports** | Daily report storage | Analytics/Reporting services | ❌ Blocked |
-| **s3.geminigame.cc** | Static assets CDN origin | Frontend applications | ❌ Blocked (CloudFront only) |
-
 **Security Configuration** (All Buckets):
 - ✅ **Public Access**: Blocked at bucket level
 - ✅ **Encryption**: SSE-S3 (AWS-managed keys)
@@ -1311,9 +1300,9 @@ resources:
 - ✅ **Lifecycle Policies**: Configured per bucket purpose (e.g., Velero → Glacier after 30 days)
 
 **Cost Optimization Recommendations**:
-- 💡 Implement S3 Intelligent-Tiering for `gemini-daily-reports` (infrequent access)
 - 💡 Enable VPC Endpoint for S3 to reduce NAT Gateway costs (~$200/month savings)
 - 💡 Review Thanos retention policy (90 days → 60 days if acceptable)
+- 💡 Evaluate Glacier Deep Archive for Velero backups older than 90 days
 
 ---
 
