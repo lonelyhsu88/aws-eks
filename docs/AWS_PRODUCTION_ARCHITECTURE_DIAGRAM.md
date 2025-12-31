@@ -265,7 +265,7 @@ graph TB
 
                 subgraph Data["💾 Data Layer"]
                     RDS["💽 RDS PostgreSQL<br/>5 Instances<br/>11.8 TB"]
-                    S3["🗄️ S3 Buckets (7)<br/>Backups/Metrics/Assets"]
+                    S3["🗄️ S3 Buckets (7)<br/>3 EKS + 4 Application"]
                     ECR["📦 ECR<br/>29 Repositories"]
                 end
             end
@@ -1278,7 +1278,46 @@ resources:
 
 ---
 
-### C. Compliance & Governance
+### C. S3 Buckets Inventory
+
+**Total Buckets**: 7 (all in ap-east-1)
+
+#### EKS-Dedicated Buckets (3)
+
+| Bucket Name | Purpose | EKS Usage | Versioning | Encryption |
+|-------------|---------|-----------|------------|-----------|
+| **gemini-eks-velero-backups** | Kubernetes resource backups | Velero backup destination | ✅ Enabled | ✅ SSE-S3 |
+| **gemini-prometheus-thanos** | Long-term metrics storage | Prometheus/Thanos backend | ❌ Disabled | ✅ SSE-S3 |
+| **gemini-svc-backup** | Service config & data backups | Application-level backups | ✅ Enabled | ✅ SSE-S3 |
+
+**Usage Patterns**:
+- **Velero**: Automated K8s cluster backups every 6 hours, 14-day retention
+- **Thanos**: Continuous metrics ingestion, 90-day retention, supports time-series queries
+- **Service Backup**: Application-initiated backups, retention varies by service
+
+#### Application Buckets (4)
+
+| Bucket Name | Purpose | Related Services | Public Access |
+|-------------|---------|------------------|---------------|
+| **gemini-campaigns-landing-pages** | Campaign landing page assets | Marketing/Promotion services | ❌ Blocked |
+| **gemini-comfyui** | ComfyUI AI-related data | AI/ML workloads | ❌ Blocked |
+| **gemini-daily-reports** | Daily report storage | Analytics/Reporting services | ❌ Blocked |
+| **s3.geminigame.cc** | Static assets CDN origin | Frontend applications | ❌ Blocked (CloudFront only) |
+
+**Security Configuration** (All Buckets):
+- ✅ **Public Access**: Blocked at bucket level
+- ✅ **Encryption**: SSE-S3 (AWS-managed keys)
+- ✅ **Access Logging**: Enabled for audit compliance
+- ✅ **Lifecycle Policies**: Configured per bucket purpose (e.g., Velero → Glacier after 30 days)
+
+**Cost Optimization Recommendations**:
+- 💡 Implement S3 Intelligent-Tiering for `gemini-daily-reports` (infrequent access)
+- 💡 Enable VPC Endpoint for S3 to reduce NAT Gateway costs (~$200/month savings)
+- 💡 Review Thanos retention policy (90 days → 60 days if acceptable)
+
+---
+
+### D. Compliance & Governance
 
 **Data Residency**:
 - ✅ All data stored in Hong Kong region (ap-east-1)
@@ -1303,7 +1342,7 @@ resources:
 
 ---
 
-### D. Glossary
+### E. Glossary
 
 | Term | Definition |
 |------|------------|
