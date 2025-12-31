@@ -37,3 +37,7 @@ credentials
 # Temporary files
 tmp/
 temp/
+
+# Claude Flow runtime configuration
+.claude-flow/
+.swarm/
