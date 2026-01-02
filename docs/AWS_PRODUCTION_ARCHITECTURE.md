@@ -4,7 +4,7 @@
 **Region**: ap-east-1 (Hong Kong)
 **Environment**: Production (PRD)
 **Last Updated**: 2026-01-02
-**Version**: 3.6
+**Version**: 4.0
 
 ---
 
@@ -33,12 +33,14 @@ graph TB
         ControlPlane["⚙️ EKS Control Plane<br/>Kubernetes 1.34 API"]
         DNS["Route53 DNS"]
         IAM["IAM<br/>9 Roles + IRSA"]
+        ECR["Amazon ECR<br/>81 Repositories<br/>(AWS Managed)"]
+        S3["Amazon S3<br/>prometheus-thanos<br/>(AWS Managed)"]
+        CloudWatch["CloudWatch<br/>Logs + Metrics<br/>(AWS Managed)"]
     end
 
-    subgraph AWS["☁️ AWS Region: ap-east-1 (Hong Kong) - Default VPC"]
-
-        subgraph Network["🌐 Network Layer - VPC (172.31.0.0/16)"]
-            IGW["Internet<br/>Gateway"]
+    subgraph AWS["☁️ AWS Region: ap-east-1 (Hong Kong)"]
+        subgraph VPC["🔒 Default VPC (172.31.0.0/16)<br/>⚠️ Production Note: Default VPC has architectural limitations"]
+            IGW["🌐 Internet Gateway<br/>(VPC Boundary)"]
 
             subgraph PublicSubnet["📤 Public Subnet - Multi-AZ"]
                 ALB["⚖️ Application Load Balancers (4)<br/>+ AWS WAF (OWASP Rules)<br/>• Istio Gateway<br/>• Backend API<br/>• OpenAPI<br/>• ArgoCD"]
@@ -46,16 +48,15 @@ graph TB
             end
 
             subgraph PrivateSubnet["🔒 Private Subnet - Multi-AZ"]
-
                 subgraph Nodes["☸️ EKS Worker Nodes (9)"]
-                    AZ1["ap-east-1a<br/>2 nodes"]
-                    AZ2["ap-east-1b<br/>3 nodes"]
-                    AZ3["ap-east-1c<br/>4 nodes"]
+                    AZ1["ap-east-1a: 2 nodes"]
+                    AZ2["ap-east-1b: 3 nodes"]
+                    AZ3["ap-east-1c: 4 nodes"]
                 end
 
-                NLB["⚖️ Internal NLB (1)<br/>• Nginx Ingress<br/>(Internal only)"]
+                NLB["⚖️ Internal NLB (1)<br/>• Nginx Ingress<br/>(Pod-to-Pod only)"]
 
-                subgraph Apps["🎮 Application Layer"]
+                subgraph Apps["🎮 Application Pods (K8s)"]
                     Games["Game Services (67)<br/>Bingo/Arcade/Crash<br/>Hash/Hilo/Mines/Plinko"]
                     Backend["Backend Services (12)<br/>API/Gateway/Sync<br/>Event/Adapter/Domain"]
                 end
@@ -68,61 +69,66 @@ graph TB
             end
         end
 
-        subgraph Storage["📦 Storage & Registry"]
-            ECR["Amazon ECR<br/>81 Repositories"]
-            S3["Amazon S3 (1)<br/>• prometheus-thanos"]
-        end
-
-        subgraph Monitoring["📊 Monitoring & Logging"]
-            CloudWatch["CloudWatch<br/>Logs + Metrics"]
-            Prometheus["Prometheus/Thanos<br/>Long-term Metrics"]
-        end
+        Prometheus["📊 Prometheus/Thanos<br/>Long-term Metrics<br/>(Self-hosted in EKS)"]
     end
 
-    %% Ingress Traffic Flow (外部進入)
-    Users -->|1. DNS Query| DNS
-    Users -->|2. HTTPS Request| IGW
-    IGW -->|3. Route to Public Subnet| ALB
-    ALB -->|4. Forward to Private Subnet| Nodes
-    Nodes -->|5. Process Request| Apps
+    %% ========================================
+    %% Ingress Traffic Flow (外部進入流量)
+    %% ========================================
+    Users -->|"① DNS Query"| DNS
+    DNS -.."② Return ALB Public IP".-> Users
+    Users -->|"③ HTTPS to ALB"| ALB
+    IGW -."Implicit NAT".-> ALB
+    ALB -->|"④ Forward to Pods<br/>(Target: Pod IPs)"| Apps
 
+    %% ========================================
     %% Internal Service Communication (內部服務通訊)
-    Nodes -->|Internal Traffic Only| NLB
-    NLB -.Service-to-Service.-> Apps
+    %% ========================================
+    Apps -.."⑤ Pod-to-Pod via Internal NLB".-> NLB
+    NLB -.."Internal Traffic Only".-> Apps
 
-    %% Egress Traffic Flow (內部出站)
-    Nodes -->|6. Egress Traffic| NAT
-    NAT -->|7. To Internet| IGW
+    %% ========================================
+    %% Egress Traffic Flow (內部出站流量)
+    %% ========================================
+    Apps -->|"⑥ Egress to Internet"| NAT
+    NAT -->|"⑦ Via IGW"| IGW
+    IGW -."To Internet".-> Internet
 
+    %% ========================================
     %% AWS Managed Services Interaction
-    ControlPlane -.Manage.-> Nodes
-    ServiceMesh -.Traffic Mgmt.-> Apps
+    %% ========================================
+    ControlPlane -.."Manage & Monitor".-> Nodes
+    ServiceMesh -.."Traffic Management".-> Apps
+    IAM -.."Authorization".-> ControlPlane
+    IAM -.."Authorization".-> RDS
+    IAM -.."Authorization".-> S3
 
-    %% Data Layer
-    Apps --> RDS
-    Apps --> S3
-    Nodes -->|Pull Images| ECR
+    %% ========================================
+    %% Data Layer & Storage
+    %% ========================================
+    Apps -->|"Database Queries"| RDS
+    Apps -->|"Object Storage"| S3
+    Nodes -->|"Pull Container Images"| ECR
 
-    %% Monitoring
-    Nodes -->|Logs| CloudWatch
-    Nodes -->|Metrics| Prometheus
-    Prometheus -->|Store| S3
+    %% ========================================
+    %% Monitoring & Logging
+    %% ========================================
+    Nodes -->|"Send Logs"| CloudWatch
+    Apps -->|"Metrics"| Prometheus
+    Prometheus -->|"Long-term Storage"| S3
 
-    %% IAM Authorization
-    IAM -.Authorize.-> ControlPlane
-    IAM -.Authorize.-> RDS
-    IAM -.Authorize.-> S3
-
-    style Internet fill:#e1f5ff
-    style AWSManaged fill:#fff3e0
-    style AWS fill:#fff8e1
-    style Network fill:#f1f8e9
-    style PublicSubnet fill:#e8f5e9
-    style PrivateSubnet fill:#fce4ec
-    style Nodes fill:#e8eaf6
-    style Data fill:#f3e5f5
-    style Storage fill:#e0f2f1
-    style Monitoring fill:#fff9c4
+    %% ========================================
+    %% Styling
+    %% ========================================
+    style Internet fill:#e1f5ff,stroke:#0288d1,stroke-width:2px
+    style AWSManaged fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style AWS fill:#f3f4f6,stroke:#6b7280,stroke-width:2px
+    style VPC fill:#f1f8e9,stroke:#558b2f,stroke-width:2px
+    style PublicSubnet fill:#e8f5e9,stroke:#66bb6a,stroke-width:2px
+    style PrivateSubnet fill:#fce4ec,stroke:#ec407a,stroke-width:2px
+    style Nodes fill:#e8eaf6,stroke:#5c6bc0,stroke-width:2px
+    style Apps fill:#fff9c4,stroke:#fbc02d,stroke-width:2px
+    style Data fill:#f3e5f5,stroke:#ab47bc,stroke-width:2px
 ```
 
 ---
@@ -433,6 +439,7 @@ graph LR
 | 3.4 | 2026-01-02 | Infrastructure Team | **架構邏輯修正**: 修正 NLB 位置（移至 Private Subnet）、EKS Control Plane 位置（AWS Managed）、WAF 整合方式、NAT 位置標示 |
 | 3.5 | 2026-01-02 | Infrastructure Team | **文檔標題簡化**: 將標題從 "AWS EKS Production Architecture" 簡化為 "AWS Production Architecture" |
 | 3.6 | 2026-01-02 | Infrastructure Team | **Ingress/Egress 流量分離**: 明確區分外部進入流量（Users→IGW→ALB）和內部出站流量（Nodes→NAT→IGW），修正流量路徑邏輯 |
+| **4.0** | **2026-01-02** | **Infrastructure Team** | **🔴 重大架構修正**: ① 修正 Ingress 流量（Users→ALB，IGW 隱式）② ALB 直接轉發到 Pods（非 Nodes）③ Internal NLB 改為 Pod-to-Pod ④ AWS Managed Services 重新分類（ECR/S3/CloudWatch）⑤ Default VPC 限制警告 ⑥ 恢復標題為 "AWS EKS Production Architecture" |
 
 ---
 
