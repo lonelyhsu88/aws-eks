@@ -4,8 +4,8 @@
 **Region**: ap-east-1 (Hong Kong)
 **Kubernetes Version**: 1.34
 **Platform Version**: eks.9
-**文檔版本**: 1.0
-**更新日期**: 2025-12-31
+**文檔版本**: 1.1
+**更新日期**: 2026-01-02
 **狀態**: ✅ Active
 
 ---
@@ -19,7 +19,7 @@
 | **容器服務** | 78+ 個微服務 | 19 遊戲 + 8 後端 + 2 DevOps |
 | **Load Balancers** | 5 個 | 4 ALB + 1 NLB |
 | **RDS Databases** | 5 個實例 | 11.8 TB 總儲存 |
-| **S3 Buckets** | 3 個 (EKS) | Velero + Prometheus + Backup |
+| **S3 Buckets** | 1 個 (EKS) | Prometheus/Thanos 長期監控 |
 | **ECR Repositories** | 29 個 | 遊戲 + Backend + DevOps |
 | **Security Groups** | 15+ | EKS + RDS + ALB + NLB |
 | **IAM Roles** | 9 個 | Cluster + Node + IRSA |
@@ -116,21 +116,13 @@ node_pool: hash-gate
 
 ## 3️⃣ 儲存資源 (Storage)
 
-### S3 Buckets (3 個 - EKS 基礎設施專用)
+### S3 Buckets (1 個 - EKS 基礎設施專用)
 
 | Bucket Name | 用途 | Region | Versioning | Encryption | Lifecycle Policy |
 |-------------|------|--------|------------|-----------|-----------------|
-| **gemini-eks-velero-backups** | Kubernetes 資源備份 (Velero) | ap-east-1 | ✅ 啟用 | SSE-S3 | 14 天保留，30 天後轉 Glacier |
 | **gemini-prometheus-thanos** | Prometheus/Thanos 長期監控數據 | ap-east-1 | ❌ 停用 | SSE-S3 | 90 天保留（時序資料）|
-| **gemini-svc-backup** | 服務配置和資料備份 | ap-east-1 | ✅ 啟用 | SSE-S3 | 依服務設定（30-180 天）|
 
 **使用模式**:
-
-**Velero Backup**:
-- **頻率**: 每 6 小時自動備份
-- **範圍**: 所有 Kubernetes 資源 (Deployments, ConfigMaps, Secrets, PVCs)
-- **保留**: 14 天熱存儲 → 30 天後轉 Glacier
-- **還原時間**: 熱存儲 ~5 分鐘，Glacier ~12 小時
 
 **Prometheus/Thanos**:
 - **寫入**: 持續寫入時序資料
@@ -138,20 +130,13 @@ node_pool: hash-gate
 - **查詢**: 支援跨 90 天歷史查詢
 - **容量**: 估計每日 10-15 GB (壓縮後)
 
-**Service Backup**:
-- **觸發**: 應用層手動/定期備份
-- **內容**: 配置檔案、資料庫 dump、狀態快照
-- **保留**: 依服務重要性設定
-
-**安全配置** (所有 Buckets):
+**安全配置**:
 - ✅ **Public Access**: 完全封鎖
 - ✅ **Encryption in Transit**: HTTPS/TLS 1.2+
 - ✅ **Encryption at Rest**: SSE-S3 (AWS 管理金鑰)
 - ✅ **Access Logging**: 啟用，存至專用 audit bucket
-- ✅ **Versioning**: Velero 和 Service Backup 啟用（防誤刪）
 
 **成本優化建議**:
-- 💡 Velero: 評估將 14 天保留縮短至 7 天（節省 ~50% 成本）
 - 💡 Thanos: 考慮 90 天 → 60 天保留（若業務可接受）
 - 💡 啟用 S3 Intelligent-Tiering（自動冷熱數據分層）
 
@@ -522,40 +507,13 @@ Prometheus (cluster) → Thanos Sidecar → S3 (gemini-prometheus-thanos)
 - Istio Service Mesh Metrics
 - Application Performance Monitoring
 
-### Velero Backup
+### ArgoCD GitOps
 
-**Backup Schedule**:
-```yaml
-Schedule: 0 */6 * * *  # 每 6 小時
-Namespaces: --all
-Include Resources: --all
-Exclude Resources: events, events.events.k8s.io
-TTL: 336h  # 14 天
-```
-
-**Backup Scope**:
-- ✅ Deployments, StatefulSets, DaemonSets
-- ✅ ConfigMaps, Secrets
-- ✅ Services, Ingress
-- ✅ PersistentVolumeClaims (with snapshots)
-- ❌ Events (排除，無意義)
-
-**Restore Procedure**:
-```bash
-# 列出備份
-velero backup get
-
-# 還原特定備份
-velero restore create --from-backup <backup-name>
-
-# 還原特定 namespace
-velero restore create --from-backup <backup-name> \
-  --include-namespaces game-production
-```
-
-**Disaster Recovery RTO/RPO**:
-- **RPO** (Recovery Point Objective): 6 小時 (備份頻率)
-- **RTO** (Recovery Time Objective): 30-60 分鐘 (還原時間)
+**自動同步狀態監控** (Prometheus/Thanos 整合):
+- Application Sync Status
+- Deployment Health
+- Git Sync Frequency
+- Rollback Events
 
 ---
 
@@ -809,9 +767,9 @@ spec:
 - ✅ 檢查 Node 資源使用率
 
 **每週**:
-- ✅ 檢查 Velero Backup 成功率
 - ✅ 審查 RDS Performance Insights
 - ✅ 清理未使用的 ECR images
+- ✅ 檢查 Prometheus/Thanos 資料完整性
 
 **每月**:
 - ✅ Kubernetes 安全更新
@@ -857,7 +815,7 @@ eksctl delete nodegroup --cluster gemini-game-prd --name old-nodegroup
 - **影響**: 所有服務離線
 - **恢復步驟**:
   1. 使用 eksctl 重建 Cluster + Node Groups (~20 分鐘)
-  2. Velero 還原 Kubernetes 資源 (~30 分鐘)
+  2. ArgoCD 自動重新部署所有應用（GitOps）(~30 分鐘)
   3. RDS 自動容錯移轉 (Multi-AZ, ~2 分鐘)
   4. 驗證服務 (~10 分鐘)
 - **RTO**: 60-90 分鐘
@@ -881,8 +839,17 @@ eksctl delete nodegroup --cluster gemini-game-prd --name old-nodegroup
 
 ---
 
-**文檔版本**: 1.0
-**最後更新**: 2025-12-31
+## 📝 文檔變更記錄
+
+| 版本 | 日期 | 變更內容 |
+|------|------|---------|
+| **1.1** | 2026-01-02 | 🔧 **S3 Buckets 清單更新**: ① 移除未使用的 gemini-eks-velero-backups ② 移除未使用的 gemini-svc-backup ③ S3 bucket 數量從 3 個更正為 1 個 ④ 移除所有 Velero Backup 相關配置和程序 ⑤ 更新災難恢復程序改用 ArgoCD GitOps 自動部署 ⑥ 與 AWS_PRODUCTION_ARCHITECTURE.md 保持一致 |
+| **1.0** | 2025-12-31 | 📋 初始版本建立 - 完整 EKS 資源清單 |
+
+---
+
+**文檔版本**: 1.1
+**最後更新**: 2026-01-02
 **更新者**: Infrastructure Team
 **審核狀態**: ✅ 已驗證
-**下次審查**: 2026-01-31
+**下次審查**: 2026-02-28
