@@ -61,7 +61,7 @@ graph TB
                         Backend["後端服務 (12)<br/>API/Gateway/Sync<br/>Event/Adapter/Domain"]
                     end
 
-                    ServiceMesh["🕸️ Istio Service Mesh<br/>mTLS + Traffic Mgmt"]
+                    ServiceMesh["🕸️ Istio Service Mesh<br/>流量管理 + 可觀測性"]
                 end
 
                 subgraph Data["💾 資料層"]
@@ -87,11 +87,11 @@ graph TB
     DNS --> WAF
     WAF --> ALB
     IGW --> ALB
-    ALB --> NLB
+    ALB --> Nodes
     NLB --> Nodes
 
     ControlPlane -.管理.-> Nodes
-    ServiceMesh -.mTLS.-> Apps
+    ServiceMesh -.流量管理.-> Apps
     Apps --> RDS
     Apps --> S3
     Nodes -->|Pull Images| ECR
