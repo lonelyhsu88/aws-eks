@@ -4,7 +4,7 @@
 **Region**: ap-east-1 (Hong Kong)
 **Environment**: Production (PRD)
 **Last Updated**: 2026-01-02
-**Version**: 3.1
+**Version**: 3.3
 
 ---
 
@@ -21,23 +21,23 @@ Gemini Gaming Platform 部署於 AWS EKS，服務於線上遊戲平台，支援 
 
 ---
 
-## 🏗️ 整體架構圖
+## 🏗️ Overall Architecture
 
-\`\`\`mermaid
+```mermaid
 graph TB
     subgraph Internet["🌐 Internet"]
-        Users["👥 玩家<br/>Web/Mobile"]
+        Users["👥 Players<br/>Web/Mobile"]
     end
 
     subgraph AWS["☁️ AWS Region: ap-east-1 (Hong Kong)"]
 
-        subgraph Security["🔐 安全層"]
+        subgraph Security["🔐 Security Layer"]
             DNS["Route53 DNS"]
-            WAF["AWS WAF<br/>OWASP 規則"]
+            WAF["AWS WAF<br/>OWASP Rules"]
             IAM["IAM<br/>9 Roles + IRSA"]
         end
 
-        subgraph Network["🌐 網路層 - VPC (172.31.0.0/16)"]
+        subgraph Network["🌐 Network Layer - VPC (172.31.0.0/16)"]
             IGW["Internet<br/>Gateway"]
 
             subgraph PublicSubnet["Public Subnet - Multi-AZ"]
@@ -56,15 +56,15 @@ graph TB
                         AZ3["ap-east-1c<br/>4 nodes"]
                     end
 
-                    subgraph Apps["🎮 應用層"]
-                        Games["遊戲服務 (67)<br/>Bingo/Arcade/Crash<br/>Hash/Hilo/Mines/Plinko"]
-                        Backend["後端服務 (12)<br/>API/Gateway/Sync<br/>Event/Adapter/Domain"]
+                    subgraph Apps["🎮 Application Layer"]
+                        Games["Game Services (67)<br/>Bingo/Arcade/Crash<br/>Hash/Hilo/Mines/Plinko"]
+                        Backend["Backend Services (12)<br/>API/Gateway/Sync<br/>Event/Adapter/Domain"]
                     end
 
-                    ServiceMesh["🕸️ Istio Service Mesh<br/>流量管理 + 可觀測性"]
+                    ServiceMesh["🕸️ Istio Service Mesh<br/>Traffic Mgmt + Observability"]
                 end
 
-                subgraph Data["💾 資料層"]
+                subgraph Data["💾 Data Layer"]
                     RDS["💽 RDS PostgreSQL (5)<br/>• 3 Primary DB<br/>• 2 Read Replicas<br/>Total: 11.8 TB"]
                 end
             end
@@ -72,12 +72,12 @@ graph TB
             NAT["NAT Gateway"]
         end
 
-        subgraph Storage["📦 儲存 & 註冊表"]
+        subgraph Storage["📦 Storage & Registry"]
             ECR["Amazon ECR<br/>81 Repositories"]
-            S3["Amazon S3 (4)<br/>• velero-backups<br/>• prometheus-thanos<br/>• svc-backup<br/>• rds-snap-backups"]
+            S3["Amazon S3 (1)<br/>• prometheus-thanos"]
         end
 
-        subgraph Monitoring["📊 監控 & 日誌"]
+        subgraph Monitoring["📊 Monitoring & Logging"]
             CloudWatch["CloudWatch<br/>Logs + Metrics"]
             Prometheus["Prometheus/Thanos<br/>Long-term Metrics"]
         end
@@ -85,27 +85,27 @@ graph TB
 
     Users -->|HTTPS| DNS
     DNS --> WAF
-    WAF --> ALB
-    IGW --> ALB
+    WAF --> IGW
+    IGW -->|Ingress| ALB
     ALB --> Nodes
     NLB --> Nodes
 
-    ControlPlane -.管理.-> Nodes
-    ServiceMesh -.流量管理.-> Apps
+    ControlPlane -.Manage.-> Nodes
+    ServiceMesh -.Traffic Mgmt.-> Apps
     Apps --> RDS
     Apps --> S3
     Nodes -->|Pull Images| ECR
 
     Nodes -->|Egress| NAT
-    NAT -->|Internet| IGW
+    NAT --> IGW
 
     EKS -->|Logs| CloudWatch
     EKS -->|Metrics| Prometheus
     Prometheus -->|Store| S3
 
-    IAM -.授權.-> EKS
-    IAM -.授權.-> RDS
-    IAM -.授權.-> S3
+    IAM -.Authorize.-> EKS
+    IAM -.Authorize.-> RDS
+    IAM -.Authorize.-> S3
 
     style Internet fill:#e1f5ff
     style AWS fill:#fff8e1
@@ -115,7 +115,7 @@ graph TB
     style Data fill:#f3e5f5
     style Storage fill:#e0f2f1
     style Monitoring fill:#fff9c4
-\`\`\`
+```
 
 ---
 
@@ -127,7 +127,7 @@ graph TB
 - ✅ 可承受單一 AZ 故障
 
 ### 2. 安全性 (Defense in Depth)
-\`\`\`
+```
 🌐 Internet
   ↓
 🛡️ WAF (Layer 7 防護)
@@ -137,7 +137,7 @@ graph TB
 🔑 IAM RBAC (身份驗證)
   ↓
 🔒 Encryption (資料加密)
-\`\`\`
+```
 
 ### 3. 可擴展性 (Auto-scaling)
 - **Horizontal Pod Autoscaler**: 依據 CPU/Memory 自動擴展 Pod
@@ -151,50 +151,47 @@ graph TB
 
 ---
 
-## 📊 流量路徑
+## 📊 Traffic Flow
 
-### 用戶請求流程
+### User Request Flow
 
-\`\`\`mermaid
+```mermaid
 sequenceDiagram
-    participant User as 👥 玩家
+    participant User as 👥 Players
     participant DNS as Route53
     participant WAF as AWS WAF
     participant ALB as ALB
     participant Istio as Istio Gateway
-    participant App as 遊戲服務
+    participant App as Game Service
     participant DB as RDS
 
-    User->>DNS: 1. DNS 查詢
-    DNS-->>User: 2. ALB 位址
-    User->>WAF: 3. HTTPS 請求
-    WAF->>ALB: 4. 安全檢查通過
-    ALB->>Istio: 5. Layer 7 路由
-    Istio->>App: 6. mTLS 連接
-    App->>DB: 7. SQL 查詢
-    DB-->>App: 8. 資料回傳
-    App-->>User: 9. HTTPS 回應
+    User->>DNS: 1. DNS Query
+    DNS-->>User: 2. ALB Address
+    User->>WAF: 3. HTTPS Request
+    WAF->>ALB: 4. Security Check Pass
+    ALB->>Istio: 5. Layer 7 Routing
+    Istio->>App: 6. mTLS Connection
+    App->>DB: 7. SQL Query
+    DB-->>App: 8. Data Return
+    App-->>User: 9. HTTPS Response
 
-    Note over User,DB: 典型延遲: 100-200ms (p95)
-\`\`\`
+    Note over User,DB: Typical Latency: 100-200ms (p95)
+```
 
-### GitOps 部署流程
+### GitOps Deployment Flow
 
-\`\`\`mermaid
+```mermaid
 graph LR
-    Dev["👨‍💻 開發者"] -->|git push| GitHub
+    Dev["👨‍💻 Developer"] -->|git push| GitHub
     GitHub -->|Webhook| ArgoCD
     ArgoCD -->|Pull Image| ECR
     ArgoCD -->|Deploy| EKS["☸️ EKS"]
-    EKS -->|Backup| Velero
-    Velero -->|Store| S3
 
     style Dev fill:#e3f2fd
     style GitHub fill:#f3e5f5
     style ArgoCD fill:#e8f5e9
     style EKS fill:#e8eaf6
-    style S3 fill:#fff3e0
-\`\`\`
+```
 
 ---
 
@@ -292,7 +289,6 @@ graph LR
 | 資源 | 頻率 | 保留期 | 恢復時間 |
 |------|------|--------|---------|
 | **RDS 快照** (自動) | 每日 | 7 天 | ~15 分鐘 |
-| **Velero (K8s)** | 每 6 小時 | 14 天 | ~10 分鐘 |
 | **Prometheus Metrics** | 持續 | 90 天 | N/A |
 
 ### 災難恢復目標
@@ -378,7 +374,7 @@ graph LR
 ### 資料與儲存
 - **Database**: Amazon RDS PostgreSQL 14.15
 - **Object Storage**: Amazon S3
-- **Backup**: Velero (to S3)
+- **Metrics Storage**: Prometheus + Thanos (to S3)
 
 ### 監控與日誌
 - **Metrics**: Prometheus + Thanos
@@ -408,10 +404,7 @@ graph LR
 ### S3 Buckets (PRD 相關)
 | Bucket | 用途 | 加密 |
 |--------|------|------|
-| gemini-eks-velero-backups | K8s 備份 | ✅ SSE-S3 |
 | gemini-prometheus-thanos | 長期監控資料 | ✅ SSE-S3 |
-| gemini-svc-backup | 服務備份 | ✅ SSE-S3 |
-| rds-snap-backups | RDS 快照備份 | ✅ SSE-S3 |
 
 ### 聯絡資訊
 - **Infrastructure Team**: infra@geminigame.cc
@@ -427,6 +420,8 @@ graph LR
 | 2.0 | 2025-12-31 | Infrastructure Team | 詳細架構文檔 |
 | 3.0 | 2026-01-02 | Infrastructure Team | **簡化版本**: 移除冗余內容，優化視覺呈現 |
 | 3.1 | 2026-01-02 | Infrastructure Team | **數據更新**: 更正為 PRD 實際資源數量（67 遊戲服務、12 後端服務、81 ECR repositories） |
+| 3.2 | 2026-01-02 | Infrastructure Team | **架構圖英文化**: 將 Mermaid 圖表中的中文標籤改為英文 |
+| 3.3 | 2026-01-02 | Infrastructure Team | **流量路徑修正**: 修正 ALB/IGW/NAT 流量路徑，S3 buckets 簡化為只保留 prometheus-thanos |
 
 ---
 
