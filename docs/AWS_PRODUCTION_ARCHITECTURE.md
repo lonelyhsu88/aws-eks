@@ -4,7 +4,7 @@
 **Region**: ap-east-1 (Hong Kong)
 **Environment**: Production (PRD)
 **Last Updated**: 2026-01-02
-**Version**: 4.0
+**Version**: 4.1
 
 ---
 
@@ -54,7 +54,7 @@ graph TB
                     AZ3["ap-east-1c: 4 nodes"]
                 end
 
-                NLB["⚖️ Internal NLB (1)<br/>• Nginx Ingress<br/>(Pod-to-Pod only)"]
+                NLB["⚖️ Internal NLB (1)<br/>• Nginx Ingress<br/>(Internal Service Access)"]
 
                 subgraph Apps["🎮 Application Pods (K8s)"]
                     Games["Game Services (67)<br/>Bingo/Arcade/Crash<br/>Hash/Hilo/Mines/Plinko"]
@@ -82,10 +82,13 @@ graph TB
     ALB -->|"④ Forward to Pods<br/>(Target: Pod IPs)"| Apps
 
     %% ========================================
-    %% Internal Service Communication (內部服務通訊)
+    %% Internal Service Access (內部服務存取)
     %% ========================================
-    Apps -.."⑤ Pod-to-Pod via Internal NLB".-> NLB
-    NLB -.."Internal Traffic Only".-> Apps
+    %% Internal NLB provides access to internal services for RD/DevOps:
+    %% - Grafana → Prometheus metrics
+    %% - Debug logs viewing
+    %% - Internal API testing
+    %% Note: Pod-to-Pod communication uses Kubernetes Services + Istio, not NLB
 
     %% ========================================
     %% Egress Traffic Flow (內部出站流量)
@@ -440,6 +443,7 @@ graph LR
 | 3.5 | 2026-01-02 | Infrastructure Team | **文檔標題簡化**: 將標題從 "AWS EKS Production Architecture" 簡化為 "AWS Production Architecture" |
 | 3.6 | 2026-01-02 | Infrastructure Team | **Ingress/Egress 流量分離**: 明確區分外部進入流量（Users→IGW→ALB）和內部出站流量（Nodes→NAT→IGW），修正流量路徑邏輯 |
 | **4.0** | **2026-01-02** | **Infrastructure Team** | **🔴 重大架構修正**: ① 修正 Ingress 流量（Users→ALB，IGW 隱式）② ALB 直接轉發到 Pods（非 Nodes）③ Internal NLB 改為 Pod-to-Pod ④ AWS Managed Services 重新分類（ECR/S3/CloudWatch）⑤ Default VPC 限制警告 ⑥ 恢復標題為 "AWS EKS Production Architecture" |
+| **4.1** | **2026-01-02** | **Infrastructure Team** | **🔧 Internal NLB 用途修正**: ① 移除錯誤的 "Pod-to-Pod only" 描述 ② 正確標示為 "Internal Service Access" ③ 註明真實用途為 RD/DevOps 內部存取測試服務（Grafana→Prometheus、Debug logs、API testing）④ 說明 Pod-to-Pod 通訊實際透過 Kubernetes Services + Istio，不經過 NLB |
 
 ---
 
