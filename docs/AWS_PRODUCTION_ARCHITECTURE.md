@@ -1,10 +1,10 @@
-# AWS EKS Production Architecture
+# AWS Production Architecture
 
 **AWS Account**: 470013648166
 **Region**: ap-east-1 (Hong Kong)
 **Environment**: Production (PRD)
 **Last Updated**: 2026-01-02
-**Version**: 3.4
+**Version**: 3.5
 
 ---
 
@@ -423,6 +423,7 @@ graph LR
 | 3.2 | 2026-01-02 | Infrastructure Team | **架構圖英文化**: 將 Mermaid 圖表中的中文標籤改為英文 |
 | 3.3 | 2026-01-02 | Infrastructure Team | **流量路徑修正**: 修正 ALB/IGW/NAT 流量路徑，S3 buckets 簡化為只保留 prometheus-thanos |
 | 3.4 | 2026-01-02 | Infrastructure Team | **架構邏輯修正**: 修正 NLB 位置（移至 Private Subnet）、EKS Control Plane 位置（AWS Managed）、WAF 整合方式、NAT 位置標示 |
+| 3.5 | 2026-01-02 | Infrastructure Team | **文檔標題簡化**: 將標題從 "AWS EKS Production Architecture" 簡化為 "AWS Production Architecture" |
 
 ---
 
