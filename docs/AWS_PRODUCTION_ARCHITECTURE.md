@@ -4,7 +4,7 @@
 **Region**: ap-east-1 (Hong Kong)
 **Environment**: Production (PRD)
 **Last Updated**: 2026-01-02
-**Version**: 3.3
+**Version**: 3.4
 
 ---
 
@@ -29,47 +29,43 @@ graph TB
         Users["👥 Players<br/>Web/Mobile"]
     end
 
-    subgraph AWS["☁️ AWS Region: ap-east-1 (Hong Kong)"]
+    subgraph AWSManaged["☁️ AWS Managed Services"]
+        ControlPlane["⚙️ EKS Control Plane<br/>Kubernetes 1.34 API"]
+        DNS["Route53 DNS"]
+        IAM["IAM<br/>9 Roles + IRSA"]
+    end
 
-        subgraph Security["🔐 Security Layer"]
-            DNS["Route53 DNS"]
-            WAF["AWS WAF<br/>OWASP Rules"]
-            IAM["IAM<br/>9 Roles + IRSA"]
-        end
+    subgraph AWS["☁️ AWS Region: ap-east-1 (Hong Kong) - Default VPC"]
 
         subgraph Network["🌐 Network Layer - VPC (172.31.0.0/16)"]
             IGW["Internet<br/>Gateway"]
 
-            subgraph PublicSubnet["Public Subnet - Multi-AZ"]
-                ALB["⚖️ Application Load Balancers (4)<br/>• Istio Gateway<br/>• Backend API<br/>• OpenAPI<br/>• ArgoCD"]
-                NLB["⚖️ Network Load Balancer (1)<br/>• Nginx Ingress (Internal)"]
+            subgraph PublicSubnet["📤 Public Subnet - Multi-AZ"]
+                ALB["⚖️ Application Load Balancers (4)<br/>+ AWS WAF (OWASP Rules)<br/>• Istio Gateway<br/>• Backend API<br/>• OpenAPI<br/>• ArgoCD"]
+                NAT["🔀 NAT Gateway<br/>(Multi-AZ)"]
             end
 
-            subgraph PrivateSubnet["Private Subnet - Multi-AZ"]
+            subgraph PrivateSubnet["🔒 Private Subnet - Multi-AZ"]
 
-                subgraph EKS["☸️ EKS Cluster: gemini-game-prd"]
-                    ControlPlane["Control Plane<br/>Kubernetes 1.34"]
-
-                    subgraph Nodes["Worker Nodes (9)"]
-                        AZ1["ap-east-1a<br/>2 nodes"]
-                        AZ2["ap-east-1b<br/>3 nodes"]
-                        AZ3["ap-east-1c<br/>4 nodes"]
-                    end
-
-                    subgraph Apps["🎮 Application Layer"]
-                        Games["Game Services (67)<br/>Bingo/Arcade/Crash<br/>Hash/Hilo/Mines/Plinko"]
-                        Backend["Backend Services (12)<br/>API/Gateway/Sync<br/>Event/Adapter/Domain"]
-                    end
-
-                    ServiceMesh["🕸️ Istio Service Mesh<br/>Traffic Mgmt + Observability"]
+                subgraph Nodes["☸️ EKS Worker Nodes (9)"]
+                    AZ1["ap-east-1a<br/>2 nodes"]
+                    AZ2["ap-east-1b<br/>3 nodes"]
+                    AZ3["ap-east-1c<br/>4 nodes"]
                 end
+
+                NLB["⚖️ Internal NLB (1)<br/>• Nginx Ingress<br/>(Internal only)"]
+
+                subgraph Apps["🎮 Application Layer"]
+                    Games["Game Services (67)<br/>Bingo/Arcade/Crash<br/>Hash/Hilo/Mines/Plinko"]
+                    Backend["Backend Services (12)<br/>API/Gateway/Sync<br/>Event/Adapter/Domain"]
+                end
+
+                ServiceMesh["🕸️ Istio Service Mesh<br/>Traffic Mgmt + Observability"]
 
                 subgraph Data["💾 Data Layer"]
                     RDS["💽 RDS PostgreSQL (5)<br/>• 3 Primary DB<br/>• 2 Read Replicas<br/>Total: 11.8 TB"]
                 end
             end
-
-            NAT["NAT Gateway"]
         end
 
         subgraph Storage["📦 Storage & Registry"]
@@ -84,11 +80,13 @@ graph TB
     end
 
     Users -->|HTTPS| DNS
-    DNS --> WAF
-    WAF --> IGW
+    DNS -->|Resolve| Internet
+    Internet -->|HTTPS| IGW
     IGW -->|Ingress| ALB
     ALB --> Nodes
-    NLB --> Nodes
+
+    Nodes -->|Internal| NLB
+    NLB -.Internal Traffic.-> Apps
 
     ControlPlane -.Manage.-> Nodes
     ServiceMesh -.Traffic Mgmt.-> Apps
@@ -97,21 +95,23 @@ graph TB
     Nodes -->|Pull Images| ECR
 
     Nodes -->|Egress| NAT
-    NAT --> IGW
+    NAT -->|To Internet| IGW
 
-    EKS -->|Logs| CloudWatch
-    EKS -->|Metrics| Prometheus
+    Nodes -->|Logs| CloudWatch
+    Nodes -->|Metrics| Prometheus
     Prometheus -->|Store| S3
 
-    IAM -.Authorize.-> EKS
+    IAM -.Authorize.-> ControlPlane
     IAM -.Authorize.-> RDS
     IAM -.Authorize.-> S3
 
     style Internet fill:#e1f5ff
+    style AWSManaged fill:#fff3e0
     style AWS fill:#fff8e1
-    style Security fill:#ffebee
     style Network fill:#f1f8e9
-    style EKS fill:#e8eaf6
+    style PublicSubnet fill:#e8f5e9
+    style PrivateSubnet fill:#fce4ec
+    style Nodes fill:#e8eaf6
     style Data fill:#f3e5f5
     style Storage fill:#e0f2f1
     style Monitoring fill:#fff9c4
@@ -422,6 +422,7 @@ graph LR
 | 3.1 | 2026-01-02 | Infrastructure Team | **數據更新**: 更正為 PRD 實際資源數量（67 遊戲服務、12 後端服務、81 ECR repositories） |
 | 3.2 | 2026-01-02 | Infrastructure Team | **架構圖英文化**: 將 Mermaid 圖表中的中文標籤改為英文 |
 | 3.3 | 2026-01-02 | Infrastructure Team | **流量路徑修正**: 修正 ALB/IGW/NAT 流量路徑，S3 buckets 簡化為只保留 prometheus-thanos |
+| 3.4 | 2026-01-02 | Infrastructure Team | **架構邏輯修正**: 修正 NLB 位置（移至 Private Subnet）、EKS Control Plane 位置（AWS Managed）、WAF 整合方式、NAT 位置標示 |
 
 ---
 
