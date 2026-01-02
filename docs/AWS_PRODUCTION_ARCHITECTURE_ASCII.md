@@ -3,7 +3,7 @@
 **AWS Account**: 470013648166
 **Region**: ap-east-1 (Hong Kong)
 **環境**: Production
-**更新日期**: 2025-12-31
+**更新日期**: 2026-01-02
 
 ---
 
@@ -141,12 +141,12 @@
 │              └─────── EKS Nodes                                                 │
 │                                                                                  │
 │  ┌────────────────────────────────────────────────────────────────────────┐    │
-│  │  🗄️  S3 Buckets (7)                                                    │    │
+│  │  🗄️  S3 Buckets (5)                                                    │    │
 │  │                                                                          │    │
-│  │  EKS 專用 (3)                     其他 (4)                              │    │
-│  │  • velero-backups                 • campaigns-landing-pages            │    │
-│  │  • prometheus-thanos              • comfyui                             │    │
-│  │  • svc-backup                     • daily-reports                       │    │
+│  │  EKS 專用 (1)                     其他 (4)                              │    │
+│  │  • prometheus-thanos              • campaigns-landing-pages            │    │
+│  │                                    • comfyui                             │    │
+│  │                                    • daily-reports                       │    │
 │  │                                    • s3.geminigame.cc                    │    │
 │  └────────────────────────────────────────────────────────────────────────┘    │
 │              ↑                                                                   │
@@ -186,7 +186,7 @@
 ├──────────────────┼────────────────────────┼──────────────┤
 │ 資料庫           │ RDS PostgreSQL         │ 5 (11.8 TB)  │
 ├──────────────────┼────────────────────────┼──────────────┤
-│ 儲存             │ S3 Buckets             │ 7            │
+│ 儲存             │ S3 Buckets             │ 5            │
 │                  │ ECR Repositories       │ 29           │
 │                  │ EBS Volumes            │ 11 (405 GB)  │
 ├──────────────────┼────────────────────────┼──────────────┤
@@ -407,6 +407,16 @@ Network Load Balancer (Internal)
 
 ---
 
-**文檔版本**: 1.0
+**文檔版本**: 4.1
 **創建日期**: 2025-12-31
+**最後更新**: 2026-01-02
 **對應清單**: AWS_PRODUCTION_RESOURCES_LIST.md v2.0
+
+---
+
+## 📝 文檔變更記錄
+
+| 版本 | 日期 | 變更內容 |
+|------|------|---------|
+| **4.1** | 2026-01-02 | 🔧 **S3 Buckets 清單更新 (對齊 v4.1)**: ① EKS 專用 S3 buckets 從 3 個更新為 1 個 ② 移除 velero-backups 和 svc-backup ③ 只保留 prometheus-thanos ④ 總 S3 buckets 數量從 7 個更新為 5 個 ⑤ 與 AWS_PRODUCTION_ARCHITECTURE.md v4.1 和 EKS_RESOURCES_INVENTORY.md v1.1 保持一致 ⑥ 相關 JIRA: OPS-993 |
+| 1.0 | 2025-12-31 | 📋 初始 ASCII 架構圖版本 |

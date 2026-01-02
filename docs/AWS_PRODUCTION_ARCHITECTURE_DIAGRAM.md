@@ -1,7 +1,7 @@
 # AWS EKS Production Architecture
 
-**Document Version**: 2.0
-**Last Updated**: 2025-12-31
+**Document Version**: 4.1
+**Last Updated**: 2026-01-02
 **Author**: Infrastructure Team
 **Status**: Active
 
@@ -13,7 +13,7 @@ This document describes the production architecture for Gemini Gaming Platform d
 
 **Key Metrics**:
 - **Infrastructure**: 11 compute instances (40 vCPUs, 76 GB RAM)
-- **Storage**: 11.8 TB RDS PostgreSQL + 3 S3 buckets (EKS)
+- **Storage**: 11.8 TB RDS PostgreSQL + 1 S3 bucket (EKS)
 - **Network**: Multi-AZ across 3 availability zones
 - **Services**: 78+ containerized microservices (19 games + 8 backend + DevOps tooling)
 - **Traffic**: 5 load balancers (4 ALB + 1 NLB)
@@ -86,7 +86,7 @@ Strategic use of instance types (c5a.xlarge for compute, m6g for databases), aut
 - Istio Gateway requires Layer 7 routing
 - Need TLS termination at load balancer
 - Separate public endpoints for different services
-- Internal NLB provides low-latency Layer 4 routing
+- Internal NLB provides internal service access for RD/DevOps teams (Grafana→Prometheus, debug logs, API testing)
 
 **Consequences**:
 - ✅ Fine-grained routing control (path-based, host-based)
@@ -610,7 +610,6 @@ sequenceDiagram
 |----------|-----------|-----------|----------|--------------|
 | **RDS Snapshots** (Automated) | Daily | 7 days | ap-east-1 | ~15 min |
 | **RDS Snapshots** (Manual) | Weekly | 30 days | ap-east-1 | ~15 min |
-| **Velero (K8s)** | Every 6 hours | 14 days | S3 (velero-backups) | ~10 min |
 | **ECR Images** | On push | Indefinite | ap-east-1 | N/A (pull) |
 | **Prometheus Metrics** | Continuous | 90 days | S3 (thanos) | N/A (query) |
 
@@ -1280,29 +1279,25 @@ resources:
 
 ### C. S3 Buckets Inventory
 
-**Total Buckets**: 3 (EKS infrastructure, all in ap-east-1)
+**Total Buckets**: 1 (EKS infrastructure, all in ap-east-1)
 
 | Bucket Name | Purpose | EKS Usage | Versioning | Encryption |
 |-------------|---------|-----------|------------|-----------|
-| **gemini-eks-velero-backups** | Kubernetes resource backups | Velero backup destination | ✅ Enabled | ✅ SSE-S3 |
 | **gemini-prometheus-thanos** | Long-term metrics storage | Prometheus/Thanos backend | ❌ Disabled | ✅ SSE-S3 |
-| **gemini-svc-backup** | Service config & data backups | Application-level backups | ✅ Enabled | ✅ SSE-S3 |
 
 **Usage Patterns**:
-- **Velero**: Automated K8s cluster backups every 6 hours, 14-day retention
 - **Thanos**: Continuous metrics ingestion, 90-day retention, supports time-series queries
-- **Service Backup**: Application-initiated backups, retention varies by service
 
-**Security Configuration** (All Buckets):
+**Security Configuration**:
 - ✅ **Public Access**: Blocked at bucket level
 - ✅ **Encryption**: SSE-S3 (AWS-managed keys)
 - ✅ **Access Logging**: Enabled for audit compliance
-- ✅ **Lifecycle Policies**: Configured per bucket purpose (e.g., Velero → Glacier after 30 days)
+- ✅ **Lifecycle Policies**: 90-day retention for metrics data
 
 **Cost Optimization Recommendations**:
 - 💡 Enable VPC Endpoint for S3 to reduce NAT Gateway costs (~$200/month savings)
 - 💡 Review Thanos retention policy (90 days → 60 days if acceptable)
-- 💡 Evaluate Glacier Deep Archive for Velero backups older than 90 days
+- 💡 Enable S3 Intelligent-Tiering for automatic cost optimization
 
 ---
 
@@ -1357,6 +1352,7 @@ resources:
 |---------|------|--------|---------|
 | 1.0 | 2025-12-31 | Infrastructure Team | Initial basic architecture diagram |
 | 2.0 | 2025-12-31 | Infrastructure Team | **Major update**: Added ADR, C4 models, NFRs, security deep dive, DR plan, cost analysis, deployment strategies, operational runbooks, technical debt, compliance section |
+| **4.1** | **2026-01-02** | **Infrastructure Team** | **🔧 Architecture Corrections (Aligned with AWS_PRODUCTION_ARCHITECTURE.md v4.1)**: ① Updated S3 buckets from 3 to 1 (removed gemini-eks-velero-backups and gemini-svc-backup, kept only gemini-prometheus-thanos) ② Corrected Internal NLB purpose from "low-latency Layer 4 routing" to "internal service access for RD/DevOps teams (Grafana→Prometheus, debug logs, API testing)" ③ Removed Velero backup references from backup strategy table ④ Updated cost optimization recommendations ⑤ Related to JIRA: OPS-993 |
 
 ---
 
