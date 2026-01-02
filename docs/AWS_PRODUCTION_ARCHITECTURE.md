@@ -1,10 +1,10 @@
-# AWS Production Architecture
+# AWS EKS Production Architecture
 
 **AWS Account**: 470013648166
 **Region**: ap-east-1 (Hong Kong)
 **Environment**: Production (PRD)
 **Last Updated**: 2026-01-02
-**Version**: 3.5
+**Version**: 3.6
 
 ---
 
@@ -79,28 +79,36 @@ graph TB
         end
     end
 
-    Users -->|HTTPS| DNS
-    DNS -->|Resolve| Internet
-    Internet -->|HTTPS| IGW
-    IGW -->|Ingress| ALB
-    ALB --> Nodes
+    %% Ingress Traffic Flow (外部進入)
+    Users -->|1. DNS Query| DNS
+    Users -->|2. HTTPS Request| IGW
+    IGW -->|3. Route to Public Subnet| ALB
+    ALB -->|4. Forward to Private Subnet| Nodes
+    Nodes -->|5. Process Request| Apps
 
-    Nodes -->|Internal| NLB
-    NLB -.Internal Traffic.-> Apps
+    %% Internal Service Communication (內部服務通訊)
+    Nodes -->|Internal Traffic Only| NLB
+    NLB -.Service-to-Service.-> Apps
 
+    %% Egress Traffic Flow (內部出站)
+    Nodes -->|6. Egress Traffic| NAT
+    NAT -->|7. To Internet| IGW
+
+    %% AWS Managed Services Interaction
     ControlPlane -.Manage.-> Nodes
     ServiceMesh -.Traffic Mgmt.-> Apps
+
+    %% Data Layer
     Apps --> RDS
     Apps --> S3
     Nodes -->|Pull Images| ECR
 
-    Nodes -->|Egress| NAT
-    NAT -->|To Internet| IGW
-
+    %% Monitoring
     Nodes -->|Logs| CloudWatch
     Nodes -->|Metrics| Prometheus
     Prometheus -->|Store| S3
 
+    %% IAM Authorization
     IAM -.Authorize.-> ControlPlane
     IAM -.Authorize.-> RDS
     IAM -.Authorize.-> S3
@@ -424,6 +432,7 @@ graph LR
 | 3.3 | 2026-01-02 | Infrastructure Team | **流量路徑修正**: 修正 ALB/IGW/NAT 流量路徑，S3 buckets 簡化為只保留 prometheus-thanos |
 | 3.4 | 2026-01-02 | Infrastructure Team | **架構邏輯修正**: 修正 NLB 位置（移至 Private Subnet）、EKS Control Plane 位置（AWS Managed）、WAF 整合方式、NAT 位置標示 |
 | 3.5 | 2026-01-02 | Infrastructure Team | **文檔標題簡化**: 將標題從 "AWS EKS Production Architecture" 簡化為 "AWS Production Architecture" |
+| 3.6 | 2026-01-02 | Infrastructure Team | **Ingress/Egress 流量分離**: 明確區分外部進入流量（Users→IGW→ALB）和內部出站流量（Nodes→NAT→IGW），修正流量路徑邏輯 |
 
 ---
 
